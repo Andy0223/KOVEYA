@@ -13,31 +13,34 @@
           "function": "Email 登入",
           "priority": "P0",
           "acceptance_criteria": "使用者可透過經驗證的 Email 登入",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-002",
           "function": "Email 驗證連結",
           "priority": "P0",
           "acceptance_criteria": "Token 一次性、短效、可防重放",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-003",
           "function": "使用者基本資料",
           "priority": "P0",
           "acceptance_criteria": "可設定姓名、語言與時區",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-004",
           "function": "Demand Workspace",
           "priority": "P0",
           "acceptance_criteria": "登入後可查看自己的預約",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -45,24 +48,27 @@
           "function": "Supply Workspace",
           "priority": "P0",
           "acceptance_criteria": "可建立並管理自己的服務",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-006",
           "function": "角色切換",
           "priority": "P0",
           "acceptance_criteria": "不須重新登入",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-007",
           "function": "Session 管理",
           "priority": "P0",
           "acceptance_criteria": "可登出、撤銷登入工作階段",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "ID-008",
@@ -101,7 +107,7 @@
           "function": "帳號資料匯出及刪除",
           "priority": "P0",
           "acceptance_criteria": "可提交申請，依明確流程處理",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         }
       ]
@@ -116,15 +122,16 @@
           "function": "建立供給方檔案",
           "priority": "P0",
           "acceptance_criteria": "可以建立個人品牌",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-002",
           "function": "編輯公開資訊",
           "priority": "P0",
           "acceptance_criteria": "名稱、介紹、圖片可修改",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -132,39 +139,43 @@
           "function": "建立服務",
           "priority": "P0",
           "acceptance_criteria": "可建立至少一種服務",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-004",
           "function": "服務定價",
           "priority": "P0",
           "acceptance_criteria": "支援固定價格、免費、待報價",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-005",
           "function": "服務時長",
           "priority": "P0",
           "acceptance_criteria": "可設定服務時間",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-006",
           "function": "線上／實體服務",
           "priority": "P0",
           "acceptance_criteria": "可設定交付方式",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-007",
           "function": "服務發布與下架",
           "priority": "P0",
           "acceptance_criteria": "下架後不可新增預約",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -172,8 +183,9 @@
           "function": "專屬公開連結",
           "priority": "P0",
           "acceptance_criteria": "可分享至其他社群",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "Local API/browser tests only; production email delivery and independent launch review remain pending."
         },
         {
           "id": "PRO-009",
@@ -251,7 +263,7 @@
           "function": "預約間隔",
           "priority": "P0",
           "acceptance_criteria": "可設定服務前後緩衝時間",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -259,7 +271,7 @@
           "function": "最早預約時間",
           "priority": "P0",
           "acceptance_criteria": "支援提前預約限制",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -267,7 +279,7 @@
           "function": "最晚可預約日期",
           "priority": "P0",
           "acceptance_criteria": "支援開放預約範圍",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {
@@ -1281,7 +1293,7 @@
           "function": "稽核紀錄",
           "priority": "P0",
           "acceptance_criteria": "記錄重要管理操作",
-          "implementation_status": "not_started",
+          "implementation_status": "partial",
           "acceptance_status": "not_verified"
         },
         {

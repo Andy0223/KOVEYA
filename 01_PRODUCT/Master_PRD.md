@@ -47,18 +47,18 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| ID-001 | Email 登入 | P0 | 使用者可透過經驗證的 Email 登入 | not_started / not_verified |
-| ID-002 | Email 驗證連結 | P0 | Token 一次性、短效、可防重放 | not_started / not_verified |
-| ID-003 | 使用者基本資料 | P0 | 可設定姓名、語言與時區 | not_started / not_verified |
-| ID-004 | Demand Workspace | P0 | 登入後可查看自己的預約 | not_started / not_verified |
-| ID-005 | Supply Workspace | P0 | 可建立並管理自己的服務 | not_started / not_verified |
-| ID-006 | 角色切換 | P0 | 不須重新登入 | not_started / not_verified |
-| ID-007 | Session 管理 | P0 | 可登出、撤銷登入工作階段 | not_started / not_verified |
+| ID-001 | Email 登入 | P0 | 使用者可透過經驗證的 Email 登入 | implemented / local_verified |
+| ID-002 | Email 驗證連結 | P0 | Token 一次性、短效、可防重放 | implemented / local_verified |
+| ID-003 | 使用者基本資料 | P0 | 可設定姓名、語言與時區 | implemented / local_verified |
+| ID-004 | Demand Workspace | P0 | 登入後可查看自己的預約 | partial / not_verified |
+| ID-005 | Supply Workspace | P0 | 可建立並管理自己的服務 | implemented / local_verified |
+| ID-006 | 角色切換 | P0 | 不須重新登入 | implemented / local_verified |
+| ID-007 | Session 管理 | P0 | 可登出、撤銷登入工作階段 | implemented / local_verified |
 | ID-008 | Google Login | P1 | 可登入並安全連結既有帳號 | not_started / not_verified |
 | ID-009 | LINE Login | P1 | 台灣等適用市場可使用 | not_started / not_verified |
 | ID-010 | 多登入方式連結 | P1 | 不產生未經驗證的帳號合併 | not_started / not_verified |
 | ID-011 | Apple Login | P2 | 視使用者需求導入 | not_started / not_verified |
-| ID-012 | 帳號資料匯出及刪除 | P0 | 可提交申請，依明確流程處理 | not_started / not_verified |
+| ID-012 | 帳號資料匯出及刪除 | P0 | 可提交申請，依明確流程處理 | partial / not_verified |
 
 ## PRD-02｜Provider Profile & Service Catalog
 
@@ -66,14 +66,14 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| PRO-001 | 建立供給方檔案 | P0 | 可以建立個人品牌 | not_started / not_verified |
-| PRO-002 | 編輯公開資訊 | P0 | 名稱、介紹、圖片可修改 | not_started / not_verified |
-| PRO-003 | 建立服務 | P0 | 可建立至少一種服務 | not_started / not_verified |
-| PRO-004 | 服務定價 | P0 | 支援固定價格、免費、待報價 | not_started / not_verified |
-| PRO-005 | 服務時長 | P0 | 可設定服務時間 | not_started / not_verified |
-| PRO-006 | 線上／實體服務 | P0 | 可設定交付方式 | not_started / not_verified |
-| PRO-007 | 服務發布與下架 | P0 | 下架後不可新增預約 | not_started / not_verified |
-| PRO-008 | 專屬公開連結 | P0 | 可分享至其他社群 | not_started / not_verified |
+| PRO-001 | 建立供給方檔案 | P0 | 可以建立個人品牌 | implemented / local_verified |
+| PRO-002 | 編輯公開資訊 | P0 | 名稱、介紹、圖片可修改 | partial / not_verified |
+| PRO-003 | 建立服務 | P0 | 可建立至少一種服務 | implemented / local_verified |
+| PRO-004 | 服務定價 | P0 | 支援固定價格、免費、待報價 | implemented / local_verified |
+| PRO-005 | 服務時長 | P0 | 可設定服務時間 | implemented / local_verified |
+| PRO-006 | 線上／實體服務 | P0 | 可設定交付方式 | implemented / local_verified |
+| PRO-007 | 服務發布與下架 | P0 | 下架後不可新增預約 | partial / not_verified |
+| PRO-008 | 專屬公開連結 | P0 | 可分享至其他社群 | implemented / local_verified |
 | PRO-009 | 服務排序 | P1 | 可調整公開顯示順序 | not_started / not_verified |
 | PRO-010 | 服務方案組合 | P1 | 可建立多次服務方案 | not_started / not_verified |
 | PRO-011 | 多地點服務 | P1 | 可設定不同服務地點 | not_started / not_verified |
@@ -89,9 +89,9 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 |---|---|---|---|---|
 | SCH-001 | 固定可用時間 | P0 | 支援星期與起訖時間 | not_started / not_verified |
 | SCH-002 | 特殊日期 | P0 | 可設定休假及例外開放時間 | not_started / not_verified |
-| SCH-003 | 預約間隔 | P0 | 可設定服務前後緩衝時間 | not_started / not_verified |
-| SCH-004 | 最早預約時間 | P0 | 支援提前預約限制 | not_started / not_verified |
-| SCH-005 | 最晚可預約日期 | P0 | 支援開放預約範圍 | not_started / not_verified |
+| SCH-003 | 預約間隔 | P0 | 可設定服務前後緩衝時間 | partial / not_verified |
+| SCH-004 | 最早預約時間 | P0 | 支援提前預約限制 | partial / not_verified |
+| SCH-005 | 最晚可預約日期 | P0 | 支援開放預約範圍 | partial / not_verified |
 | SCH-006 | 可預約時段計算 | P0 | 排除已占用及封鎖時段 | not_started / not_verified |
 | SCH-007 | 防止撞期 | P0 | 同一互斥資源不得重複占用 | not_started / not_verified |
 | SCH-008 | 時區處理 | P0 | UTC 儲存、正確顯示當地時間 | not_started / not_verified |
@@ -279,7 +279,7 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | ADM-002 | 供給方檔案管理 | P0 | 可處理不當內容及停權 | not_started / not_verified |
 | ADM-003 | 預約異常查詢 | P0 | 可追蹤錯誤事件 | not_started / not_verified |
 | ADM-004 | 系統健康狀態 | P0 | 顯示核心服務狀態 | not_started / not_verified |
-| ADM-005 | 稽核紀錄 | P0 | 記錄重要管理操作 | not_started / not_verified |
+| ADM-005 | 稽核紀錄 | P0 | 記錄重要管理操作 | partial / not_verified |
 | ADM-006 | 通知失敗管理 | P0 | 可重試或處理失敗通知 | not_started / not_verified |
 | ADM-007 | 使用者申訴 | P1 | 可建立並追蹤案件 | not_started / not_verified |
 | ADM-008 | 訂閱管理 | P1 | 可查看平台訂閱狀態 | not_started / not_verified |

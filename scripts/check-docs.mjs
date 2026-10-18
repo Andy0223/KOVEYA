@@ -41,6 +41,18 @@ const master = readFileSync("01_PRODUCT/Master_PRD.md", "utf8");
 for (const id of seen)
   if (!master.includes(`| ${id} |`))
     throw new Error(`Master PRD missing ${id}`);
+for (const module of spec.modules)
+  for (const requirement of module.requirements) {
+    const row = master
+      .split("\n")
+      .find((line) => line.startsWith(`| ${requirement.id} |`));
+    if (
+      !row?.includes(
+        `${requirement.implementation_status} / ${requirement.acceptance_status}`,
+      )
+    )
+      throw new Error(`Stale requirement status: ${requirement.id}`);
+  }
 for (const file of files.filter((f) => f.endsWith(".md"))) {
   const text = readFileSync(file, "utf8");
   for (const match of text.matchAll(/\]\(([^)]+)\)/g)) {
@@ -53,6 +65,18 @@ for (const file of files.filter((f) => f.endsWith(".md"))) {
 const api = parse(readFileSync("03_TECH/API_Specification.yaml", "utf8"));
 if (api.openapi !== "3.1.0" || !api.paths["/providers/{slug}"])
   throw new Error("Missing OpenAPI contract.");
+function checkReferences(value) {
+  if (!value || typeof value !== "object") return;
+  if (typeof value.$ref === "string" && value.$ref.startsWith("#/")) {
+    const target = value.$ref
+      .slice(2)
+      .split("/")
+      .reduce((parent, key) => parent?.[key], api);
+    if (!target) throw new Error(`Broken OpenAPI reference: ${value.$ref}`);
+  }
+  for (const child of Object.values(value)) checkReferences(child);
+}
+checkReferences(api);
 console.log(
   `Documentation links, OpenAPI YAML, and ${seen.size} requirement IDs verified.`,
 );

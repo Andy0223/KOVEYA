@@ -13,6 +13,20 @@ import type {
   PublicOffering,
 } from "../shared/catalog";
 import "./styles.css";
+import {
+  AccountGate,
+  AccountProvider,
+  api,
+  errorText,
+  useAccount,
+} from "./account";
+import { AccountSettings, SignInPage, VerifyPage } from "./identity-pages";
+import {
+  BusinessHome,
+  BusinessProfilePage,
+  DemandHome,
+  ServiceEditor,
+} from "./business-pages";
 
 type Locale = "zh-TW" | "en";
 const copy = {
@@ -25,7 +39,7 @@ const copy = {
     intro: "一個連結服務與人的地方。從第一個預約，到每一次值得信賴的服務關係。",
     primary: "看看服務頁面",
     secondary: "認識 KOVEYA Business",
-    note: "目前為本機開發版本，預約與帳號功能建置中。",
+    note: "目前可建立帳號、品牌與服務頁；預約功能開發中。",
     cardTitle: "把時間，留給你熱愛的事。",
     cardNote: "提供服務 → 分享連結 → 建立關係",
     categories: ["運動與健康", "教育與學習", "創作與專業"],
@@ -81,7 +95,7 @@ const copy = {
       "A place for people and services to connect. From your first booking to relationships that last.",
     primary: "Explore a service page",
     secondary: "Meet KOVEYA Business",
-    note: "Local development preview. Booking and accounts are being built.",
+    note: "Create your account, business, and service pages. Booking is being built.",
     cardTitle: "More time for what you love.",
     cardNote: "Offer a service → Share your link → Build a relationship",
     categories: [
@@ -169,7 +183,12 @@ function App() {
     }
   });
   const t = copy[locale];
+  const { account, refresh } = useAccount();
+  const [accountError, setAccountError] = useState("");
   const { pathname } = useLocation();
+  useEffect(() => {
+    if (account?.user.locale) setLocale(account.user.locale);
+  }, [account?.user.id, account?.user.locale]);
   useEffect(() => {
     document.documentElement.lang = locale === "zh-TW" ? "zh-Hant" : "en";
     try {
@@ -201,6 +220,34 @@ function App() {
           >
             {t.business}
           </Link>
+          <Link
+            className="account-link"
+            to={account ? "/app/profile" : "/sign-in"}
+          >
+            {account
+              ? locale === "en"
+                ? "Account"
+                : "帳號"
+              : locale === "en"
+                ? "Sign in"
+                : "登入"}
+          </Link>
+          {account && (
+            <button
+              className="header-logout"
+              onClick={async () => {
+                try {
+                  await api("/auth/logout", "POST");
+                  await refresh();
+                  setAccountError("");
+                } catch (error) {
+                  setAccountError(errorText(error, locale));
+                }
+              }}
+            >
+              {locale === "en" ? "Sign out" : "登出"}
+            </button>
+          )}
           <button
             className="locale-button"
             onClick={() => setLocale(locale === "en" ? "zh-TW" : "en")}
@@ -210,6 +257,11 @@ function App() {
           </button>
         </nav>
       </header>
+      {accountError && (
+        <p className="form-error page-width" role="alert">
+          {accountError}
+        </p>
+      )}
       <main id="main">
         <Routes>
           <Route
@@ -301,45 +353,56 @@ function App() {
             }
           />
           <Route path="/p/:slug" element={<ProviderPage locale={locale} />} />
-          {["/app", "/business"].map((path) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <section className="workspace page-width">
-                  <p className="eyebrow">
-                    {path === "/business" ? "KOVEYA BUSINESS" : "YOUR KOVEYA"} ·{" "}
-                    {t.preview}
-                  </p>
-                  <h1>
-                    {path === "/business"
-                      ? t.workspaceSupply
-                      : t.workspaceDemand}
-                  </h1>
-                  <p className="intro">
-                    {path === "/business"
-                      ? t.workspaceSupplyText
-                      : t.workspaceDemandText}
-                  </p>
-                  <ol className="workspace-steps">
-                    {(path === "/business" ? t.supplySteps : t.demandSteps).map(
-                      (step, i) => (
-                        <li key={step}>
-                          <span>0{i + 1}</span>
-                          {step}
-                        </li>
-                      ),
-                    )}
-                  </ol>
-                  <p className="notice">{t.workspaceNote}</p>
-                  <Link className="button primary" to="/p/demo-coach">
-                    {t.primary}
-                    <span aria-hidden>↗</span>
-                  </Link>
-                </section>
-              }
-            />
-          ))}
+          <Route path="/sign-in" element={<SignInPage locale={locale} />} />
+          <Route path="/auth/verify" element={<VerifyPage locale={locale} />} />
+          <Route
+            path="/app"
+            element={
+              <AccountGate locale={locale}>
+                <DemandHome locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/app/profile"
+            element={
+              <AccountGate locale={locale}>
+                <AccountSettings locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business"
+            element={
+              <AccountGate locale={locale}>
+                <BusinessHome locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/profile"
+            element={
+              <AccountGate locale={locale}>
+                <BusinessProfilePage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/services/new"
+            element={
+              <AccountGate locale={locale}>
+                <ServiceEditor locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/services/:id"
+            element={
+              <AccountGate locale={locale}>
+                <ServiceEditor locale={locale} />
+              </AccountGate>
+            }
+          />
           <Route
             path="*"
             element={
@@ -356,7 +419,7 @@ function App() {
           KOVEYA<span>↗</span>
         </Link>
         <p>{t.footer}</p>
-        <span className="preview-tag">{t.preview} · v0.1</span>
+        <span className="preview-tag">{t.preview} · v0.2</span>
       </footer>
     </>
   );
@@ -431,7 +494,16 @@ function ProviderPage({ locale }: { locale: Locale }) {
       <div className="provider-layout">
         <aside>
           <div className="provider-avatar" aria-hidden>
-            KC<span>↗</span>
+            {provider.publicName.trim().split(/\s+/).length > 1
+              ? provider.publicName
+                  .trim()
+                  .split(/\s+/)
+                  .map((word) => word[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()
+              : [...provider.publicName].slice(0, 2).join("").toUpperCase()}
+            <span>↗</span>
           </div>
           <h1>{provider.publicName}</h1>
           <p className="location">◎ {provider.locationLabel}</p>
@@ -449,6 +521,13 @@ function ProviderPage({ locale }: { locale: Locale }) {
               {provider.services.length.toString().padStart(2, "0")}
             </span>
           </h2>
+          {provider.services.length === 0 && (
+            <p className="notice">
+              {locale === "en"
+                ? "This provider has not published any services yet."
+                : "這位供給方尚未發布服務。"}
+            </p>
+          )}
           {provider.services.map((service) => (
             <article className="service-card" key={service.id}>
               <div className="service-topline">
@@ -497,7 +576,9 @@ function ProviderPage({ locale }: { locale: Locale }) {
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AccountProvider>
+        <App />
+      </AccountProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

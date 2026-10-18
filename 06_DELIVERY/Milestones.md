@@ -2,8 +2,8 @@
 
 | 里程碑 | 驗收條件 | 狀態 |
 |---|---|---|
-| M0 Foundation | 規格追蹤、可執行本機專案、migration、CI、公開頁 | 本機驗證完成；CI 已設定，遠端執行另行確認 |
-| M1 Identity & Provider | 安全 Email 登入、同帳號雙模式、品牌與服務發布 | 未開始 |
+| M0 Foundation | 規格追蹤、可執行本機專案、migration、CI、公開頁 | 本機與 GitHub CI 通過（v0.1） |
+| M1 Identity & Provider | 安全 Email 登入、同帳號雙模式、品牌與服務發布 | v0.2 本機核心流程完成；正式寄信與品牌圖片待補 |
 | M2 Booking Loop | 直接／申請預約、取消、改期、歷史與防撞 | 未開始 |
 | M3 Operations | CRM、通知、ICS、管理與稽核 | 未開始 |
 | M4 Closed Beta | 所有 P0、手機、安全、併發、備份復原及獨立審查 | 未開始 |

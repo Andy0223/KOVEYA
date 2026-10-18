@@ -1,5 +1,15 @@
 # Release Notes
 
+## 0.2.0 Identity & Provider — 2026-10-19
+
+新增 Email 驗證連結、七天 Session、雙工作模式、帳號資料及隱私申請、個人品牌、服務草稿／編輯／發布／下架。公開頁讀取真正發布的服務，未登入不能管理私人資料。
+
+安全保護包含十分鐘一次性連結、瀏覽器綁定、hash 儲存、Session 撤銷、Origin／JSON／16KB 限制、限流、租戶範圍、操作稽核及服務 revision／mutation guard。新增身份失敗注入、並發驗證、越權與編輯競爭測試。
+
+本機明確啟用驗證預覽，不寄真實 Email；正式 Resend adapter 尚待 secrets、寄件網域與實際寄送驗證。品牌圖片、隱私案件人工處理、排班與預約交易仍待完成。此版本不是完整 MVP。
+
+E2E 使用獨立 D1 及正式 build；CI 固定 Ubuntu 24.04 並更新 Actions runtime。驗證快照見 [Progress](Progress.md)。
+
 ## 0.1.0 Foundation — 2026-10-18
 
 建立策略、產品、UX、技術、營運、測試及交付文件。15 模組需求以結構化資料追蹤，原文通知矩陣新增 NTF 編號。

@@ -2,7 +2,7 @@
 
 所有 P0 以完整功能及對應需求驗收，不以單一 helper 測試取代。測試層級：領域單元 → schema 約束 → Worker／D1 整合 → 瀏覽器 E2E → 真實手機與使用者 → 獨立安全及交易審查。
 
-目前單元與 schema 測試使用 Vitest 及 Node SQLite，瀏覽器以 Playwright 對本機 Workers + D1。Node SQLite 測試不證明雲端 D1 的批次及併發行為。
+目前單元、schema 及失敗注入測試使用 Vitest 及 Node SQLite；Playwright 測試正式建置後的 Workers + D1，每次初始化獨立資料庫。Node SQLite 測試不證明雲端 D1 的批次及併發行為。
 
 ## 非功能需求
 

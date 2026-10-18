@@ -1,2 +1,8 @@
-# Email integration will be configured when the identity module is implemented.
-# Never commit real credentials. Local catalog development needs no secrets.
+# Explicitly enables a sign-in preview URL only on loopback hosts.
+# .dev.vars is ignored and is not included in deployment configuration.
+LOCAL_EMAIL_PREVIEW=true
+
+# For real email delivery, disable the local preview and configure:
+# APP_ORIGIN=https://your-domain.example
+# RESEND_API_KEY=your-secret
+# EMAIL_FROM=KOVEYA <login@your-verified-domain.example>

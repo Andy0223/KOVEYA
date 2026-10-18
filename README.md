@@ -6,7 +6,9 @@
 
 ## 目前進度
 
-Foundation v0.1：可執行的 React／Workers 專案、雙語首頁、公開供給方頁與 D1 初始資料模型。`/app` 與 `/business` 為工作模式介紹；登入、服務管理、預約、通知及 CRM 尚未實作。
+Identity & Provider v0.2：Email 一次性連結登入與 Session、個人資料、雙模式、品牌建立、服務草稿／編輯／發布／下架、公開頁，已可在本機完整操作。預約交易、可用時間、通知及 CRM 尚未完成。
+
+本機登入透過明確啟用的驗證預覽測試，不寄真實 Email。Resend adapter 已實作，正式寄送仍需設定已驗證寄件網域與 secrets，並做整合驗證。資料匯出／刪除目前只記錄人工處理申請。
 
 第一個正式里程碑：供給方建立公開服務頁、分享連結，需求方完成驗證與預約，雙方能管理、取消、改期及查看紀錄。尚未完成完整 P0 或 Beta 驗收。
 
@@ -16,11 +18,12 @@ Foundation v0.1：可執行的 React／Workers 專案、雙語首頁、公開供
 
 ```sh
 npm ci
+test -f .dev.vars || cp .dev.vars.example .dev.vars
 npm run db:setup
 npm run dev
 ```
 
-開啟 `http://127.0.0.1:5173`。示範頁為 `/p/demo-coach`，內容為虛構資料，不接受真實預約。本機使用 Workers runtime 與 D1，不需要 Cloudflare 帳號或 Email secrets。
+開啟 `http://127.0.0.1:5173`。示範頁為 `/p/demo-coach`，內容為虛構資料，不接受真實預約。本機使用 Workers runtime 與 D1，不需要 Cloudflare 帳號或 Email secrets。請勿覆寫已有的 `.dev.vars`；需要本機驗證入口時，設定 `LOCAL_EMAIL_PREVIEW=true` 並重啟 dev。
 
 ```sh
 npm run check
@@ -28,7 +31,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`check` 包含型別、單元／資料庫約束、文件與 build。E2E 測本機公開頁；不等同完整 PRD 或真實手機驗收。正式部署前見 [Deployment](04_OPERATIONS/Deployment.md)。
+`check` 包含型別、單元／資料庫約束、文件與 build。E2E 每次建立獨立 D1，測試正式 build 的登入、服務管理與公開頁；不等同完整 PRD、正式寄信或真實手機驗收。正式部署前見 [Deployment](04_OPERATIONS/Deployment.md)。
 
 ## 文件入口
 
@@ -49,7 +52,7 @@ npm run test:e2e
 ```text
 src/web/             React 前端、雙語文案、響應式樣式
 src/shared/          前後端共用公開型別
-worker/modules/      公開目錄與排程領域邏輯
+worker/modules/      身分、業務、公開目錄與排程領域邏輯
 worker/db/           Drizzle schema
 migrations/          可執行 D1 migrations 與 schema snapshots
 seeds/               虛構的本機資料

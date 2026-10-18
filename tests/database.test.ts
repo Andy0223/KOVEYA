@@ -41,7 +41,7 @@ describe("Initial database constraints (not full booking API acceptance)", () =>
   it("tenant composite keys reject a resource from another business", () => {
     fixture();
     db.exec(
-      "INSERT INTO organizations VALUES ('org-other', 'Other', 'ACTIVE', 1); INSERT INTO resources VALUES ('r2', 'org-other', 'Other Coach', 'Asia/Taipei')",
+      "INSERT INTO organizations (id, name, status, created_at) VALUES ('org-other', 'Other', 'ACTIVE', 1); INSERT INTO resources VALUES ('r2', 'org-other', 'Other Coach', 'Asia/Taipei')",
     );
     expect(() =>
       db.exec(

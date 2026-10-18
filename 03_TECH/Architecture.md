@@ -4,9 +4,9 @@
 
 目前前端 `src/web`，共用回應型別 `src/shared`，API 入口 `worker/index.ts`，公開目錄 `worker/modules/catalog`，排程純函式 `worker/modules/scheduling`，資料模型 `worker/db/schema.ts`。
 
-目前只有公開供給方讀取及健康檢查。React 首頁、需求方與供給方介紹可運行。登入、管理、預約交易及通知尚未接上。
+目前已接上 Email 連結登入、Session、個人資料、隱私申請、個人品牌與服務管理、公開供給方讀取及健康檢查。完整排班、預約交易、通知與 CRM 尚未接上。
 
-後續依序接身分、租戶授權、服務寫入、排班、預約生命週期、客戶、Outbox 與通知。R2、Resend、Cron／Queues 透過 adapter 加入；不預先建立未使用的外部資源。
+後續依序接排班、預約生命週期、客戶、Outbox 與通知。R2、Resend、Cron／Queues 透過 adapter 加入；不預先建立未使用的外部資源。
 
 資料庫保護占用唯一性及複合租戶外鍵。讀取可用時間後仍須在提交時重新檢查，不能把先查後寫視為防撞。
 

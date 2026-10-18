@@ -46,6 +46,9 @@ export const sessions = sqliteTable("sessions", {
 
 export const organizations = sqliteTable("organizations", {
   id: text("id").primaryKey(),
+  ownerUserId: text("owner_user_id")
+    .references(() => users.id)
+    .unique(),
   name: text("name").notNull(),
   status: text("status", { enum: ["ACTIVE", "SUSPENDED"] })
     .notNull()
@@ -93,6 +96,8 @@ export const services = sqliteTable(
   "services",
   {
     id: text("id").primaryKey(),
+    revision: integer("revision").notNull().default(1),
+    lastMutationId: text("last_mutation_id"),
     orgId: text("org_id")
       .notNull()
       .references(() => organizations.id),
@@ -141,6 +146,48 @@ export const services = sqliteTable(
     ),
   ],
 );
+
+export const emailChallenges = sqliteTable("email_challenges", {
+  tokenHash: text("token_hash").primaryKey(),
+  browserHash: text("browser_hash").notNull(),
+  email: text("email").notNull(),
+  returnTo: text("return_to").notNull(),
+  locale: text("locale").notNull(),
+  expiresAt: integer("expires_at").notNull(),
+  consumedAt: integer("consumed_at"),
+  consumedNonce: text("consumed_nonce"),
+});
+
+export const rateLimitBuckets = sqliteTable("rate_limit_buckets", {
+  key: text("key").primaryKey(),
+  hits: integer("hits").notNull(),
+  expiresAt: integer("expires_at").notNull(),
+});
+
+export const auditLogs = sqliteTable("audit_logs", {
+  id: text("id").primaryKey(),
+  actorId: text("actor_id")
+    .notNull()
+    .references(() => users.id),
+  orgId: text("org_id").references(() => organizations.id),
+  action: text("action").notNull(),
+  entityId: text("entity_id").notNull(),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const privacyRequests = sqliteTable("privacy_requests", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: text("type", { enum: ["EXPORT", "DELETE"] }).notNull(),
+  status: text("status", {
+    enum: ["SUBMITTED", "PROCESSING", "COMPLETED", "REJECTED"],
+  })
+    .notNull()
+    .default("SUBMITTED"),
+  createdAt: integer("created_at").notNull(),
+});
 
 export const offerings = sqliteTable(
   "offerings",

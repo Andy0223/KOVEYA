@@ -1,11 +1,10 @@
 openapi: 3.1.0
 info:
   title: KOVEYA API
-  version: 0.1.0
-  description: >-
-    Implemented foundation routes only. Authentication, booking writes, and other
-    planned endpoints are listed separately under x-koveya-planned-endpoints.
-    This contract does not claim the complete MVP has been implemented.
+  version: 0.2.0
+  description: Implemented identity, individual business profile, service management and public
+    catalog. Local verification preview is restricted to explicit loopback mode. Scheduling and
+    booking transactions remain planned.
 servers:
   - url: /api/v1
 security: []
@@ -15,24 +14,33 @@ paths:
       operationId: getHealth
       summary: Check database migration readiness
       responses:
-        '200':
+        "200":
           description: Database query succeeded
           content:
             application/json:
               schema:
                 type: object
-                required: [data, requestId]
+                required:
+                  - data
+                  - requestId
                 properties:
                   data:
                     type: object
-                    required: [status, database, version]
+                    required:
+                      - status
+                      - database
+                      - version
                     properties:
-                      status: { const: ok }
-                      database: { const: ready }
-                      version: { type: string }
-                  requestId: { type: string }
-        '503':
-          $ref: '#/components/responses/ServiceUnavailable'
+                      status:
+                        const: ok
+                      database:
+                        const: ready
+                      version:
+                        type: string
+                  requestId:
+                    type: string
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
   /providers/{slug}:
     get:
       operationId: getPublicProvider
@@ -43,99 +51,1615 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+            pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
             maxLength: 80
       responses:
-        '200':
+        "200":
           description: Public fields only; unpublished services and private business identifiers excluded
           content:
             application/json:
               schema:
                 type: object
-                required: [data, requestId]
+                required:
+                  - data
+                  - requestId
                 properties:
-                  data: { $ref: '#/components/schemas/PublicProvider' }
-                  requestId: { type: string }
-        '400': { $ref: '#/components/responses/Error' }
-        '404': { $ref: '#/components/responses/Error' }
-        '500': { $ref: '#/components/responses/Error' }
+                  data:
+                    $ref: "#/components/schemas/PublicProvider"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+  /auth/config:
+    get:
+      operationId: getAuthConfig
+      summary: Discover email delivery mode
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - delivery
+                    properties:
+                      delivery:
+                        enum:
+                          - local
+                          - email
+                          - unavailable
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /auth/email/start:
+    post:
+      operationId: startEmailLogin
+      summary: Send a one-time sign-in link
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - sent
+                      - expiresInSeconds
+                    properties:
+                      sent:
+                        const: true
+                      expiresInSeconds:
+                        type: integer
+                      localPreviewUrl:
+                        type: string
+                        format: uri
+                        description: Only returned when LOCAL_EMAIL_PREVIEW=true on a loopback host.
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 254
+                returnTo:
+                  type: string
+                  description: Only local /app, /business or /p paths are retained; unsafe paths fall back to /app.
+                locale:
+                  enum:
+                    - zh-TW
+                    - en
+  /auth/email/verify:
+    post:
+      operationId: verifyEmailLogin
+      summary: Consume a short-lived browser-bound token and establish a session
+      security:
+        - loginChallenge: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - returnTo
+                    properties:
+                      returnTo:
+                        type: string
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  pattern: ^[a-f0-9]{64}$
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: Revoke the current session; safe to repeat
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - signedOut
+                    properties:
+                      signedOut:
+                        const: true
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+  /auth/sessions/revoke-all:
+    post:
+      operationId: revokeAllSessions
+      summary: Revoke all sessions for the current account
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - revoked
+                    properties:
+                      revoked:
+                        const: true
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+  /me:
+    get:
+      operationId: getAccount
+      summary: Get the current account and owned business
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Account"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+    patch:
+      operationId: updateAccount
+      summary: Update name, preferred language and IANA timezone
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - updated
+                    properties:
+                      updated:
+                        const: true
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - name
+                - locale
+                - timezone
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                locale:
+                  enum:
+                    - zh-TW
+                    - en
+                timezone:
+                  type: string
+  /privacy-requests:
+    get:
+      operationId: getPrivacyRequests
+      summary: List only the current account privacy requests
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PrivacyRequest"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: submitPrivacyRequest
+      summary: Submit or return an existing pending request; manual processing remains separate
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PrivacyRequest"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - type
+              properties:
+                type:
+                  enum:
+                    - EXPORT
+                    - DELETE
+  /business/profile:
+    get:
+      operationId: getBusinessProfile
+      summary: Get the owned active business profile
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    anyOf:
+                      - $ref: "#/components/schemas/BusinessProfile"
+                      - type: "null"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /organizations:
+    post:
+      operationId: createIndividualBusiness
+      summary: Create an individual business, owner membership, profile and resource atomically
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - id
+                      - slug
+                    properties:
+                      id:
+                        type: string
+                      slug:
+                        type: string
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessProfileInput"
+  /organizations/{id}:
+    patch:
+      operationId: updateBusinessProfile
+      summary: Update an owned brand profile; public slug is immutable after creation
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - updated
+                    properties:
+                      updated:
+                        const: true
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessProfileInput"
+  /business/services:
+    get:
+      operationId: getManagedServices
+      summary: List only services owned by the authenticated business
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ManagedService"
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /services:
+    post:
+      operationId: createService
+      summary: Create a draft service and its single MVP offering
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - id
+                      - offeringId
+                      - revision
+                    properties:
+                      id:
+                        type: string
+                      offeringId:
+                        type: string
+                      revision:
+                        type: integer
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceInput"
+  /services/{id}:
+    patch:
+      operationId: updateService
+      summary: Update service and offering with a revision and per-mutation guard
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - updated
+                      - revision
+                    properties:
+                      updated:
+                        const: true
+                      revision:
+                        type: integer
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceEditInput"
+  /services/{id}/publish:
+    post:
+      operationId: publishService
+      summary: publish an owned service; publishing requires a public profile
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - updated
+                      - revision
+                    properties:
+                      updated:
+                        const: true
+                      revision:
+                        type: integer
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedRevision
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
+  /services/{id}/unpublish:
+    post:
+      operationId: unpublishService
+      summary: unpublish an owned service; publishing requires a public profile
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - updated
+                      - revision
+                    properties:
+                      updated:
+                        const: true
+                      revision:
+                        type: integer
+                  requestId:
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "413":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+      parameters:
+        - in: header
+          name: Origin
+          required: true
+          schema:
+            type: string
+          description: Must equal the configured application origin (loopback origin in local preview).
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedRevision
+              properties:
+                expectedRevision:
+                  type: integer
+                  minimum: 1
 components:
   responses:
     Error:
       description: Structured error with request identifier; no internal details
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema:
+            $ref: "#/components/schemas/Error"
     ServiceUnavailable:
       description: Database is unavailable or migrations have not been applied
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/Error' }
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     Error:
       type: object
-      required: [error, requestId]
+      required:
+        - error
+        - requestId
       properties:
-        requestId: { type: string }
+        requestId:
+          type: string
         error:
           type: object
-          required: [code, message]
+          required:
+            - code
+            - message
           properties:
-            code: { type: string }
-            message: { type: string }
+            code:
+              type: string
+            message:
+              type: string
     PublicProvider:
       type: object
       additionalProperties: false
-      required: [publicName, slug, bio, locationLabel, timezone, services]
+      required:
+        - publicName
+        - slug
+        - bio
+        - locationLabel
+        - timezone
+        - services
       properties:
-        publicName: { type: string }
-        slug: { type: string }
-        bio: { type: string }
-        locationLabel: { type: string }
-        timezone: { type: string, examples: [Asia/Taipei] }
+        publicName:
+          type: string
+        slug:
+          type: string
+        bio:
+          type: string
+        locationLabel:
+          type: string
+        timezone:
+          type: string
+          examples:
+            - Asia/Taipei
         services:
           type: array
-          items: { $ref: '#/components/schemas/PublicService' }
+          items:
+            $ref: "#/components/schemas/PublicService"
     PublicService:
       type: object
       additionalProperties: false
-      required: [id, name, description, mode, delivery, locationLabel, timezone, cancellationPolicy, offerings]
+      required:
+        - id
+        - name
+        - description
+        - mode
+        - delivery
+        - locationLabel
+        - timezone
+        - cancellationPolicy
+        - offerings
       properties:
-        id: { type: string }
-        name: { type: string }
-        description: { type: string }
-        mode: { enum: [INSTANT, REQUEST] }
-        delivery: { enum: [ONLINE, IN_PERSON, AT_CLIENT] }
-        locationLabel: { type: string }
-        timezone: { type: string }
-        cancellationPolicy: { type: string }
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        mode:
+          enum:
+            - INSTANT
+            - REQUEST
+        delivery:
+          enum:
+            - ONLINE
+            - IN_PERSON
+            - AT_CLIENT
+        locationLabel:
+          type: string
+        timezone:
+          type: string
+        cancellationPolicy:
+          type: string
         offerings:
           type: array
-          items: { $ref: '#/components/schemas/PublicOffering' }
+          items:
+            $ref: "#/components/schemas/PublicOffering"
     PublicOffering:
       type: object
       additionalProperties: false
-      required: [id, durationMinutes, pricingType, priceMinor, currency]
+      required:
+        - id
+        - durationMinutes
+        - pricingType
+        - priceMinor
+        - currency
       properties:
-        id: { type: string }
-        durationMinutes: { type: integer, minimum: 15, multipleOf: 15 }
-        pricingType: { enum: [FIXED, FREE, QUOTE] }
-        priceMinor: { type: [integer, 'null'], minimum: 0 }
-        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        id:
+          type: string
+        durationMinutes:
+          type: integer
+          minimum: 15
+          multipleOf: 15
+        pricingType:
+          enum:
+            - FIXED
+            - FREE
+            - QUOTE
+        priceMinor:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+    Account:
+      type: object
+      additionalProperties: false
+      required:
+        - user
+        - business
+      properties:
+        user:
+          type: object
+          additionalProperties: false
+          required:
+            - id
+            - name
+            - email
+            - locale
+            - timezone
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+            locale:
+              enum:
+                - zh-TW
+                - en
+            timezone:
+              type: string
+        business:
+          anyOf:
+            - type: object
+              additionalProperties: false
+              required:
+                - orgId
+                - publicName
+                - slug
+              properties:
+                orgId:
+                  type: string
+                publicName:
+                  type: string
+                slug:
+                  type: string
+            - type: "null"
+    BusinessProfileInput:
+      type: object
+      additionalProperties: false
+      required:
+        - publicName
+        - slug
+        - timezone
+      properties:
+        publicName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          minLength: 3
+          maxLength: 60
+        bio:
+          type: string
+          maxLength: 2000
+        locationLabel:
+          type: string
+          maxLength: 200
+        timezone:
+          type: string
+        published:
+          type: boolean
+    BusinessProfile:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - publicName
+        - slug
+        - bio
+        - locationLabel
+        - timezone
+        - published
+      properties:
+        id:
+          type: string
+        publicName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        slug:
+          type: string
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          minLength: 3
+          maxLength: 60
+        bio:
+          type: string
+          maxLength: 2000
+        locationLabel:
+          type: string
+          maxLength: 200
+        timezone:
+          type: string
+        published:
+          type: boolean
+    ServiceInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+        - mode
+        - delivery
+        - locationLabel
+        - timezone
+        - durationMinutes
+        - pricingType
+        - priceMinor
+        - currency
+        - cancellationNoticeMinutes
+        - cancellationPolicy
+        - minNoticeMinutes
+        - maxAdvanceDays
+        - bufferBeforeMinutes
+        - bufferAfterMinutes
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 4000
+        mode:
+          enum:
+            - INSTANT
+            - REQUEST
+        delivery:
+          enum:
+            - ONLINE
+            - IN_PERSON
+            - AT_CLIENT
+        locationLabel:
+          type: string
+          minLength: 1
+          maxLength: 200
+        timezone:
+          type: string
+        durationMinutes:
+          type: integer
+          minimum: 15
+          maximum: 720
+          multipleOf: 15
+        pricingType:
+          enum:
+            - FIXED
+            - FREE
+            - QUOTE
+        priceMinor:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+          maximum: 1000000000000
+        currency:
+          enum:
+            - TWD
+            - IDR
+            - USD
+            - JPY
+            - EUR
+        cancellationNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        cancellationPolicy:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        minNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        maxAdvanceDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        bufferBeforeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+        bufferAfterMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+      description: FIXED requires a positive amount; FREE requires 0; QUOTE requires null and REQUEST
+        mode. Combined duration and buffers must not exceed 1440 minutes. Timezones must be accepted
+        IANA names or UTC.
+    ServiceEditInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+        - mode
+        - delivery
+        - locationLabel
+        - timezone
+        - durationMinutes
+        - pricingType
+        - priceMinor
+        - currency
+        - cancellationNoticeMinutes
+        - cancellationPolicy
+        - minNoticeMinutes
+        - maxAdvanceDays
+        - bufferBeforeMinutes
+        - bufferAfterMinutes
+        - expectedRevision
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 4000
+        mode:
+          enum:
+            - INSTANT
+            - REQUEST
+        delivery:
+          enum:
+            - ONLINE
+            - IN_PERSON
+            - AT_CLIENT
+        locationLabel:
+          type: string
+          minLength: 1
+          maxLength: 200
+        timezone:
+          type: string
+        durationMinutes:
+          type: integer
+          minimum: 15
+          maximum: 720
+          multipleOf: 15
+        pricingType:
+          enum:
+            - FIXED
+            - FREE
+            - QUOTE
+        priceMinor:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+          maximum: 1000000000000
+        currency:
+          enum:
+            - TWD
+            - IDR
+            - USD
+            - JPY
+            - EUR
+        cancellationNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        cancellationPolicy:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        minNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        maxAdvanceDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        bufferBeforeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+        bufferAfterMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+        expectedRevision:
+          type: integer
+          minimum: 1
+    ManagedService:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+        - mode
+        - delivery
+        - locationLabel
+        - timezone
+        - durationMinutes
+        - pricingType
+        - priceMinor
+        - currency
+        - cancellationNoticeMinutes
+        - cancellationPolicy
+        - minNoticeMinutes
+        - maxAdvanceDays
+        - bufferBeforeMinutes
+        - bufferAfterMinutes
+        - id
+        - revision
+        - policyVersion
+        - offeringId
+        - status
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 4000
+        mode:
+          enum:
+            - INSTANT
+            - REQUEST
+        delivery:
+          enum:
+            - ONLINE
+            - IN_PERSON
+            - AT_CLIENT
+        locationLabel:
+          type: string
+          minLength: 1
+          maxLength: 200
+        timezone:
+          type: string
+        durationMinutes:
+          type: integer
+          minimum: 15
+          maximum: 720
+          multipleOf: 15
+        pricingType:
+          enum:
+            - FIXED
+            - FREE
+            - QUOTE
+        priceMinor:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+          maximum: 1000000000000
+        currency:
+          enum:
+            - TWD
+            - IDR
+            - USD
+            - JPY
+            - EUR
+        cancellationNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        cancellationPolicy:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        minNoticeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 43200
+        maxAdvanceDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        bufferBeforeMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+        bufferAfterMinutes:
+          type: integer
+          minimum: 0
+          maximum: 1440
+          multipleOf: 15
+        id:
+          type: string
+        revision:
+          type: integer
+        policyVersion:
+          type: integer
+        offeringId:
+          type: string
+        status:
+          enum:
+            - DRAFT
+            - PUBLISHED
+            - UNPUBLISHED
+            - ARCHIVED
+    PrivacyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - type
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+        type:
+          enum:
+            - EXPORT
+            - DELETE
+        status:
+          enum:
+            - SUBMITTED
+            - PROCESSING
+            - COMPLETED
+            - REJECTED
+        createdAt:
+          type: integer
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-koveya_session
+      description: HTTPS uses the __Host- prefix with Secure, HttpOnly, SameSite=Lax and Path=/. Local
+        HTTP uses koveya_session.
+    loginChallenge:
+      type: apiKey
+      in: cookie
+      name: __Host-koveya_login
+      description: Browser-binding cookie for one-time email verification. Local HTTP uses koveya_login.
 x-koveya-planned-endpoints:
-  authentication:
-    - POST /auth/email/start
-    - POST /auth/email/verify
-    - POST /auth/logout
-    - GET /me
-    - PATCH /me
   providers-and-services:
-    - POST /organizations
-    - PATCH /organizations/:id
-    - POST /services
-    - PATCH /services/:id
-    - POST /services/:id/publish
-    - POST /services/:id/unpublish
     - GET /services/:id
   scheduling-and-bookings:
     - GET /services/:id/availability
@@ -170,7 +1694,6 @@ x-koveya-planned-endpoints:
     - POST /bookings/:id/no-show
     - POST /booking-requests/:id/withdraw
     - POST /booking-requests/:id/counter-proposals
-    - POST /privacy-requests
 x-koveya-planned-error-codes:
   - AUTH_REQUIRED
   - FORBIDDEN
@@ -188,3 +1711,20 @@ x-koveya-write-requirements:
   - Request hash conflict if the same key is reused for different input
   - Origin and CSRF protection when cookie authentication is introduced
   - Database constraints and atomic booking, allocation, history and outbox writes
+x-koveya-error-codes:
+  - AUTH_REQUIRED
+  - FORBIDDEN
+  - VALIDATION_ERROR
+  - PAYLOAD_TOO_LARGE
+  - INVALID_LOGIN_LINK
+  - RATE_LIMITED
+  - EMAIL_UNAVAILABLE
+  - SERVICE_UNAVAILABLE
+  - BUSINESS_EXISTS
+  - BUSINESS_CONFLICT
+  - BUSINESS_REQUIRED
+  - PROFILE_UNPUBLISHED
+  - SLUG_IMMUTABLE
+  - STATE_CONFLICT
+  - NOT_FOUND
+  - INTERNAL_ERROR
