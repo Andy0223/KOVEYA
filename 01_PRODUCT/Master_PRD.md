@@ -50,7 +50,7 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | ID-001 | Email 登入 | P0 | 使用者可透過經驗證的 Email 登入 | implemented / local_verified |
 | ID-002 | Email 驗證連結 | P0 | Token 一次性、短效、可防重放 | implemented / local_verified |
 | ID-003 | 使用者基本資料 | P0 | 可設定姓名、語言與時區 | implemented / local_verified |
-| ID-004 | Demand Workspace | P0 | 登入後可查看自己的預約 | partial / not_verified |
+| ID-004 | Demand Workspace | P0 | 登入後可查看自己的預約 | implemented / local_verified |
 | ID-005 | Supply Workspace | P0 | 可建立並管理自己的服務 | implemented / local_verified |
 | ID-006 | 角色切換 | P0 | 不須重新登入 | implemented / local_verified |
 | ID-007 | Session 管理 | P0 | 可登出、撤銷登入工作階段 | implemented / local_verified |
@@ -87,16 +87,16 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| SCH-001 | 固定可用時間 | P0 | 支援星期與起訖時間 | not_started / not_verified |
-| SCH-002 | 特殊日期 | P0 | 可設定休假及例外開放時間 | not_started / not_verified |
-| SCH-003 | 預約間隔 | P0 | 可設定服務前後緩衝時間 | partial / not_verified |
-| SCH-004 | 最早預約時間 | P0 | 支援提前預約限制 | partial / not_verified |
-| SCH-005 | 最晚可預約日期 | P0 | 支援開放預約範圍 | partial / not_verified |
-| SCH-006 | 可預約時段計算 | P0 | 排除已占用及封鎖時段 | not_started / not_verified |
-| SCH-007 | 防止撞期 | P0 | 同一互斥資源不得重複占用 | not_started / not_verified |
-| SCH-008 | 時區處理 | P0 | UTC 儲存、正確顯示當地時間 | not_started / not_verified |
-| SCH-009 | 取消後釋出時段 | P0 | 有效取消後重新開放 | not_started / not_verified |
-| SCH-010 | 改期原子性 | P0 | 失敗時不遺失原預約 | not_started / not_verified |
+| SCH-001 | 固定可用時間 | P0 | 支援星期與起訖時間 | implemented / local_verified |
+| SCH-002 | 特殊日期 | P0 | 可設定休假及例外開放時間 | implemented / local_verified |
+| SCH-003 | 預約間隔 | P0 | 可設定服務前後緩衝時間 | implemented / local_verified |
+| SCH-004 | 最早預約時間 | P0 | 支援提前預約限制 | implemented / local_verified |
+| SCH-005 | 最晚可預約日期 | P0 | 支援開放預約範圍 | implemented / local_verified |
+| SCH-006 | 可預約時段計算 | P0 | 排除已占用及封鎖時段 | implemented / local_verified |
+| SCH-007 | 防止撞期 | P0 | 同一互斥資源不得重複占用 | implemented / local_verified |
+| SCH-008 | 時區處理 | P0 | UTC 儲存、正確顯示當地時間 | implemented / local_verified |
+| SCH-009 | 取消後釋出時段 | P0 | 有效取消後重新開放 | implemented / local_verified |
+| SCH-010 | 改期原子性 | P0 | 失敗時不遺失原預約 | implemented / local_verified |
 | SCH-011 | 固定週期預約 | P1 | 可建立有期限的重複安排 | not_started / not_verified |
 | SCH-012 | 多地點排班 | P1 | 不同地點可設定不同時段 | not_started / not_verified |
 | SCH-013 | Google Calendar 同步 | P1 | 經授權同步並處理失敗 | not_started / not_verified |
@@ -110,16 +110,16 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| BKG-001 | 直接預約 | P0 | 符合規則即可建立預約 | not_started / not_verified |
+| BKG-001 | 直接預約 | P0 | 符合規則即可建立預約 | implemented / local_verified |
 | BKG-002 | 申請式預約 | P0 | 建立待確認申請 | not_started / not_verified |
 | BKG-003 | 接受預約 | P0 | 狀態正確更新 | not_started / not_verified |
 | BKG-004 | 拒絕預約 | P0 | 保留原因及異動紀錄 | not_started / not_verified |
-| BKG-005 | 需求方取消 | P0 | 正確套用取消規則 | not_started / not_verified |
-| BKG-006 | 供給方取消 | P0 | 需求方可查看取消資訊 | not_started / not_verified |
-| BKG-007 | 雙方改期 | P0 | 避免重複或遺失預約 | not_started / not_verified |
+| BKG-005 | 需求方取消 | P0 | 正確套用取消規則 | implemented / local_verified |
+| BKG-006 | 供給方取消 | P0 | 需求方可查看取消資訊 | implemented / local_verified |
+| BKG-007 | 雙方改期 | P0 | 避免重複或遺失預約 | implemented / local_verified |
 | BKG-008 | 手動新增預約 | P0 | 供給方可加入既有安排 | not_started / not_verified |
-| BKG-009 | 預約詳情 | P0 | 雙方看到一致資訊 | not_started / not_verified |
-| BKG-010 | 預約歷史 | P0 | 可查看歷史與異動 | not_started / not_verified |
+| BKG-009 | 預約詳情 | P0 | 雙方看到一致資訊 | implemented / local_verified |
+| BKG-010 | 預約歷史 | P0 | 可查看歷史與異動 | implemented / local_verified |
 | BKG-011 | 預約到期 | P0 | 待確認申請可依規則過期 | not_started / not_verified |
 | BKG-012 | 候補預約 | P1 | 可等待時段釋出 | not_started / not_verified |
 | BKG-013 | 批次預約 | P1 | 可一次安排多次服務 | not_started / not_verified |
@@ -131,9 +131,9 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| DEM-001 | 我的預約 | P0 | 可查看未來與歷史預約 | not_started / not_verified |
-| DEM-002 | 預約狀態 | P0 | 明確顯示待確認、已確認等 | not_started / not_verified |
-| DEM-003 | 自助改期及取消 | P0 | 遵守服務政策 | not_started / not_verified |
+| DEM-001 | 我的預約 | P0 | 可查看未來與歷史預約 | implemented / local_verified |
+| DEM-002 | 預約狀態 | P0 | 明確顯示待確認、已確認等 | implemented / local_verified |
+| DEM-003 | 自助改期及取消 | P0 | 遵守服務政策 | implemented / local_verified |
 | DEM-004 | 常用供給方 | P0 | 可查看曾使用的供給方 | not_started / not_verified |
 | DEM-005 | 快速再次預約 | P1 | 不必重複輸入所有資訊 | not_started / not_verified |
 | DEM-006 | 我的套票 | P1 | 可查看剩餘權益 | not_started / not_verified |
@@ -207,9 +207,9 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| PAY-001 | 記錄服務價格 | P0 | 保存交易時的價格快照 | not_started / not_verified |
-| PAY-002 | 記錄幣別 | P0 | 每筆交易有明確幣別 | not_started / not_verified |
-| PAY-003 | 線下付款方式 | P0 | 可選現場付款或另行付款 | not_started / not_verified |
+| PAY-001 | 記錄服務價格 | P0 | 保存交易時的價格快照 | implemented / local_verified |
+| PAY-002 | 記錄幣別 | P0 | 每筆交易有明確幣別 | implemented / local_verified |
+| PAY-003 | 線下付款方式 | P0 | 可選現場付款或另行付款 | implemented / local_verified |
 | PAY-004 | 付款狀態 | P1 | 區分未付、待確認、已付 | not_started / not_verified |
 | PAY-005 | 人工標記收款 | P1 | 記錄操作人和時間 | not_started / not_verified |
 | PAY-006 | 外部付款連結 | P1 | 可連到供給方自行管理的收款頁 | not_started / not_verified |

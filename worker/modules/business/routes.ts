@@ -6,16 +6,7 @@ import { profileInput, serviceInput, serviceEditInput } from "../../validation";
 import { requireUser } from "../identity/session";
 
 export const businessRoutes = new Hono<Environment>();
-for (const path of [
-  "/business/*",
-  "/organizations",
-  "/organizations/*",
-  "/services",
-  "/services/*",
-])
-  businessRoutes.use(path, requireUser);
-
-async function ownedBusiness(db: D1Database, userId: string) {
+export async function ownedBusiness(db: D1Database, userId: string) {
   return db
     .prepare(
       `SELECT o.id, p.public_name AS publicName, p.slug, p.bio, p.location_label AS locationLabel, p.timezone, p.published
@@ -34,7 +25,7 @@ async function ownedBusiness(db: D1Database, userId: string) {
     }>();
 }
 
-businessRoutes.get("/business/profile", async (c) => {
+businessRoutes.get("/business/profile", requireUser, async (c) => {
   const business = await ownedBusiness(c.env.DB, c.get("userId"));
   return ok(
     c,
@@ -42,7 +33,7 @@ businessRoutes.get("/business/profile", async (c) => {
   );
 });
 
-businessRoutes.post("/organizations", async (c) => {
+businessRoutes.post("/organizations", requireUser, async (c) => {
   const input = await body(c, profileInput),
     db = c.env.DB;
   if (await ownedBusiness(db, c.get("userId")))
@@ -93,7 +84,7 @@ businessRoutes.post("/organizations", async (c) => {
   return ok(c, { id, slug: input.slug });
 });
 
-businessRoutes.patch("/organizations/:id", async (c) => {
+businessRoutes.patch("/organizations/:id", requireUser, async (c) => {
   const input = await body(c, profileInput),
     db = c.env.DB;
   const owned = await ownedBusiness(db, c.get("userId"));
@@ -133,7 +124,7 @@ businessRoutes.patch("/organizations/:id", async (c) => {
   return ok(c, { updated: true });
 });
 
-businessRoutes.get("/business/services", async (c) => {
+businessRoutes.get("/business/services", requireUser, async (c) => {
   const business = await ownedBusiness(c.env.DB, c.get("userId"));
   if (!business) return ok(c, []);
   const result = await c.env.DB.prepare(
@@ -149,7 +140,7 @@ businessRoutes.get("/business/services", async (c) => {
   return ok(c, result.results);
 });
 
-businessRoutes.post("/services", async (c) => {
+businessRoutes.post("/services", requireUser, async (c) => {
   const input = await body(c, serviceInput),
     db = c.env.DB;
   const business = await ownedBusiness(db, c.get("userId"));
@@ -194,6 +185,12 @@ businessRoutes.post("/services", async (c) => {
       ),
     db
       .prepare(
+        `INSERT INTO service_resources (service_id, org_id, resource_id)
+      SELECT ?, ?, id FROM resources WHERE org_id = ? ORDER BY id LIMIT 1`,
+      )
+      .bind(id, business.id, business.id),
+    db
+      .prepare(
         `INSERT INTO audit_logs (id, actor_id, org_id, action, entity_id, created_at) VALUES (?, ?, ?, 'service.created', ?, ?)`,
       )
       .bind(crypto.randomUUID(), c.get("userId"), business.id, id, Date.now()),
@@ -201,7 +198,7 @@ businessRoutes.post("/services", async (c) => {
   return ok(c, { id, offeringId, revision: 1 });
 });
 
-businessRoutes.patch("/services/:id", async (c) => {
+businessRoutes.patch("/services/:id", requireUser, async (c) => {
   const input = await body(c, serviceEditInput),
     db = c.env.DB;
   const business = await ownedBusiness(db, c.get("userId"));
@@ -280,7 +277,7 @@ businessRoutes.patch("/services/:id", async (c) => {
 });
 
 for (const action of ["publish", "unpublish"] as const) {
-  businessRoutes.post(`/services/:id/${action}`, async (c) => {
+  businessRoutes.post(`/services/:id/${action}`, requireUser, async (c) => {
     const input = await body(
       c,
       z.object({ expectedRevision: z.number().int().positive() }).strict(),

@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: KOVEYA API
-  version: 0.2.0
-  description: Implemented identity, individual business profile, service management and public
-    catalog. Local verification preview is restricted to explicit loopback mode. Scheduling and
-    booking transactions remain planned.
+  version: 0.3.0
+  description: Implemented identity, individual business and catalog, shared availability, instant
+    bookings, cancellation, counterpart reschedule proposals and fulfillment. Request-to-book,
+    notification delivery and production verification remain pending.
 servers:
   - url: /api/v1
 security: []
@@ -1087,6 +1087,615 @@ paths:
                 expectedRevision:
                   type: integer
                   minimum: 1
+  /business/availability:
+    get:
+      operationId: getBusinessAvailability
+      summary: Read own shared working hours
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Schedule"
+                  requestId: &a1
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: putBusinessAvailability
+      summary: Replace weekly rules and date exceptions atomically
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - revision
+                    properties:
+                      revision: &a10
+                        type: integer
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /services/{id}/availability:
+    get:
+      operationId: getAvailability
+      summary: Find public available instants
+      description: Published services of active, public providers only. REQUEST and QUOTE return no slots
+        in v0.3. Slots honor service timezone, resource-local hours, buffers, notice, booking
+        horizon and current allocations.
+      parameters:
+        - &a2
+          in: path
+          name: id
+          required: true
+          schema: *a1
+        - &a5
+          in: query
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: offeringId
+          required: true
+          schema: *a1
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Availability"
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings:
+    get:
+      operationId: listBookings
+      summary: Read own demand or business bookings
+      description: Up to 200 records, descending start time. Business scope requires active business
+        ownership and OWNER membership.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: scope
+          schema:
+            enum:
+              - demand
+              - business
+            default: demand
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Booking"
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createBooking
+      summary: Create instant booking with immutable agreed terms
+      description: Fixed/free INSTANT services only. Client relationship, booking, slot allocations,
+        events, audit, idempotency receipt and pending outbox commit together. Does not collect
+        payment or send email.
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a3
+          in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]{8,128}$
+          description: Scoped by actor and operation. Retry the same payload and key after an unknown network
+            result; reuse with different input returns IDEMPOTENCY_CONFLICT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: &a4
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - id
+                    properties:
+                      id: *a1
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      summary: Read authorized booking, history and reschedule proposals
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/BookingDetail"
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/cancel:
+    post:
+      operationId: cancelBooking
+      summary: Cancel confirmed booking and release allocations
+      description: Customer may cancel through the agreed deadline, inclusive. Owner may cancel before
+        start. Neither may cancel at or after start. No refund is performed.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - reason
+              properties:
+                expectedVersion:
+                  type: integer
+                  minimum: 1
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/availability:
+    get:
+      operationId: getRescheduleAvailability
+      summary: Find replacement times under original terms
+      description: Authenticated booking participants only. Excludes that booking's own allocations, uses
+        original service terms and current resource hours. Existing contracts may reschedule after
+        unpublishing the service.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a5
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Availability"
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/reschedule-requests:
+    post:
+      operationId: proposeReschedule
+      summary: Propose another time without modifying original booking
+      description: Counterpart consent required. Latest proposal supersedes unanswered proposals. No new
+        slot is held. Expiry is the earliest of 24 hours, original start, and 15 minutes before
+        proposed start. Customer proposal obeys original cancellation notice. Self-bookings cannot
+        create counterpart proposals.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - startsAt
+              properties:
+                expectedVersion:
+                  type: integer
+                  minimum: 1
+                startsAt:
+                  type: integer
+                  description: UTC epoch milliseconds
+                  multipleOf: 900000
+                  maximum: 8000000000000
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /reschedule-requests/{id}/accept:
+    post:
+      operationId: acceptReschedule
+      summary: Counterpart accepts pending reschedule
+      description: Checks responder, expiry and booking version. Accept checks current resource
+        availability, then changes booking and allocations in one atomic batch. A conflict preserves
+        the original booking. Prices and policies remain unchanged.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /reschedule-requests/{id}/reject:
+    post:
+      operationId: rejectReschedule
+      summary: Counterpart rejects pending reschedule
+      description: Checks responder, expiry and booking version. Accept checks current resource
+        availability, then changes booking and allocations in one atomic batch. A conflict preserves
+        the original booking. Prices and policies remain unchanged.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/complete:
+    post:
+      operationId: completeBooking
+      summary: Owner marks service complete
+      description: Active business owner only, after the service ends, CONFIRMED state and matching
+        version. Terminal transitions cannot be repeated except an identical idempotent replay.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+              properties:
+                expectedVersion:
+                  type: integer
+                  minimum: 1
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/no-show:
+    post:
+      operationId: markNoShow
+      summary: Owner marks service no-show
+      description: Active business owner only, after the service ends, CONFIRMED state and matching
+        version. Terminal transitions cannot be repeated except an identical idempotent replay.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a2
+        - *a3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+              properties:
+                expectedVersion:
+                  type: integer
+                  minimum: 1
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a4
+                  requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
 components:
   responses:
     Error:
@@ -1160,6 +1769,8 @@ components:
         - timezone
         - cancellationPolicy
         - offerings
+        - revision
+        - cancellationNoticeMinutes
       properties:
         id:
           type: string
@@ -1186,6 +1797,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PublicOffering"
+        revision:
+          type: integer
+          minimum: 1
+        cancellationNoticeMinutes:
+          type: integer
+          minimum: 0
     PublicOffering:
       type: object
       additionalProperties: false
@@ -1646,6 +2263,263 @@ components:
             - REJECTED
         createdAt:
           type: integer
+    Interval:
+      type: object
+      additionalProperties: false
+      required:
+        - start
+        - end
+      properties:
+        start: &a6
+          type: integer
+          minimum: 0
+          maximum: 1425
+          multipleOf: 15
+        end: &a7
+          type: integer
+          minimum: 15
+          maximum: 1440
+          multipleOf: 15
+      description: Half-open local-minute interval; end > start. Overlapping intervals are rejected.
+    Schedule:
+      type: object
+      additionalProperties: false
+      required:
+        - revision
+        - timezone
+        - rules
+        - exceptions
+      properties:
+        revision:
+          type: integer
+          minimum: 1
+        timezone: *a1
+        rules: &a8
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - start
+              - end
+              - weekday
+            properties:
+              start: *a6
+              end: *a7
+              weekday:
+                type: integer
+                minimum: 0
+                maximum: 6
+          maxItems: 28
+        exceptions: &a9
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - date
+              - intervals
+            properties:
+              date:
+                type: string
+                format: date
+              intervals:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Interval"
+                maxItems: 4
+          maxItems: 60
+    ScheduleInput:
+      type: object
+      additionalProperties: false
+      required:
+        - expectedRevision
+        - timezone
+        - rules
+        - exceptions
+      properties:
+        expectedRevision:
+          type: integer
+          minimum: 1
+        timezone: *a1
+        rules: *a8
+        exceptions: *a9
+      description: One personal resource shared by all services. Date exceptions replace weekly rules; an
+        empty interval array closes that date. Duplicate dates and overlaps are rejected. Saving
+        does not alter confirmed bookings.
+    Availability:
+      type: object
+      additionalProperties: false
+      required:
+        - date
+        - timezone
+        - slots
+      properties:
+        date:
+          type: string
+          format: date
+        timezone: *a1
+        slots:
+          type: array
+          items: &a11
+            type: integer
+            description: UTC epoch milliseconds
+    BookingInput:
+      type: object
+      additionalProperties: false
+      required:
+        - serviceId
+        - offeringId
+        - startsAt
+        - expectedServiceRevision
+        - acceptTerms
+      properties:
+        serviceId: *a1
+        offeringId: *a1
+        startsAt:
+          type: integer
+          description: UTC epoch milliseconds
+          multipleOf: 900000
+          maximum: 8000000000000
+        expectedServiceRevision:
+          type: integer
+          minimum: 1
+        acceptTerms:
+          const: true
+    BookingTerms:
+      type: object
+      additionalProperties: false
+      required:
+        - serviceId
+        - serviceRevision
+        - serviceName
+        - providerName
+        - providerSlug
+        - resourceId
+        - timezone
+        - locationLabel
+        - durationMinutes
+        - bufferBeforeMinutes
+        - bufferAfterMinutes
+        - priceMinor
+        - currency
+        - cancellationPolicy
+        - cancellationNoticeMinutes
+        - minNoticeMinutes
+        - maxAdvanceDays
+        - paymentMethod
+        - acceptedAt
+      properties:
+        serviceId: *a1
+        serviceRevision: *a10
+        serviceName: *a1
+        providerName: *a1
+        providerSlug: *a1
+        resourceId: *a1
+        timezone: *a1
+        locationLabel: *a1
+        durationMinutes: *a10
+        bufferBeforeMinutes: *a10
+        bufferAfterMinutes: *a10
+        priceMinor: *a10
+        currency: *a1
+        cancellationPolicy: *a1
+        cancellationNoticeMinutes: *a10
+        minNoticeMinutes: *a10
+        maxAdvanceDays: *a10
+        paymentMethod:
+          const: ARRANGED_WITH_PROVIDER
+        acceptedAt: *a11
+    Booking:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - startsAt
+        - endsAt
+        - status
+        - version
+        - terms
+        - clientName
+        - isProvider
+      properties:
+        id: *a1
+        startsAt: *a11
+        endsAt: *a11
+        status: &a12
+          enum:
+            - CONFIRMED
+            - CANCELLED
+            - COMPLETED
+            - NO_SHOW
+        version: *a10
+        terms: &a13
+          $ref: "#/components/schemas/BookingTerms"
+        clientName: *a1
+        isProvider: &a14
+          type: boolean
+    BookingDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - startsAt
+        - endsAt
+        - status
+        - version
+        - terms
+        - clientName
+        - isProvider
+        - events
+        - proposals
+      properties:
+        id: *a1
+        startsAt: *a11
+        endsAt: *a11
+        status: *a12
+        version: *a10
+        terms: *a13
+        clientName: *a1
+        isProvider: *a14
+        events:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - eventType
+              - payload
+              - createdAt
+            properties:
+              eventType: *a1
+              payload:
+                type: object
+                additionalProperties: true
+              createdAt: *a11
+        proposals:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - id
+              - startsAt
+              - status
+              - expiresAt
+              - canRespond
+            properties:
+              id: *a1
+              startsAt: *a11
+              status:
+                enum:
+                  - PENDING
+                  - ACCEPTED
+                  - REJECTED
+                  - CANCELLED
+                  - EXPIRED
+              expiresAt: *a11
+              canRespond:
+                type: boolean
   securitySchemes:
     sessionCookie:
       type: apiKey
@@ -1662,16 +2536,6 @@ x-koveya-planned-endpoints:
   providers-and-services:
     - GET /services/:id
   scheduling-and-bookings:
-    - GET /services/:id/availability
-    - PUT /services/:id/availability-rules
-    - POST /availability-exceptions
-    - POST /bookings
-    - GET /bookings
-    - GET /bookings/:id
-    - POST /bookings/:id/cancel
-    - POST /bookings/:id/reschedule-requests
-    - POST /reschedule-requests/:id/accept
-    - POST /reschedule-requests/:id/reject
     - POST /booking-requests
     - POST /booking-requests/:id/accept
     - POST /booking-requests/:id/reject
@@ -1690,8 +2554,6 @@ x-koveya-planned-endpoints:
     - DELETE /integrations/:provider/:id
     - POST /webhooks/:provider
   additions-under-design:
-    - POST /bookings/:id/complete
-    - POST /bookings/:id/no-show
     - POST /booking-requests/:id/withdraw
     - POST /booking-requests/:id/counter-proposals
 x-koveya-planned-error-codes:
@@ -1728,3 +2590,9 @@ x-koveya-error-codes:
   - STATE_CONFLICT
   - NOT_FOUND
   - INTERNAL_ERROR
+  - SLOT_UNAVAILABLE
+  - POLICY_VIOLATION
+  - IDEMPOTENCY_REQUIRED
+  - IDEMPOTENCY_CONFLICT
+x-koveya-scheduling-contract-note: Shared GET/PUT /business/availability replaces proposed
+  per-service availability-rules and availability-exceptions endpoints for the one-resource MVP.

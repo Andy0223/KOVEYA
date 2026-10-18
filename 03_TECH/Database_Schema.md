@@ -29,3 +29,13 @@ Email challenge、browser challenge 及 Session 只保存 SHA-256 hash。一次�
 organizations.owner_user_id 唯一，MVP 一個帳號一個個人業務。service revision 與 last_mutation_id 共同保護多陳述式編輯：舊版本 UPDATE 0 列時，不能繼續修改 offering 或寫成功稽核。policy_version 在取消規則變更時增加。
 
 privacy_requests 僅保存使用者已驗證提出的申請與狀態，人工處理及保存例外尚未完成。rate_limit_buckets 只保存 scope／subject 的 hash、次數與期限；清理與營運保存政策待上線前設定。
+
+## v0.3 增量（目前共 24 張表）
+
+新增 service_resources、availability_exceptions、transaction_guards、booking_events、reschedule_requests；resources 新增 revision。Migration 0003 回填既有有資源的服務；無資源的虛構 demo 由可重跑 seed 初始化。所有 schema 與舊資料 migration 都經測試。
+
+booking.terms_snapshot 已由直接預約 API 原子寫入，保存服務版本、名稱、供給方、地點、IANA 時區、價格／幣別、時長／緩衝、預約限制及取消規則。編輯服務與接受改期不覆寫快照。
+
+服務資源、日期例外、預約事件與改期提案使用租戶複合外鍵。transaction_guards 的 CHECK 用於明確斷言版本與狀態；成功後同批清除。預約、配置、事件、Outbox、稽核及冪等收據任一失敗整批回滾。
+
+尚未建立：預約申請、完整通知與偏好、訂單／付款、套票權益等後續模組。Outbox 此版本只保存 PENDING 事件，沒有消費或寄送功能。

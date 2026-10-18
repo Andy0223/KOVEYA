@@ -13,13 +13,17 @@ export async function api<T>(
   path: string,
   method = "GET",
   value?: unknown,
+  idempotencyKey?: string,
 ): Promise<T> {
   const response = await fetch(`/api/v1${path}`, {
     method,
     credentials: "same-origin",
     ...(method !== "GET"
       ? {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+          },
           body: JSON.stringify(value ?? {}),
         }
       : {}),
@@ -33,6 +37,22 @@ export async function api<T>(
 }
 
 const messages: Record<string, [string, string]> = {
+  SLOT_UNAVAILABLE: [
+    "這個時段已被預約或不再開放，請重新查詢。",
+    "This time is no longer available. Please reload times.",
+  ],
+  POLICY_VIOLATION: [
+    "此操作不符合預約期限或服務政策。",
+    "This action does not meet the service policy or notice period.",
+  ],
+  IDEMPOTENCY_CONFLICT: [
+    "這筆操作的內容已變更，請重新載入。",
+    "This operation changed. Please reload.",
+  ],
+  BUSINESS_REQUIRED: [
+    "請先建立品牌頁。",
+    "Please create a business profile first.",
+  ],
   VALIDATION_ERROR: [
     "請檢查欄位、時間與價格格式。",
     "Please check the fields, time settings, and price.",

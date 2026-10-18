@@ -9,7 +9,7 @@ import type {
 import { currencyDigits, parsePrice } from "../shared/account";
 import { api, errorText, useAccount } from "./account";
 
-function BusinessNav({ locale }: { locale: Locale }) {
+export function BusinessNav({ locale }: { locale: Locale }) {
   const en = locale === "en";
   return (
     <nav
@@ -17,6 +17,10 @@ function BusinessNav({ locale }: { locale: Locale }) {
       aria-label={en ? "Business navigation" : "商業工作台導覽"}
     >
       <Link to="/business">{en ? "Services" : "服務管理"}</Link>
+      <Link to="/business/availability">
+        {en ? "Availability" : "可用時間"}
+      </Link>
+      <Link to="/business/bookings">{en ? "Bookings" : "預約管理"}</Link>
       <Link to="/business/profile">{en ? "Business profile" : "品牌資料"}</Link>
       <Link to="/app/profile">{en ? "Account" : "帳號設定"}</Link>
     </nav>
@@ -92,8 +96,8 @@ export function BusinessHome({ locale }: { locale: Locale }) {
       </div>
       <p className="notice">
         {en
-          ? "Service pages can be published now. Availability and booking submissions are still being built."
-          : "現在可以發布服務頁；可預約時間與提交預約仍在開發中。"}
+          ? "Set shared working hours before sharing your link. Instant booking, cancellation and reschedule proposals are available; request-to-book is coming next."
+          : "分享連結前，請先設定可用時間。目前支援直接預約、取消與改期提案；申請式預約待接續完成。"}
       </p>
       <Link className="text-link" to={`/p/${account.business.slug}`}>
         {en ? "View public page" : "查看公開頁面"} ↗
@@ -779,6 +783,9 @@ export function DemandHome({ locale }: { locale: Locale }) {
           {en ? "Switch to business" : "切換供給方工作台"} ↗
         </Link>
       </div>
+      <Link className="button primary" to="/app/bookings">
+        {en ? "My bookings" : "我的預約"} →
+      </Link>
       <div className="empty-state">
         <span aria-hidden>◷</span>
         <h2>
@@ -786,8 +793,8 @@ export function DemandHome({ locale }: { locale: Locale }) {
         </h2>
         <p>
           {en
-            ? "Booking management is being built. You can already explore service pages or create your own business."
-            : "預約管理正在開發中，你可以先瀏覽服務頁，或開始建立自己的品牌。"}
+            ? "Manage your confirmed bookings, cancellation and reschedule proposals in My bookings."
+            : "在「我的預約」查看已確認安排，處理取消與改期提案。"}
         </p>
         <Link className="text-link" to="/p/demo-coach">
           {en ? "View a sample service page" : "查看示範服務頁"} →

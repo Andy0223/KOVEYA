@@ -8,6 +8,7 @@ export interface PublicOffering {
 
 export interface PublicService {
   id: string;
+  revision: number;
   name: string;
   description: string;
   mode: "INSTANT" | "REQUEST";
@@ -15,6 +16,7 @@ export interface PublicService {
   locationLabel: string;
   timezone: string;
   cancellationPolicy: string;
+  cancellationNoticeMinutes: number;
   offerings: PublicOffering[];
 }
 

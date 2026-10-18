@@ -7,6 +7,8 @@ import type { Environment } from "./environment";
 import { ApiError, protectWrites } from "./http";
 import { identityRoutes } from "./modules/identity/routes";
 import { businessRoutes } from "./modules/business/routes";
+import { schedulingRoutes } from "./modules/scheduling/routes";
+import { bookingRoutes } from "./modules/scheduling/bookings";
 export const app = new Hono<Environment>();
 
 app.use("*", requestId({ generator: () => crypto.randomUUID() }));
@@ -28,12 +30,14 @@ app.use(
 app.use("/api/*", protectWrites);
 app.route("/api/v1", identityRoutes);
 app.route("/api/v1", businessRoutes);
+app.route("/api/v1", schedulingRoutes);
+app.route("/api/v1", bookingRoutes);
 
 app.get("/api/v1/health", async (c) => {
   try {
     await c.env.DB.prepare("SELECT id FROM organizations LIMIT 1").first();
     return c.json({
-      data: { status: "ok", database: "ready", version: "0.2.0" },
+      data: { status: "ok", database: "ready", version: "0.3.0" },
       requestId: c.get("requestId"),
     });
   } catch {

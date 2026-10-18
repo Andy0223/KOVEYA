@@ -37,6 +37,7 @@ export async function getPublicProvider(
   const rows = await db
     .select({
       id: services.id,
+      revision: services.revision,
       name: services.name,
       description: services.description,
       mode: services.mode,
@@ -44,6 +45,7 @@ export async function getPublicProvider(
       locationLabel: services.locationLabel,
       timezone: services.timezone,
       cancellationPolicy: services.cancellationPolicy,
+      cancellationNoticeMinutes: services.cancellationNoticeMinutes,
       offeringId: offerings.id,
       durationMinutes: offerings.durationMinutes,
       pricingType: offerings.pricingType,
@@ -69,6 +71,7 @@ export async function getPublicProvider(
     if (!service) {
       service = {
         id: row.id,
+        revision: row.revision,
         name: row.name,
         description: row.description,
         mode: row.mode,
@@ -76,6 +79,7 @@ export async function getPublicProvider(
         locationLabel: row.locationLabel,
         timezone: row.timezone,
         cancellationPolicy: row.cancellationPolicy,
+        cancellationNoticeMinutes: row.cancellationNoticeMinutes,
         offerings: [],
       };
       publicServices.push(service);

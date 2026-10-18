@@ -14,3 +14,7 @@ INSERT OR IGNORE INTO services (id, org_id, name, description, mode, status, del
 VALUES ('service-demo-draft', 'org-demo', '未公開草稿（開發用）', '此草稿不得出現在公開 API。', 'INSTANT', 'DRAFT', 'ONLINE', '線上', 'Asia/Taipei', '草稿政策');
 INSERT OR IGNORE INTO offerings (id, service_id, org_id, duration_minutes, pricing_type, price_minor, currency)
 VALUES ('offering-demo-draft', 'service-demo-draft', 'org-demo', 60, 'FIXED', 100000, 'TWD');
+INSERT OR IGNORE INTO resources (id, org_id, name, timezone) VALUES ('resource-demo', 'org-demo', 'Demo Coach', 'Asia/Taipei');
+INSERT OR IGNORE INTO service_resources (service_id, org_id, resource_id) SELECT id, org_id, 'resource-demo' FROM services WHERE org_id='org-demo';
+INSERT OR IGNORE INTO availability_rules (id,org_id,resource_id,weekday,start_local_minute,end_local_minute)
+VALUES ('demo-mon','org-demo','resource-demo',1,540,1080), ('demo-tue','org-demo','resource-demo',2,540,1080), ('demo-wed','org-demo','resource-demo',3,540,1080), ('demo-thu','org-demo','resource-demo',4,540,1080), ('demo-fri','org-demo','resource-demo',5,540,1080);

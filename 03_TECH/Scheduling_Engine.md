@@ -1,21 +1,31 @@
-# Scheduling Engine
+# Scheduling Engine v0.3
 
-需求 SCH-001–016。目前實作 `allocationSlots` 與 Booking 終態判斷，尚未實作完整 availability 查詢及 booking write。
+已實作 SCH-001–010：個人供給方共用資源、每週排班、日期例外、提前量、預約範圍、前後緩衝、UTC／IANA 時區、時段查詢、配置唯一鍵、取消釋出與原子改期。參考 `worker/modules/scheduling/`，可操作 `/business/availability`。
 
-15 分鐘粒度；時間區間 [start, end)。服務前後緩衝一併占用。19:00–20:00 前後各 15 分鐘，配置 18:45–20:15 的六個 slot。
+15 分鐘粒度，區間 [start, end)。19:00–20:00 前後各 15 分鐘，配置 18:45–20:15 的六個 slot；全部 slot 都必須在資源的工作時間內。拒絕非 15 分鐘倍數；單次配置最多 24 小時。
 
-工程暫定：拒絕非 15 分鐘倍數的長度與緩衝，起點需對齊 UTC slot。單次配置上限 24 小時，避免無界計算；若產品需要更長交付，採專案模式或另訂規則。
+## 時段查詢
 
-## 目標查詢流程
+公開 `GET /services/:id/availability?offeringId=…&date=YYYY-MM-DD` 只提供已公開且業務有效的 INSTANT 服務；REQUEST／QUOTE 此版本沒有可提交的時段。
 
-將指定日期的當地每週規則與例外解析成 UTC 區間 → 套用提前量與最遠日期 → 加緩衝 → 排除占用及封鎖 → 回當地時間、UTC 及 timezone。
+以 UTC 每 15 分鐘列舉真實時間點，依服務 IANA 時區篩選指定日期，再按資源時區檢查每個占用 slot 的每週規則或日期例外。不存在的 DST 時間不產生候選，重複時間保留兩個 UTC，畫面標示 offset。當地時間規則不預先換成固定 UTC。
 
-例外暫定整日關閉優先；自訂日期開放取代該日每週規則，重疊時合併。跨日規則拆成兩個當地日期區間。DST 不存在的當地時間不產生時段；重複時間須回兩個不同 UTC 與 offset，不能只以鐘點辨認。上述尚未落碼，不宣稱已驗收。
+每個日期最多一筆例外。空 intervals 表示整天關閉；非空開放區間取代每週排班。拒絕重疊區間與重複日期；跨日拆成兩天。最遠日期是服務時區「今天 + maxAdvanceDays」，含該日期；最早起點至少符合 minNoticeMinutes 且必須在未來。
 
-## 預約與改期交易目標
+資源排班獨立於服務時區；變更品牌／服務時區不會偷偷改掉既有排班。修改排班時增加 resource revision，既有預約仍保留。日後多人／多資源聯合排程尚未實作。
 
-D1 batch 同時包含條件寫入、預約、allocation、history、Outbox、冪等結果。任一保護失敗須整批回滾，不能依賴零列 UPDATE 自動報錯；需要明確的版本／條件失敗策略並測試。
+## 原子寫入
 
-改期在同一原子操作換掉舊占用，避免先刪除原安排再獨立嘗試新時間。每個 API 重新確認 published、租戶、政策、目前狀態與版本。
+預約最終 D1 batch 重新斷言服務 revision、發布狀態、品牌公開、業務有效、資源 revision 與使用者有效；不符則由 CHECK guard 使整批失敗。不可將 UPDATE 0 列當成成功。
 
-D1 batch 的交易行為依 [官方文件](https://developers.cloudflare.com/d1/worker-api/d1-database/) 設計，仍須真實 D1 併發測試。
+同一批提交：冪等紀錄 → guard → 租戶客戶關係 → 預約及不可變條件快照 → 唯一資源配置 → 事件／Outbox／稽核 → 清除 guard。資源配置使用 resource + UTC slot 主鍵，禁止同時通過預查的兩筆交易都占用時段。以 JSON 批次插入配置，避免按每個 slot 發送查詢。
+
+改期接受沿用原價格、時長、緩衝、取消條件，套用目前資源排班。接受者必須是對方；檢查 proposal 期限、booking version，再於一批替換時間與配置。新配置失敗，原時間與配置一起回滾。
+
+`Idempotency-Key` 為 actor + operation 範圍；相同 key／內容回相同 entity id，不同內容回 IDEMPOTENCY_CONFLICT。重試結果不冒充目前狀態，詳情另外 GET。
+
+## 驗證範圍
+
+Playwright 在隔離的 Workers／本機 D1 執行 100 個同時請求（兩個驗證使用者，各 50 個獨立 key）：一筆成功、99 筆 SLOT_UNAVAILABLE，供給方只能查到一筆有效預約，取消後時段恢復。SQLite 額外注入 Outbox 與改期配置失敗，檢查完整回滾及同 key 安全重試。
+
+這些不是正式雲端 D1 壓力測試、持續負載或 Beta 驗收。申請式預約、通知送達與備份復原仍待完成。

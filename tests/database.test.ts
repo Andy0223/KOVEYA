@@ -15,7 +15,7 @@ beforeEach(() => {
 afterEach(() => db.close());
 
 function fixture() {
-  db.exec(`INSERT INTO resources VALUES ('r1', 'org-demo', 'Coach', 'Asia/Taipei');
+  db.exec(`INSERT INTO resources (id, org_id, name, timezone) VALUES ('r1', 'org-demo', 'Coach', 'Asia/Taipei');
     INSERT INTO client_relationships (id, org_id, name) VALUES ('c1', 'org-demo', 'Client');
     INSERT INTO bookings (id, org_id, offering_id, client_id, starts_at, ends_at, status, terms_snapshot, created_at)
     VALUES ('b1', 'org-demo', 'offering-demo-tennis', 'c1', 1792407600000, 1792411200000, 'CONFIRMED', '{}', 1792272000000);`);
@@ -41,7 +41,7 @@ describe("Initial database constraints (not full booking API acceptance)", () =>
   it("tenant composite keys reject a resource from another business", () => {
     fixture();
     db.exec(
-      "INSERT INTO organizations (id, name, status, created_at) VALUES ('org-other', 'Other', 'ACTIVE', 1); INSERT INTO resources VALUES ('r2', 'org-other', 'Other Coach', 'Asia/Taipei')",
+      "INSERT INTO organizations (id, name, status, created_at) VALUES ('org-other', 'Other', 'ACTIVE', 1); INSERT INTO resources (id, org_id, name, timezone) VALUES ('r2', 'org-other', 'Other Coach', 'Asia/Taipei')",
     );
     expect(() =>
       db.exec(

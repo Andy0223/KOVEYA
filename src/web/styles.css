@@ -1134,3 +1134,82 @@ button:disabled {
     width: 100%;
   }
 }
+/* Scheduling and confirmed service relationships. */
+.booking-page {
+  max-width: 900px;
+}
+.booking-page > .panel,
+.booking-page > form {
+  margin-top: 1.5rem;
+}
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.65rem;
+  margin: 1.2rem 0;
+}
+.slot-button {
+  background: #fffdf7;
+  border: 1px solid #b6c7bc;
+  border-radius: 10px;
+  padding: 0.8rem 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  color: #254d3d;
+}
+.slot-button.selected {
+  color: white;
+  background: #254d3d;
+  border-color: #254d3d;
+}
+.slot-button:focus-visible {
+  outline: 3px solid #b6a373;
+  outline-offset: 3px;
+}
+.time-picker input[type="date"] {
+  max-width: 100%;
+}
+.check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 1rem 0;
+}
+.check-label input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 1.2rem;
+  margin-top: 0.25rem;
+}
+.schedule-day {
+  padding: 1.2rem 0;
+  border-top: 1px solid #d8ddd4;
+}
+.schedule-interval {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.interval-fields {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.interval-fields label {
+  min-width: 100px;
+  flex: 1;
+}
+.booking-history {
+  padding-left: 1.2rem;
+}
+.booking-history li {
+  margin: 1rem 0;
+}
+.booking-history p {
+  margin: 0.3rem 0;
+}
+.booking-page .dev-note {
+  overflow-wrap: anywhere;
+}

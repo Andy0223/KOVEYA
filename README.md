@@ -6,7 +6,7 @@
 
 ## 目前進度
 
-Identity & Provider v0.2：Email 一次性連結登入與 Session、個人資料、雙模式、品牌建立、服務草稿／編輯／發布／下架、公開頁，已可在本機完整操作。預約交易、可用時間、通知及 CRM 尚未完成。
+Scheduling & Booking v0.3：可在本機完成登入、品牌與服務建立、每週排班／日期例外、直接預約、雙方預約清單、取消、改期提案與對方接受，以及服務結束後標記完成／未到場。100 請求競爭同一時段僅一筆成功。申請式預約、通知實際送達、CRM 與管理後台尚未完成。
 
 本機登入透過明確啟用的驗證預覽測試，不寄真實 Email。Resend adapter 已實作，正式寄送仍需設定已驗證寄件網域與 secrets，並做整合驗證。資料匯出／刪除目前只記錄人工處理申請。
 
@@ -31,7 +31,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`check` 包含型別、單元／資料庫約束、文件與 build。E2E 每次建立獨立 D1，測試正式 build 的登入、服務管理與公開頁；不等同完整 PRD、正式寄信或真實手機驗收。正式部署前見 [Deployment](04_OPERATIONS/Deployment.md)。
+`check` 包含型別、單元／資料庫約束、文件與 build。E2E 每次建立獨立 D1，測試正式 build 的登入、服務管理、排班、預約、取消、改期與 D1 競爭；不等同完整 PRD、正式寄信或真實手機驗收。正式部署前見 [Deployment](04_OPERATIONS/Deployment.md)。
 
 ## 文件入口
 

@@ -226,6 +226,7 @@ export const offerings = sqliteTable(
 export const resources = sqliteTable(
   "resources",
   {
+    revision: integer("revision").notNull().default(1),
     id: text("id").primaryKey(),
     orgId: text("org_id")
       .notNull()
@@ -372,4 +373,105 @@ export const idempotencyRecords = sqliteTable(
     createdAt: integer("created_at").notNull(),
   },
   (t) => [primaryKey({ columns: [t.actorId, t.operation, t.key] })],
+);
+
+// One shared personal resource per service in this MVP.
+export const serviceResources = sqliteTable(
+  "service_resources",
+  {
+    serviceId: text("service_id").primaryKey(),
+    orgId: text("org_id").notNull(),
+    resourceId: text("resource_id").notNull(),
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.serviceId, t.orgId],
+      foreignColumns: [services.id, services.orgId],
+    }),
+    foreignKey({
+      columns: [t.resourceId, t.orgId],
+      foreignColumns: [resources.id, resources.orgId],
+    }),
+  ],
+);
+export const availabilityExceptions = sqliteTable(
+  "availability_exceptions",
+  {
+    id: text("id").primaryKey(),
+    orgId: text("org_id").notNull(),
+    resourceId: text("resource_id").notNull(),
+    date: text("date").notNull(),
+    intervals: text("intervals", { mode: "json" }).notNull(),
+  },
+  (t) => [
+    uniqueIndex("availability_exception_uq").on(t.resourceId, t.date),
+    foreignKey({
+      columns: [t.resourceId, t.orgId],
+      foreignColumns: [resources.id, resources.orgId],
+    }),
+    check("exception_json_check", sql`json_valid(${t.intervals})`),
+  ],
+);
+// A failed assertion aborts the whole D1 batch, including any earlier writes.
+export const transactionGuards = sqliteTable(
+  "transaction_guards",
+  {
+    id: text("id").primaryKey(),
+    passed: integer("passed").notNull(),
+  },
+  (t) => [check("transaction_guard_check", sql`${t.passed} = 1`)],
+);
+export const bookingEvents = sqliteTable(
+  "booking_events",
+  {
+    id: text("id").primaryKey(),
+    bookingId: text("booking_id").notNull(),
+    orgId: text("org_id").notNull(),
+    actorId: text("actor_id")
+      .notNull()
+      .references(() => users.id),
+    eventType: text("event_type").notNull(),
+    payload: text("payload", { mode: "json" }).notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.bookingId, t.orgId],
+      foreignColumns: [bookings.id, bookings.orgId],
+    }),
+  ],
+);
+export const rescheduleRequests = sqliteTable(
+  "reschedule_requests",
+  {
+    id: text("id").primaryKey(),
+    bookingId: text("booking_id").notNull(),
+    orgId: text("org_id").notNull(),
+    proposerId: text("proposer_id")
+      .notNull()
+      .references(() => users.id),
+    responderId: text("responder_id")
+      .notNull()
+      .references(() => users.id),
+    bookingVersion: integer("booking_version").notNull(),
+    startsAt: integer("starts_at").notNull(),
+    status: text("status").notNull().default("PENDING"),
+    expiresAt: integer("expires_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.bookingId, t.orgId],
+      foreignColumns: [bookings.id, bookings.orgId],
+    }),
+    check(
+      "reschedule_status_check",
+      sql`${t.status} IN ('PENDING','ACCEPTED','REJECTED','EXPIRED','CANCELLED')`,
+    ),
+    check(
+      "reschedule_time_check",
+      sql`${t.startsAt} % 900000 = 0 AND ${t.bookingVersion} > 0`,
+    ),
+    index("reschedule_booking_idx").on(t.bookingId, t.status),
+  ],
 );

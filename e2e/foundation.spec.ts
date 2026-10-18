@@ -30,11 +30,13 @@ test("public provider reads D1 and shows service terms", async ({ page }) => {
     page.getByRole("heading", { name: "KOVEYA Demo Coach" }),
   ).toBeVisible();
   await expect(page.getByText("1,500.00", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "查看服務內容" }).first().click();
+  await page
+    .locator(".service-card")
+    .filter({ has: page.getByRole("heading", { name: "一對一網球練習" }) })
+    .getByRole("button", { name: "查看服務內容" })
+    .click();
   await expect(page.getByRole("heading", { name: "取消政策" })).toBeVisible();
-  await expect(
-    page.getByText("預約功能建置中", { exact: false }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "選擇預約時間" })).toBeVisible();
 });
 
 test("missing provider and missing API have explicit outcomes", async ({

@@ -28,6 +28,13 @@ import {
   ServiceEditor,
 } from "./business-pages";
 
+import {
+  AvailabilityPage,
+  BookingPage,
+  BookingList,
+  BookingDetailPage,
+} from "./booking-pages";
+
 type Locale = "zh-TW" | "en";
 const copy = {
   "zh-TW": {
@@ -39,7 +46,7 @@ const copy = {
     intro: "一個連結服務與人的地方。從第一個預約，到每一次值得信賴的服務關係。",
     primary: "看看服務頁面",
     secondary: "認識 KOVEYA Business",
-    note: "目前可建立帳號、品牌與服務頁；預約功能開發中。",
+    note: "目前支援服務頁、排班、直接預約、取消與改期提案。",
     cardTitle: "把時間，留給你熱愛的事。",
     cardNote: "提供服務 → 分享連結 → 建立關係",
     categories: ["運動與健康", "教育與學習", "創作與專業"],
@@ -95,7 +102,7 @@ const copy = {
       "A place for people and services to connect. From your first booking to relationships that last.",
     primary: "Explore a service page",
     secondary: "Meet KOVEYA Business",
-    note: "Create your account, business, and service pages. Booking is being built.",
+    note: "Create service pages, set your hours, and manage instant bookings, cancellations and reschedule proposals.",
     cardTitle: "More time for what you love.",
     cardNote: "Offer a service → Share your link → Build a relationship",
     categories: [
@@ -353,6 +360,42 @@ function App() {
             }
           />
           <Route path="/p/:slug" element={<ProviderPage locale={locale} />} />
+          <Route
+            path="/p/:slug/book/:id"
+            element={<BookingPage locale={locale} />}
+          />
+          <Route
+            path="/app/bookings"
+            element={
+              <AccountGate locale={locale}>
+                <BookingList locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/app/bookings/:id"
+            element={
+              <AccountGate locale={locale}>
+                <BookingDetailPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/bookings"
+            element={
+              <AccountGate locale={locale}>
+                <BookingList locale={locale} business />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/availability"
+            element={
+              <AccountGate locale={locale}>
+                <AvailabilityPage locale={locale} />
+              </AccountGate>
+            }
+          />
           <Route path="/sign-in" element={<SignInPage locale={locale} />} />
           <Route path="/auth/verify" element={<VerifyPage locale={locale} />} />
           <Route
@@ -419,7 +462,7 @@ function App() {
           KOVEYA<span>↗</span>
         </Link>
         <p>{t.footer}</p>
-        <span className="preview-tag">{t.preview} · v0.2</span>
+        <span className="preview-tag">{t.preview} · v0.3</span>
       </footer>
     </>
   );
@@ -562,7 +605,23 @@ function ProviderPage({ locale }: { locale: Locale }) {
                   <p>◎ {service.locationLabel}</p>
                   <h4>{t.policy}</h4>
                   <p>{service.cancellationPolicy}</p>
-                  <p className="notice">{t.bookingSoon}</p>
+                  {service.mode === "INSTANT" && (
+                    <Link
+                      className="button primary"
+                      to={`/p/${slug}/book/${service.id}`}
+                    >
+                      {locale === "en" ? "Choose a time" : "選擇預約時間"} →
+                    </Link>
+                  )}
+                  <p className="notice">
+                    {service.mode === "INSTANT"
+                      ? locale === "en"
+                        ? "Choose a time, then sign in to confirm."
+                        : "先選擇時間，再登入確認預約。"
+                      : locale === "en"
+                        ? "Request-to-book is coming next."
+                        : "申請式預約正在接續開發。"}
+                  </p>
                 </div>
               )}
             </article>

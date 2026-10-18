@@ -18,3 +18,13 @@
 付款來源獨立：Provider-reported Paid 與 PSP-confirmed Paid 不互相冒用。送信 SENT 不代表收件者已理解或已讀。
 
 目前只有 Booking 終態轉移純函式與測試；其餘為目標設計。
+
+## v0.3 已實作範圍（取代上方「目前只有純函式」的舊進度）
+
+INSTANT 預約建立 CONFIRMED。雙方在開始前依原政策取消為 CANCELLED；供給方於結束後可標記 COMPLETED／NO_SHOW，均要求版本與冪等鍵。需求方不可標記履約；終態不能再次異動。
+
+改期提案 PENDING → ACCEPTED／REJECTED／CANCELLED；超過期限在讀取時顯示 EXPIRED，所有接受操作均檢查真實期限。尚未建立背景到期通知工作。最新提案取代未回覆舊提案，不占用新時段，原預約保持有效。有效期取 24 小時、原服務起點、新起點前 15 分鐘之最早者。接受者必須是另一方，價格與條件快照不變。
+
+完成、取消或接受改期在同批記錄 booking_events、audit_logs 及 PENDING outbox_events。通知消費者尚未接上，不把 Outbox 成功寫入宣稱為 Email 送達。
+
+REQUEST 預約申請、付款、通知送達狀態機仍為設計，並非已上線功能。
