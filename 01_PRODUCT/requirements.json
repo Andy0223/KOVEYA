@@ -42,7 +42,7 @@
           "acceptance_criteria": "登入後可查看自己的預約",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "ID-005",
@@ -250,7 +250,7 @@
           "acceptance_criteria": "支援星期與起訖時間",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-002",
@@ -259,7 +259,7 @@
           "acceptance_criteria": "可設定休假及例外開放時間",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-003",
@@ -268,7 +268,7 @@
           "acceptance_criteria": "可設定服務前後緩衝時間",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-004",
@@ -277,7 +277,7 @@
           "acceptance_criteria": "支援提前預約限制",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-005",
@@ -286,7 +286,7 @@
           "acceptance_criteria": "支援開放預約範圍",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-006",
@@ -295,7 +295,7 @@
           "acceptance_criteria": "排除已占用及封鎖時段",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-007",
@@ -304,7 +304,7 @@
           "acceptance_criteria": "同一互斥資源不得重複占用",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-008",
@@ -313,7 +313,7 @@
           "acceptance_criteria": "UTC 儲存、正確顯示當地時間",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-009",
@@ -322,7 +322,7 @@
           "acceptance_criteria": "有效取消後重新開放",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-010",
@@ -331,7 +331,7 @@
           "acceptance_criteria": "失敗時不遺失原預約",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "SCH-011",
@@ -395,31 +395,34 @@
           "acceptance_criteria": "符合規則即可建立預約",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-002",
           "function": "申請式預約",
           "priority": "P0",
           "acceptance_criteria": "建立待確認申請",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.4 local SQLite, Workers-D1 and desktop/mobile-browser tests: fixed/free requests, owner review, explicit counter-time consent, expiry and atomic booking acceptance. Production/Beta review pending."
         },
         {
           "id": "BKG-003",
           "function": "接受預約",
           "priority": "P0",
           "acceptance_criteria": "狀態正確更新",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.4 local SQLite, Workers-D1 and desktop/mobile-browser tests: fixed/free requests, owner review, explicit counter-time consent, expiry and atomic booking acceptance. Production/Beta review pending."
         },
         {
           "id": "BKG-004",
           "function": "拒絕預約",
           "priority": "P0",
           "acceptance_criteria": "保留原因及異動紀錄",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.4 local SQLite, Workers-D1 and desktop/mobile-browser tests: fixed/free requests, owner review, explicit counter-time consent, expiry and atomic booking acceptance. Production/Beta review pending."
         },
         {
           "id": "BKG-005",
@@ -428,7 +431,7 @@
           "acceptance_criteria": "正確套用取消規則",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-006",
@@ -437,7 +440,7 @@
           "acceptance_criteria": "需求方可查看取消資訊",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-007",
@@ -446,7 +449,7 @@
           "acceptance_criteria": "避免重複或遺失預約",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-008",
@@ -463,7 +466,7 @@
           "acceptance_criteria": "雙方看到一致資訊",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-010",
@@ -472,15 +475,16 @@
           "acceptance_criteria": "可查看歷史與異動",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "BKG-011",
           "function": "預約到期",
           "priority": "P0",
           "acceptance_criteria": "待確認申請可依規則過期",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.4 local SQLite, Workers-D1 and desktop/mobile-browser tests: fixed/free requests, owner review, explicit counter-time consent, expiry and atomic booking acceptance. Production/Beta review pending."
         },
         {
           "id": "BKG-012",
@@ -520,7 +524,7 @@
           "acceptance_criteria": "可查看未來與歷史預約",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "DEM-002",
@@ -529,7 +533,7 @@
           "acceptance_criteria": "明確顯示待確認、已確認等",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "DEM-003",
@@ -538,7 +542,7 @@
           "acceptance_criteria": "遵守服務政策",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "DEM-004",
@@ -822,56 +826,63 @@
           "function": "預約建立通知",
           "priority": "P0",
           "acceptance_criteria": "雙方在網站與 Email 取得預約確認",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-002",
           "function": "申請待審核通知",
           "priority": "P0",
           "acceptance_criteria": "需求方可查看待確認，供給方收到待處理通知",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-003",
           "function": "預約接受通知",
           "priority": "P0",
           "acceptance_criteria": "雙方可查看已確認狀態",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-004",
           "function": "預約拒絕通知",
           "priority": "P0",
           "acceptance_criteria": "需求方取得拒絕通知，供給方已結案",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-005",
           "function": "需求方取消通知",
           "priority": "P0",
           "acceptance_criteria": "雙方可查看取消結果",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-006",
           "function": "供給方取消通知",
           "priority": "P0",
           "acceptance_criteria": "需求方收到重要取消通知",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-007",
           "function": "改期提案通知",
           "priority": "P0",
           "acceptance_criteria": "需回覆的一方收到提案及回覆入口",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "partial",
+          "acceptance_status": "not_verified",
+          "verification_scope": "In-app delivery, unread/read status, recipient isolation, outbox deduplication and retry are locally verified. Transactional email delivery required by the full baseline is not implemented."
         },
         {
           "id": "NTF-008",
@@ -935,7 +946,7 @@
           "acceptance_criteria": "保存交易時的價格快照",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "PAY-002",
@@ -944,7 +955,7 @@
           "acceptance_criteria": "每筆交易有明確幣別",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "PAY-003",
@@ -953,7 +964,7 @@
           "acceptance_criteria": "可選現場付款或另行付款",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.3 local SQLite/Workers-D1/browser verification. Instant bookings only; request-to-book, production delivery and independent Beta review remain pending."
+          "verification_scope": "v0.4 local SQLite/Workers-D1/browser verification. Fixed/free INSTANT and REQUEST services supported; QUOTE, production delivery and independent Beta review remain pending."
         },
         {
           "id": "PAY-004",

@@ -9,6 +9,9 @@ import { identityRoutes } from "./modules/identity/routes";
 import { businessRoutes } from "./modules/business/routes";
 import { schedulingRoutes } from "./modules/scheduling/routes";
 import { bookingRoutes } from "./modules/scheduling/bookings";
+import { requestRoutes } from "./modules/scheduling/requests";
+import { notificationRoutes } from "./modules/notifications/routes";
+import { maintenance } from "./modules/notifications/jobs";
 export const app = new Hono<Environment>();
 
 app.use("*", requestId({ generator: () => crypto.randomUUID() }));
@@ -32,12 +35,14 @@ app.route("/api/v1", identityRoutes);
 app.route("/api/v1", businessRoutes);
 app.route("/api/v1", schedulingRoutes);
 app.route("/api/v1", bookingRoutes);
+app.route("/api/v1", requestRoutes);
+app.route("/api/v1", notificationRoutes);
 
 app.get("/api/v1/health", async (c) => {
   try {
     await c.env.DB.prepare("SELECT id FROM organizations LIMIT 1").first();
     return c.json({
-      data: { status: "ok", database: "ready", version: "0.3.0" },
+      data: { status: "ok", database: "ready", version: "0.4.0" },
       requestId: c.get("requestId"),
     });
   } catch {
@@ -115,4 +120,13 @@ app.onError((error, c) => {
   );
 });
 
-export default app;
+export default {
+  fetch: app.fetch,
+  scheduled(
+    _event: ScheduledController,
+    env: Environment["Bindings"],
+    ctx: ExecutionContext,
+  ) {
+    ctx.waitUntil(maintenance(env.DB));
+  },
+};

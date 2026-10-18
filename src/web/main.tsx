@@ -35,6 +35,12 @@ import {
   BookingDetailPage,
 } from "./booking-pages";
 
+import {
+  RequestList,
+  RequestDetailPage,
+  NotificationPage,
+} from "./request-pages";
+
 type Locale = "zh-TW" | "en";
 const copy = {
   "zh-TW": {
@@ -46,7 +52,7 @@ const copy = {
     intro: "一個連結服務與人的地方。從第一個預約，到每一次值得信賴的服務關係。",
     primary: "看看服務頁面",
     secondary: "認識 KOVEYA Business",
-    note: "目前支援服務頁、排班、直接預約、取消與改期提案。",
+    note: "目前支援服務頁、排班、預約與申請、取消改期及站內通知。",
     cardTitle: "把時間，留給你熱愛的事。",
     cardNote: "提供服務 → 分享連結 → 建立關係",
     categories: ["運動與健康", "教育與學習", "創作與專業"],
@@ -102,7 +108,7 @@ const copy = {
       "A place for people and services to connect. From your first booking to relationships that last.",
     primary: "Explore a service page",
     secondary: "Meet KOVEYA Business",
-    note: "Create service pages, set your hours, and manage instant bookings, cancellations and reschedule proposals.",
+    note: "Create service pages, set your hours, manage bookings and requests, and follow updates in Notifications.",
     cardTitle: "More time for what you love.",
     cardNote: "Offer a service → Share your link → Build a relationship",
     categories: [
@@ -240,6 +246,11 @@ function App() {
                 : "登入"}
           </Link>
           {account && (
+            <Link to="/app/notifications">
+              {locale === "en" ? "Notifications" : "通知"}
+            </Link>
+          )}
+          {account && (
             <button
               className="header-logout"
               onClick={async () => {
@@ -365,6 +376,38 @@ function App() {
             element={<BookingPage locale={locale} />}
           />
           <Route
+            path="/app/requests"
+            element={
+              <AccountGate locale={locale}>
+                <RequestList locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/requests"
+            element={
+              <AccountGate locale={locale}>
+                <RequestList locale={locale} business />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/app/requests/:id"
+            element={
+              <AccountGate locale={locale}>
+                <RequestDetailPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/app/notifications"
+            element={
+              <AccountGate locale={locale}>
+                <NotificationPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
             path="/app/bookings"
             element={
               <AccountGate locale={locale}>
@@ -462,7 +505,7 @@ function App() {
           KOVEYA<span>↗</span>
         </Link>
         <p>{t.footer}</p>
-        <span className="preview-tag">{t.preview} · v0.3</span>
+        <span className="preview-tag">{t.preview} · v0.4</span>
       </footer>
     </>
   );
@@ -605,7 +648,7 @@ function ProviderPage({ locale }: { locale: Locale }) {
                   <p>◎ {service.locationLabel}</p>
                   <h4>{t.policy}</h4>
                   <p>{service.cancellationPolicy}</p>
-                  {service.mode === "INSTANT" && (
+                  {service.offerings.some((o) => o.priceMinor !== null) && (
                     <Link
                       className="button primary"
                       to={`/p/${slug}/book/${service.id}`}
@@ -619,8 +662,8 @@ function ProviderPage({ locale }: { locale: Locale }) {
                         ? "Choose a time, then sign in to confirm."
                         : "先選擇時間，再登入確認預約。"
                       : locale === "en"
-                        ? "Request-to-book is coming next."
-                        : "申請式預約正在接續開發。"}
+                        ? "Request a time; the provider will confirm availability."
+                        : "送出申請後，需供給方確認才會成立預約。"}
                   </p>
                 </div>
               )}

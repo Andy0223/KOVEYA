@@ -127,7 +127,7 @@ schedulingRoutes.get("/services/:id/availability", async (c) => {
     c.req.param("id"),
     query.data.offeringId,
   );
-  if (service.mode !== "INSTANT" || service.pricingType === "QUOTE")
+  if (service.pricingType === "QUOTE")
     return ok(c, {
       date: query.data.date,
       timezone: service.timezone,

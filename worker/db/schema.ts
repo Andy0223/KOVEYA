@@ -342,6 +342,7 @@ export const bookingAllocations = sqliteTable(
 export const outboxEvents = sqliteTable(
   "outbox_events",
   {
+    lastError: text("last_error"),
     id: text("id").primaryKey(),
     orgId: text("org_id")
       .notNull()
@@ -473,5 +474,91 @@ export const rescheduleRequests = sqliteTable(
       sql`${t.startsAt} % 900000 = 0 AND ${t.bookingVersion} > 0`,
     ),
     index("reschedule_booking_idx").on(t.bookingId, t.status),
+  ],
+);
+
+export const bookingRequests = sqliteTable(
+  "booking_requests",
+  {
+    id: text("id").primaryKey(),
+    orgId: text("org_id").notNull(),
+    offeringId: text("offering_id").notNull(),
+    clientId: text("client_id").notNull(),
+    startsAt: integer("starts_at").notNull(),
+    originalStartsAt: integer("original_starts_at").notNull(),
+    termsSnapshot: text("terms_snapshot", { mode: "json" }).notNull(),
+    status: text("status").notNull().default("SUBMITTED"),
+    version: integer("version").notNull().default(1),
+    expiresAt: integer("expires_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+    bookingId: text("booking_id"),
+    lastMutationId: text("last_mutation_id"),
+  },
+  (t) => [
+    uniqueIndex("request_tenant_uq").on(t.id, t.orgId),
+    foreignKey({
+      columns: [t.bookingId, t.orgId],
+      foreignColumns: [bookings.id, bookings.orgId],
+    }),
+    index("request_due_idx").on(t.status, t.expiresAt),
+    foreignKey({
+      columns: [t.offeringId, t.orgId],
+      foreignColumns: [offerings.id, offerings.orgId],
+    }),
+    foreignKey({
+      columns: [t.clientId, t.orgId],
+      foreignColumns: [clients.id, clients.orgId],
+    }),
+    check(
+      "request_state_check",
+      sql`${t.status} IN ('SUBMITTED','COUNTER_PROPOSED','ACCEPTED','REJECTED','WITHDRAWN','DECLINED','EXPIRED')`,
+    ),
+    check(
+      "request_values_check",
+      sql`${t.version}>0 AND ${t.startsAt}%900000=0 AND ${t.originalStartsAt}%900000=0 AND json_valid(${t.termsSnapshot})`,
+    ),
+  ],
+);
+export const requestEvents = sqliteTable(
+  "request_events",
+  {
+    id: text("id").primaryKey(),
+    requestId: text("request_id").notNull(),
+    orgId: text("org_id").notNull(),
+    actorId: text("actor_id").references(() => users.id),
+    eventType: text("event_type").notNull(),
+    payload: text("payload", { mode: "json" }).notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    foreignKey({
+      columns: [t.requestId, t.orgId],
+      foreignColumns: [bookingRequests.id, bookingRequests.orgId],
+    }),
+  ],
+);
+export const notifications = sqliteTable(
+  "notifications",
+  {
+    id: text("id").primaryKey(),
+    eventId: text("event_id")
+      .notNull()
+      .references(() => outboxEvents.id),
+    recipientId: text("recipient_id")
+      .notNull()
+      .references(() => users.id),
+    eventType: text("event_type").notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: text("entity_id").notNull(),
+    createdAt: integer("created_at").notNull(),
+    readAt: integer("read_at"),
+  },
+  (t) => [
+    uniqueIndex("notification_delivery_uq").on(t.eventId, t.recipientId),
+    index("notification_recipient_idx").on(t.recipientId, t.createdAt),
+    check(
+      "notification_entity_check",
+      sql`${t.entityType} IN ('BOOKING','REQUEST')`,
+    ),
   ],
 );

@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: KOVEYA API
-  version: 0.3.0
-  description: Implemented identity, individual business and catalog, shared availability, instant
-    bookings, cancellation, counterpart reschedule proposals and fulfillment. Request-to-book,
-    notification delivery and production verification remain pending.
+  version: 0.4.0
+  description: Identity, individual service business, scheduling, instant and request bookings,
+    counterpart proposals, cancellation, fulfillment and in-app notifications. Email transaction
+    delivery, CRM, ICS and production verification remain pending.
 servers:
   - url: /api/v1
 security: []
@@ -1150,7 +1150,7 @@ paths:
                     required:
                       - revision
                     properties:
-                      revision: &a10
+                      revision: &a15
                         type: integer
                   requestId: *a1
         "400":
@@ -1169,9 +1169,9 @@ paths:
     get:
       operationId: getAvailability
       summary: Find public available instants
-      description: Published services of active, public providers only. REQUEST and QUOTE return no slots
-        in v0.3. Slots honor service timezone, resource-local hours, buffers, notice, booking
-        horizon and current allocations.
+      description: Published fixed/free INSTANT and REQUEST services of active public providers. QUOTE
+        returns no slots. Requests do not allocate or hold returned times. Availability honors
+        resource hours, service timezone, buffers, notice and horizon.
       parameters:
         - &a2
           in: path
@@ -1684,6 +1684,559 @@ paths:
                 properties:
                   data: *a4
                   requestId: *a1
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests:
+    get:
+      operationId: listBookingRequests
+      summary: Read authorized customer or business requests
+      description: Latest 100 requests. Business requires active owner membership. Expired pending states
+        are shown as EXPIRED immediately, even before the maintenance job persists expiry.
+      security:
+        - sessionCookie: []
+      parameters:
+        - in: query
+          name: scope
+          schema:
+            enum:
+              - demand
+              - business
+            default: demand
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BookingRequest"
+                  requestId: &a6
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: submitBookingRequest
+      summary: Submit fixed/free REQUEST without holding a slot
+      description: Requires explicit customer terms agreement and current service revision. Saves an
+        immutable snapshot. Expiry is the earliest of 24 hours and requested start minus max(15,
+        minNoticeMinutes) minutes. Self-approval and QUOTE are rejected. No booking or allocations
+        are created.
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a8
+          in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]{8,128}$
+          description: Actor + operation scope; same key and input replay the original entity id; different
+            input conflicts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: &a9
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - id
+                    properties:
+                      id: *a6
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}:
+    get:
+      operationId: getBookingRequest
+      summary: Read authorized request and history
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a7
+          in: path
+          name: id
+          required: true
+          schema: *a6
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/RequestDetail"
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/availability:
+    get:
+      operationId: getRequestAvailability
+      summary: Query replacement times under original request terms
+      description: Participants of a live request only; all existing allocations count because requests
+        never hold a slot.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Availability"
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/accept:
+    post:
+      operationId: acceptBookingRequest
+      summary: Accept request and atomically confirm a booking
+      description: SUBMITTED requires the owner; COUNTER_PROPOSED requires the customer. Rechecks expiry,
+        version, active requester, published service, resource revision and availability. Original
+        price and policies are preserved. On conflict no booking or false acceptance is committed.
+        Returns the request id; GET detail for bookingId.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - *a8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - acceptTerms
+              properties:
+                expectedVersion: &a10
+                  type: integer
+                  minimum: 1
+                acceptTerms:
+                  const: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a9
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/counter-proposals:
+    post:
+      operationId: counterProposeRequest
+      summary: Owner proposes a different time requiring customer consent
+      description: Only live requests, different available time, original terms. Increments version, saves
+        proposed time, never extends the original deadline or holds a slot.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - *a8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - startsAt
+              properties:
+                expectedVersion: *a10
+                startsAt:
+                  type: integer
+                  description: UTC epoch milliseconds
+                  multipleOf: 900000
+                  maximum: 8000000000000
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a9
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/reject:
+    post:
+      operationId: rejectBookingRequest
+      summary: Owner rejects live request
+      description: Matching version, authority and unexpired pending state required. Records reason and
+        history; never allocates time.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - *a8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - reason
+              properties:
+                expectedVersion: *a10
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a9
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/withdraw:
+    post:
+      operationId: withdrawBookingRequest
+      summary: Customer withdraws live request
+      description: Matching version, authority and unexpired pending state required. Records reason and
+        history; never allocates time.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - *a8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - reason
+              properties:
+                expectedVersion: *a10
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a9
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /booking-requests/{id}/decline:
+    post:
+      operationId: declineBookingRequest
+      summary: Customer declines counter-proposed time
+      description: Matching version, authority and unexpired pending state required. Records reason and
+        history; never allocates time.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+        - *a8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - reason
+              properties:
+                expectedVersion: *a10
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a9
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /notifications:
+    get:
+      operationId: getNotifications
+      summary: Read own in-app notifications and unread count
+      description: Latest 100, newest first. Performs bounded maintenance to support local development;
+        scheduled Worker also runs every five minutes. Recipient IDs derive from authorized domain
+        relationships. No cross-user notification data is returned. Email delivery is not
+        implemented.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - unread
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Notification"
+                      unread: &a21
+                        type: integer
+                  requestId: *a6
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /notifications/{id}/read:
+    post:
+      operationId: readNotification
+      summary: Recipient explicitly marks a notification read
+      description: Recipient only, otherwise NOT_FOUND. Repeated marking is idempotent and preserves first
+        read time. This does not accept any request or proposal.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: []
+              properties: {}
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - read
+                    properties:
+                      read:
+                        const: true
+                  requestId: *a6
         "400":
           $ref: "#/components/responses/Error"
         "401":
@@ -2270,12 +2823,12 @@ components:
         - start
         - end
       properties:
-        start: &a6
+        start: &a11
           type: integer
           minimum: 0
           maximum: 1425
           multipleOf: 15
-        end: &a7
+        end: &a12
           type: integer
           minimum: 15
           maximum: 1440
@@ -2294,7 +2847,7 @@ components:
           type: integer
           minimum: 1
         timezone: *a1
-        rules: &a8
+        rules: &a13
           type: array
           items:
             type: object
@@ -2304,14 +2857,14 @@ components:
               - end
               - weekday
             properties:
-              start: *a6
-              end: *a7
+              start: *a11
+              end: *a12
               weekday:
                 type: integer
                 minimum: 0
                 maximum: 6
           maxItems: 28
-        exceptions: &a9
+        exceptions: &a14
           type: array
           items:
             type: object
@@ -2342,8 +2895,8 @@ components:
           type: integer
           minimum: 1
         timezone: *a1
-        rules: *a8
-        exceptions: *a9
+        rules: *a13
+        exceptions: *a14
       description: One personal resource shared by all services. Date exceptions replace weekly rules; an
         empty interval array closes that date. Duplicate dates and overlaps are rejected. Saving
         does not alter confirmed bookings.
@@ -2361,7 +2914,7 @@ components:
         timezone: *a1
         slots:
           type: array
-          items: &a11
+          items: &a16
             type: integer
             description: UTC epoch milliseconds
     BookingInput:
@@ -2411,25 +2964,25 @@ components:
         - acceptedAt
       properties:
         serviceId: *a1
-        serviceRevision: *a10
+        serviceRevision: *a15
         serviceName: *a1
         providerName: *a1
         providerSlug: *a1
         resourceId: *a1
         timezone: *a1
         locationLabel: *a1
-        durationMinutes: *a10
-        bufferBeforeMinutes: *a10
-        bufferAfterMinutes: *a10
-        priceMinor: *a10
+        durationMinutes: *a15
+        bufferBeforeMinutes: *a15
+        bufferAfterMinutes: *a15
+        priceMinor: *a15
         currency: *a1
         cancellationPolicy: *a1
-        cancellationNoticeMinutes: *a10
-        minNoticeMinutes: *a10
-        maxAdvanceDays: *a10
+        cancellationNoticeMinutes: *a15
+        minNoticeMinutes: *a15
+        maxAdvanceDays: *a15
         paymentMethod:
           const: ARRANGED_WITH_PROVIDER
-        acceptedAt: *a11
+        acceptedAt: *a16
     Booking:
       type: object
       additionalProperties: false
@@ -2444,19 +2997,19 @@ components:
         - isProvider
       properties:
         id: *a1
-        startsAt: *a11
-        endsAt: *a11
-        status: &a12
+        startsAt: *a16
+        endsAt: *a16
+        status: &a17
           enum:
             - CONFIRMED
             - CANCELLED
             - COMPLETED
             - NO_SHOW
-        version: *a10
-        terms: &a13
+        version: *a15
+        terms: &a18
           $ref: "#/components/schemas/BookingTerms"
         clientName: *a1
-        isProvider: &a14
+        isProvider: &a19
           type: boolean
     BookingDetail:
       type: object
@@ -2474,13 +3027,13 @@ components:
         - proposals
       properties:
         id: *a1
-        startsAt: *a11
-        endsAt: *a11
-        status: *a12
-        version: *a10
-        terms: *a13
+        startsAt: *a16
+        endsAt: *a16
+        status: *a17
+        version: *a15
+        terms: *a18
         clientName: *a1
-        isProvider: *a14
+        isProvider: *a19
         events:
           type: array
           items:
@@ -2495,7 +3048,7 @@ components:
               payload:
                 type: object
                 additionalProperties: true
-              createdAt: *a11
+              createdAt: *a16
         proposals:
           type: array
           items:
@@ -2509,7 +3062,7 @@ components:
               - canRespond
             properties:
               id: *a1
-              startsAt: *a11
+              startsAt: *a16
               status:
                 enum:
                   - PENDING
@@ -2517,9 +3070,114 @@ components:
                   - REJECTED
                   - CANCELLED
                   - EXPIRED
-              expiresAt: *a11
+              expiresAt: *a16
               canRespond:
                 type: boolean
+    BookingRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - startsAt
+        - originalStartsAt
+        - status
+        - version
+        - expiresAt
+        - bookingId
+        - terms
+        - clientName
+        - isProvider
+      properties:
+        id: *a6
+        startsAt: &a20
+          type: integer
+          description: UTC epoch milliseconds
+        originalStartsAt: *a20
+        status: &a22
+          enum:
+            - SUBMITTED
+            - COUNTER_PROPOSED
+            - ACCEPTED
+            - REJECTED
+            - WITHDRAWN
+            - DECLINED
+            - EXPIRED
+        version: *a21
+        expiresAt: *a20
+        bookingId: &a23
+          type:
+            - string
+            - "null"
+        terms: &a24
+          $ref: "#/components/schemas/BookingTerms"
+        clientName: *a6
+        isProvider: &a25
+          type: boolean
+    RequestDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - startsAt
+        - originalStartsAt
+        - status
+        - version
+        - expiresAt
+        - bookingId
+        - terms
+        - clientName
+        - isProvider
+        - events
+      properties:
+        id: *a6
+        startsAt: *a20
+        originalStartsAt: *a20
+        status: *a22
+        version: *a21
+        expiresAt: *a20
+        bookingId: *a23
+        terms: *a24
+        clientName: *a6
+        isProvider: *a25
+        events:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - eventType
+              - payload
+              - createdAt
+            properties:
+              eventType: *a6
+              payload:
+                type: object
+                additionalProperties: true
+              createdAt: *a20
+    Notification:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - eventType
+        - entityType
+        - entityId
+        - createdAt
+        - readAt
+      properties:
+        id: *a6
+        eventType: *a6
+        entityType:
+          enum:
+            - BOOKING
+            - REQUEST
+        entityId: *a6
+        createdAt: *a20
+        readAt:
+          type:
+            - integer
+            - "null"
+          description: Recipient explicitly marked read; not proof of understanding or agreement.
   securitySchemes:
     sessionCookie:
       type: apiKey
@@ -2535,10 +3193,7 @@ components:
 x-koveya-planned-endpoints:
   providers-and-services:
     - GET /services/:id
-  scheduling-and-bookings:
-    - POST /booking-requests
-    - POST /booking-requests/:id/accept
-    - POST /booking-requests/:id/reject
+  scheduling-and-bookings: []
   clients-and-packages:
     - GET /clients
     - GET /clients/:id
@@ -2548,14 +3203,11 @@ x-koveya-planned-endpoints:
     - GET /entitlements/:id/ledger
     - POST /entitlements/:id/adjustments
   notifications-and-integrations:
-    - GET /notifications
     - PATCH /notification-preferences
     - POST /integrations/:provider/connect
     - DELETE /integrations/:provider/:id
     - POST /webhooks/:provider
-  additions-under-design:
-    - POST /booking-requests/:id/withdraw
-    - POST /booking-requests/:id/counter-proposals
+  additions-under-design: []
 x-koveya-planned-error-codes:
   - AUTH_REQUIRED
   - FORBIDDEN
@@ -2596,3 +3248,12 @@ x-koveya-error-codes:
   - IDEMPOTENCY_CONFLICT
 x-koveya-scheduling-contract-note: Shared GET/PUT /business/availability replaces proposed
   per-service availability-rules and availability-exceptions endpoints for the one-resource MVP.
+x-koveya-background-processing:
+  - Scheduled Worker every five minutes; local GET /notifications also runs bounded maintenance.
+  - At most five request expirations and ten outbox events per invocation. Expiry is already
+    enforced on reads and mutations.
+  - In-app notification insertion and Outbox SENT marking commit atomically with unique
+    event/recipient deduplication. SENT means in-app processing only, not email delivery.
+  - Failed notification delivery increments attempts, retains a safe error category, retries
+    exponentially from 30 seconds, then becomes FAILED after five attempts. Manual administration
+    remains pending.

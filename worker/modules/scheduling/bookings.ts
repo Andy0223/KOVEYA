@@ -7,6 +7,7 @@ import { requireUser } from "../identity/session";
 import { bookableService, dateOf, readSchedule, slotsFor } from "./repository";
 import { availableSlots, validDate } from "./availability";
 import { allocationSlots } from "./slots";
+import { bookingStatements, clientStatement, termsFor } from "./booking-write";
 import { eventStatements, receipt } from "./transactions";
 
 export const bookingRoutes = new Hono<Environment>();
@@ -54,29 +55,8 @@ bookingRoutes.post("/bookings", requireUser, async (c) => {
       throw new ApiError("SLOT_UNAVAILABLE", 409);
     }
     const id = crypto.randomUUID(),
-      guard = crypto.randomUUID(),
-      end = input.startsAt + service.durationMinutes * 60_000;
-    const terms: BookingTerms = {
-      serviceId: service.id,
-      serviceRevision: service.revision,
-      serviceName: service.name,
-      providerName: service.providerName,
-      providerSlug: service.providerSlug,
-      resourceId: service.resourceId,
-      timezone: service.timezone,
-      locationLabel: service.locationLabel,
-      durationMinutes: service.durationMinutes,
-      bufferBeforeMinutes: service.bufferBeforeMinutes,
-      bufferAfterMinutes: service.bufferAfterMinutes,
-      priceMinor: service.priceMinor,
-      currency: service.currency,
-      cancellationPolicy: service.cancellationPolicy,
-      cancellationNoticeMinutes: service.cancellationNoticeMinutes,
-      minNoticeMinutes: service.minNoticeMinutes,
-      maxAdvanceDays: service.maxAdvanceDays,
-      paymentMethod: "ARRANGED_WITH_PROVIDER",
-      acceptedAt: now,
-    };
+      guard = crypto.randomUUID();
+    const terms = termsFor(service, now);
     return ok(
       c,
       await transaction.commit(id, [
@@ -98,53 +78,16 @@ bookingRoutes.post("/bookings", requireUser, async (c) => {
             schedule.revision,
             user,
           ),
-        db
-          .prepare(
-            `INSERT INTO client_relationships (id,org_id,user_id,name,email)
-      SELECT ?,?,u.id,u.name,i.provider_subject FROM users u JOIN identities i ON i.user_id=u.id AND i.provider='email' WHERE u.id=?
-      ON CONFLICT(org_id,user_id) DO NOTHING`,
-          )
-          .bind(crypto.randomUUID(), service.orgId, user),
-        db
-          .prepare(
-            `INSERT INTO bookings (id,org_id,offering_id,client_id,starts_at,ends_at,status,terms_snapshot,created_at,version)
-      SELECT ?,?,?,id,?,?,'CONFIRMED',?,?,1 FROM client_relationships WHERE org_id=? AND user_id=?`,
-          )
-          .bind(
-            id,
-            service.orgId,
-            service.offeringId,
-            input.startsAt,
-            end,
-            JSON.stringify(terms),
-            now,
-            service.orgId,
-            user,
-          ),
-        db
-          .prepare(
-            "INSERT INTO booking_allocations (org_id,booking_id,resource_id,slot_start_utc) SELECT ?,?,?,value FROM json_each(?)",
-          )
-          .bind(
-            service.orgId,
-            id,
-            service.resourceId,
-            JSON.stringify(
-              allocationSlots(
-                input.startsAt,
-                service.durationMinutes,
-                service.bufferBeforeMinutes,
-                service.bufferAfterMinutes,
-              ),
-            ),
-          ),
-        ...eventStatements(
+        clientStatement(db, service.orgId, user),
+        ...bookingStatements(
           db,
-          service.orgId,
           id,
+          service.orgId,
+          service.offeringId,
           user,
-          "booking.confirmed",
-          { startsAt: input.startsAt, endsAt: end },
+          user,
+          input.startsAt,
+          terms,
           now,
         ),
         db.prepare("DELETE FROM transaction_guards WHERE id=?").bind(guard),

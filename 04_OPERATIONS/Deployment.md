@@ -34,3 +34,11 @@ Cloudflare Vite 會產生 `dist` 與建置後的 Wrangler 設定。正式部署�
 部署驗收包括 API 404 不誤回 SPA、深層網址可直接開啟、D1 migrations、環境隔離、登入與交易閉環、監測及回滾／資料修復方案。CI 只檢查，不建立雲端資源。
 
 Vite build 會複製 `.dev.vars` 到 Worker 輸出供本機 preview 使用；它不在前端 assets，且不會隨 Worker 部署。不要將整個輸出資料夾當公開靜態檔上傳。正式 secrets 需透過 Cloudflare 設定。[官方說明](https://developers.cloudflare.com/workers/vite-plugin/reference/secrets/)
+
+## v0.4 背景工作
+
+Worker 預設匯出含 fetch 與 scheduled handler；wrangler.jsonc 設定每五分鐘 Cron。每次至多持久化五筆已到期申請並處理十筆待送 Outbox，以限制單次查詢量；大量積壓會延遲，正式環境需依量測設計 Queues／告警與容量。
+
+本機開啟通知中心或 GET /api/v1/notifications 也會處理一批，無須公開未驗證的 Cron HTTP 入口。正式 Cron 需部署到正確環境並實測；目前只有 scheduled handler 的本機測試，沒有正式雲端證據。
+
+站內通知失敗以 30 秒開始指數退避，最多五次；失敗原因與下次嘗試時間保留在 Outbox。終止失敗後需日後管理介面或授權營運程序處理，不能無限重送。此版本不寄交易 Email。

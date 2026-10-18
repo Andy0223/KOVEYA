@@ -28,3 +28,13 @@ INSTANT 預約建立 CONFIRMED。雙方在開始前依原政策取消為 CANCELL
 完成、取消或接受改期在同批記錄 booking_events、audit_logs 及 PENDING outbox_events。通知消費者尚未接上，不把 Outbox 成功寫入宣稱為 Email 送達。
 
 REQUEST 預約申請、付款、通知送達狀態機仍為設計，並非已上線功能。
+
+## v0.4 申請式預約
+
+REQUEST／固定價格或免費服務支援 SUBMITTED → ACCEPTED／COUNTER_PROPOSED／REJECTED／WITHDRAWN／EXPIRED；COUNTER_PROPOSED 可由需求方 ACCEPTED／DECLINED／WITHDRAWN，供給方亦可更新提案或 REJECTED。終態不能再異動；所有使用者操作需 version 與 Idempotency-Key。
+
+申請不是預約，不持有配置。原時間由需求方送出時明確同意，供給方可接受；替代時間一定由需求方明確同意。接受時重新檢查服務公開、業務有效、需求方有效、資源排班版本與目前配置，再同批寫入 Booking、配置、歷史、Outbox、稽核、收據及 ACCEPTED／booking_id。失敗不會假接受。
+
+有效期為 now + 24 小時與 startsAt − max(15, minNoticeMinutes) 分鐘的較早者；到期時刻不允許接受。替代時間只能縮短而不能延長原期限。讀取即顯示 EXPIRED；背景工作再以版本／nonce 條件寫入終態及系統事件，避免與接受競爭重複更新。正式部署 Cron 尚未驗收。
+
+原始價格、政策、時長與緩衝保存在申請快照；服務後續修改不改寫原條件。QUOTE 仍需未實作的議價同意流程，不得偽裝成免費預約。個人業務不能向自己送出需要自己批准的申請。

@@ -19,7 +19,7 @@ import type {
 import { api, ClientError, errorText, useAccount } from "./account";
 import { BusinessNav, BusinessProfilePage } from "./business-pages";
 
-function today(timezone: string) {
+export function today(timezone: string) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: timezone,
     year: "numeric",
@@ -36,14 +36,14 @@ function timeLabel(time: number, tz: string, locale: Locale) {
     timeZoneName: "shortOffset",
   }).format(time);
 }
-function when(time: number, tz: string, locale: Locale) {
+export function when(time: number, tz: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale, {
     timeZone: tz,
     dateStyle: "medium",
     timeStyle: "short",
   }).format(time);
 }
-function price(minor: number, currency: string, locale: Locale) {
+export function price(minor: number, currency: string, locale: Locale) {
   const f = new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
@@ -53,7 +53,7 @@ function price(minor: number, currency: string, locale: Locale) {
     minor / 10 ** (f.resolvedOptions().maximumFractionDigits ?? 0),
   );
 }
-function useOperationKey() {
+export function useOperationKey() {
   const last = useRef({ value: "", key: "" });
   return (value: unknown) => {
     const text = JSON.stringify(value);
@@ -62,7 +62,7 @@ function useOperationKey() {
     return last.current.key;
   };
 }
-function ErrorNotice({ message }: { message: string }) {
+export function ErrorNotice({ message }: { message: string }) {
   return message ? (
     <p className="form-error" role="alert">
       {message}
@@ -250,12 +250,16 @@ export function BookingPage({ locale }: { locale: Locale }) {
     };
     try {
       const result = await api<{ id: string }>(
-        "/bookings",
+        service.mode === "REQUEST" ? "/booking-requests" : "/bookings",
         "POST",
         value,
         key(value),
       );
-      navigate(`/app/bookings/${result.id}`);
+      navigate(
+        service.mode === "REQUEST"
+          ? `/app/requests/${result.id}`
+          : `/app/bookings/${result.id}`,
+      );
     } catch (e) {
       setError(errorText(e, locale));
       if (e instanceof ClientError && e.code === "SLOT_UNAVAILABLE") {
@@ -297,16 +301,23 @@ export function BookingPage({ locale }: { locale: Locale }) {
               {service.locationLabel} · {service.timezone}
             </p>
           </div>
-          {service.mode !== "INSTANT" || offering.priceMinor === null ? (
+          {offering.priceMinor === null ? (
             <p className="notice">
               {en
-                ? "Request-to-book is coming next. Please contact your provider."
-                : "申請式預約正在接續開發，請先聯絡供給方。"}
+                ? "A price must be agreed before booking. Please contact your provider."
+                : "待報價服務需先議定價格，目前請先聯絡供給方。"}
             </p>
           ) : (
             <>
               <div className="panel">
                 <h2>{en ? "Choose a time" : "選擇時間"}</h2>
+                {service.mode === "REQUEST" && (
+                  <p className="notice">
+                    {en
+                      ? "This is a request, not a confirmed booking. No slot is held. It expires within 24 hours or at the booking notice deadline, whichever is earlier. The provider must respond; proposed time changes require your agreement."
+                      : "這是預約申請，尚未確認，也不保留時段。申請會在 24 小時內或提前預約截止時到期，以較早者為準；需要供給方回覆，替代時間須經你同意。"}
+                  </p>
+                )}
                 <TimePicker
                   key={`${id}-${attempt}`}
                   locale={locale}
@@ -374,8 +385,12 @@ export function BookingPage({ locale }: { locale: Locale }) {
                         ? "Confirming…"
                         : "確認中…"
                       : en
-                        ? "Confirm booking"
-                        : "確認預約"}
+                        ? service.mode === "REQUEST"
+                          ? "Submit request"
+                          : "Confirm booking"
+                        : service.mode === "REQUEST"
+                          ? "送出預約申請"
+                          : "確認預約"}
                   </button>
                 )}
               </div>
@@ -577,8 +592,8 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
             </p>
             <p className="notice">
               {en
-                ? "Email notifications are not enabled yet. Check updates here."
-                : "Email 通知尚未啟用，請在此查看預約異動。"}
+                ? "Email delivery is not enabled yet. View updates in Notifications."
+                : "Email 寄送尚未啟用，可至「通知中心」查看異動。"}
             </p>
           </div>
           {booking.proposals.map((p) => (

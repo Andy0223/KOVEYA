@@ -39,3 +39,11 @@ booking.terms_snapshot 已由直接預約 API 原子寫入，保存服務版本�
 服務資源、日期例外、預約事件與改期提案使用租戶複合外鍵。transaction_guards 的 CHECK 用於明確斷言版本與狀態；成功後同批清除。預約、配置、事件、Outbox、稽核及冪等收據任一失敗整批回滾。
 
 尚未建立：預約申請、完整通知與偏好、訂單／付款、套票權益等後續模組。Outbox 此版本只保存 PENDING 事件，沒有消費或寄送功能。
+
+## v0.4 增量（目前共 27 張表）
+
+Migration 0005 新增 booking_requests、request_events、notifications；outbox_events 新增 last_error。申請保存原始與目前提議時間、版本、截止、不可變條件、正式 booking_id。申請與 offering／client／booking 透過 org_id 複合外鍵隔離。
+
+request_events 可保存 actor_id=null 的到期系統事件。到期以版本／狀態／時間條件更新並標記本次 nonce，只有同一次更新成功才能寫入歷史與 Outbox，全部在 batch 內提交。
+
+notifications 有 event_id + recipient_id 唯一鍵及自己的 read_at。Outbox 消費時按目前合法客戶／業務關係找收件者，插入站內通知與標記 SENT 在同一交易。SENT 在此版本只代表站內處理，不代表 Email 或已讀。Email 尚未接上；站內通知不是付款或接受提案的證據。

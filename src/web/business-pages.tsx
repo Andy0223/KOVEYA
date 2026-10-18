@@ -21,6 +21,8 @@ export function BusinessNav({ locale }: { locale: Locale }) {
         {en ? "Availability" : "可用時間"}
       </Link>
       <Link to="/business/bookings">{en ? "Bookings" : "預約管理"}</Link>
+      <Link to="/business/requests">{en ? "Requests" : "預約申請"}</Link>
+      <Link to="/app/notifications">{en ? "Notifications" : "通知中心"}</Link>
       <Link to="/business/profile">{en ? "Business profile" : "品牌資料"}</Link>
       <Link to="/app/profile">{en ? "Account" : "帳號設定"}</Link>
     </nav>
@@ -96,8 +98,8 @@ export function BusinessHome({ locale }: { locale: Locale }) {
       </div>
       <p className="notice">
         {en
-          ? "Set shared working hours before sharing your link. Instant booking, cancellation and reschedule proposals are available; request-to-book is coming next."
-          : "分享連結前，請先設定可用時間。目前支援直接預約、取消與改期提案；申請式預約待接續完成。"}
+          ? "Set shared working hours before sharing your link. Instant booking, requests, cancellation and reschedule proposals are available."
+          : "分享連結前，請先設定可用時間。支援直接預約、申請審核、取消與改期提案。"}
       </p>
       <Link className="text-link" to={`/p/${account.business.slug}`}>
         {en ? "View public page" : "查看公開頁面"} ↗
@@ -786,6 +788,14 @@ export function DemandHome({ locale }: { locale: Locale }) {
       <Link className="button primary" to="/app/bookings">
         {en ? "My bookings" : "我的預約"} →
       </Link>
+      <div className="button-row">
+        <Link className="button secondary" to="/app/requests">
+          {en ? "My requests" : "我的預約申請"}
+        </Link>
+        <Link className="button secondary" to="/app/notifications">
+          {en ? "Notifications" : "通知中心"}
+        </Link>
+      </div>
       <div className="empty-state">
         <span aria-hidden>◷</span>
         <h2>

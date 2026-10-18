@@ -111,16 +111,16 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
 | BKG-001 | 直接預約 | P0 | 符合規則即可建立預約 | implemented / local_verified |
-| BKG-002 | 申請式預約 | P0 | 建立待確認申請 | not_started / not_verified |
-| BKG-003 | 接受預約 | P0 | 狀態正確更新 | not_started / not_verified |
-| BKG-004 | 拒絕預約 | P0 | 保留原因及異動紀錄 | not_started / not_verified |
+| BKG-002 | 申請式預約 | P0 | 建立待確認申請 | implemented / local_verified |
+| BKG-003 | 接受預約 | P0 | 狀態正確更新 | implemented / local_verified |
+| BKG-004 | 拒絕預約 | P0 | 保留原因及異動紀錄 | implemented / local_verified |
 | BKG-005 | 需求方取消 | P0 | 正確套用取消規則 | implemented / local_verified |
 | BKG-006 | 供給方取消 | P0 | 需求方可查看取消資訊 | implemented / local_verified |
 | BKG-007 | 雙方改期 | P0 | 避免重複或遺失預約 | implemented / local_verified |
 | BKG-008 | 手動新增預約 | P0 | 供給方可加入既有安排 | not_started / not_verified |
 | BKG-009 | 預約詳情 | P0 | 雙方看到一致資訊 | implemented / local_verified |
 | BKG-010 | 預約歷史 | P0 | 可查看歷史與異動 | implemented / local_verified |
-| BKG-011 | 預約到期 | P0 | 待確認申請可依規則過期 | not_started / not_verified |
+| BKG-011 | 預約到期 | P0 | 待確認申請可依規則過期 | implemented / local_verified |
 | BKG-012 | 候補預約 | P1 | 可等待時段釋出 | not_started / not_verified |
 | BKG-013 | 批次預約 | P1 | 可一次安排多次服務 | not_started / not_verified |
 | BKG-014 | 團體預約 | P2 | 可管理多名參與者 | not_started / not_verified |
@@ -187,13 +187,13 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| NTF-001 | 預約建立通知 | P0 | 雙方在網站與 Email 取得預約確認 | not_started / not_verified |
-| NTF-002 | 申請待審核通知 | P0 | 需求方可查看待確認，供給方收到待處理通知 | not_started / not_verified |
-| NTF-003 | 預約接受通知 | P0 | 雙方可查看已確認狀態 | not_started / not_verified |
-| NTF-004 | 預約拒絕通知 | P0 | 需求方取得拒絕通知，供給方已結案 | not_started / not_verified |
-| NTF-005 | 需求方取消通知 | P0 | 雙方可查看取消結果 | not_started / not_verified |
-| NTF-006 | 供給方取消通知 | P0 | 需求方收到重要取消通知 | not_started / not_verified |
-| NTF-007 | 改期提案通知 | P0 | 需回覆的一方收到提案及回覆入口 | not_started / not_verified |
+| NTF-001 | 預約建立通知 | P0 | 雙方在網站與 Email 取得預約確認 | partial / not_verified |
+| NTF-002 | 申請待審核通知 | P0 | 需求方可查看待確認，供給方收到待處理通知 | partial / not_verified |
+| NTF-003 | 預約接受通知 | P0 | 雙方可查看已確認狀態 | partial / not_verified |
+| NTF-004 | 預約拒絕通知 | P0 | 需求方取得拒絕通知，供給方已結案 | partial / not_verified |
+| NTF-005 | 需求方取消通知 | P0 | 雙方可查看取消結果 | partial / not_verified |
+| NTF-006 | 供給方取消通知 | P0 | 需求方收到重要取消通知 | partial / not_verified |
+| NTF-007 | 改期提案通知 | P0 | 需回覆的一方收到提案及回覆入口 | partial / not_verified |
 | NTF-008 | 服務提醒 | P1 | Email／行事曆依設定提醒 | not_started / not_verified |
 | NTF-009 | 候補有空位通知 | P1 | 需求方可接受邀請，供給方依設定通知 | not_started / not_verified |
 | NTF-010 | 方案到期通知 | P1 | 依偏好提醒需求方及供給方 | not_started / not_verified |
