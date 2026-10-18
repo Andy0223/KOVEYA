@@ -1,0 +1,1496 @@
+{
+  "version": "1.0",
+  "source": "User-provided Master Plan & PRD v1.0, 2026-10-18",
+  "note": "Structured transcription; NTF IDs were added during engineering preparation, not present in the original.",
+  "modules": [
+    {
+      "id": "PRD-01",
+      "title": "Identity & Account Management",
+      "user_story": "同一帳號安全存取需求方與供給方工作台。",
+      "requirements": [
+        {
+          "id": "ID-001",
+          "function": "Email 登入",
+          "priority": "P0",
+          "acceptance_criteria": "使用者可透過經驗證的 Email 登入",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-002",
+          "function": "Email 驗證連結",
+          "priority": "P0",
+          "acceptance_criteria": "Token 一次性、短效、可防重放",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-003",
+          "function": "使用者基本資料",
+          "priority": "P0",
+          "acceptance_criteria": "可設定姓名、語言與時區",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-004",
+          "function": "Demand Workspace",
+          "priority": "P0",
+          "acceptance_criteria": "登入後可查看自己的預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-005",
+          "function": "Supply Workspace",
+          "priority": "P0",
+          "acceptance_criteria": "可建立並管理自己的服務",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-006",
+          "function": "角色切換",
+          "priority": "P0",
+          "acceptance_criteria": "不須重新登入",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-007",
+          "function": "Session 管理",
+          "priority": "P0",
+          "acceptance_criteria": "可登出、撤銷登入工作階段",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-008",
+          "function": "Google Login",
+          "priority": "P1",
+          "acceptance_criteria": "可登入並安全連結既有帳號",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-009",
+          "function": "LINE Login",
+          "priority": "P1",
+          "acceptance_criteria": "台灣等適用市場可使用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-010",
+          "function": "多登入方式連結",
+          "priority": "P1",
+          "acceptance_criteria": "不產生未經驗證的帳號合併",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-011",
+          "function": "Apple Login",
+          "priority": "P2",
+          "acceptance_criteria": "視使用者需求導入",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ID-012",
+          "function": "帳號資料匯出及刪除",
+          "priority": "P0",
+          "acceptance_criteria": "可提交申請，依明確流程處理",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-02",
+      "title": "Provider Profile & Service Catalog",
+      "user_story": "供給方建立專業服務頁並分享給既有客戶。",
+      "requirements": [
+        {
+          "id": "PRO-001",
+          "function": "建立供給方檔案",
+          "priority": "P0",
+          "acceptance_criteria": "可以建立個人品牌",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-002",
+          "function": "編輯公開資訊",
+          "priority": "P0",
+          "acceptance_criteria": "名稱、介紹、圖片可修改",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-003",
+          "function": "建立服務",
+          "priority": "P0",
+          "acceptance_criteria": "可建立至少一種服務",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-004",
+          "function": "服務定價",
+          "priority": "P0",
+          "acceptance_criteria": "支援固定價格、免費、待報價",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-005",
+          "function": "服務時長",
+          "priority": "P0",
+          "acceptance_criteria": "可設定服務時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-006",
+          "function": "線上／實體服務",
+          "priority": "P0",
+          "acceptance_criteria": "可設定交付方式",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-007",
+          "function": "服務發布與下架",
+          "priority": "P0",
+          "acceptance_criteria": "下架後不可新增預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-008",
+          "function": "專屬公開連結",
+          "priority": "P0",
+          "acceptance_criteria": "可分享至其他社群",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-009",
+          "function": "服務排序",
+          "priority": "P1",
+          "acceptance_criteria": "可調整公開顯示順序",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-010",
+          "function": "服務方案組合",
+          "priority": "P1",
+          "acceptance_criteria": "可建立多次服務方案",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-011",
+          "function": "多地點服務",
+          "priority": "P1",
+          "acceptance_criteria": "可設定不同服務地點",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-012",
+          "function": "服務分類範本",
+          "priority": "P1",
+          "acceptance_criteria": "可依產業載入預設條件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-013",
+          "function": "自訂網域",
+          "priority": "P2",
+          "acceptance_criteria": "付費供給方可連接",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PRO-014",
+          "function": "多語言服務介紹",
+          "priority": "P2",
+          "acceptance_criteria": "可設定不同語言內容",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-03",
+      "title": "Availability & Scheduling Engine",
+      "user_story": "供給方的互斥時間與資源不被重複預約。",
+      "requirements": [
+        {
+          "id": "SCH-001",
+          "function": "固定可用時間",
+          "priority": "P0",
+          "acceptance_criteria": "支援星期與起訖時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-002",
+          "function": "特殊日期",
+          "priority": "P0",
+          "acceptance_criteria": "可設定休假及例外開放時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-003",
+          "function": "預約間隔",
+          "priority": "P0",
+          "acceptance_criteria": "可設定服務前後緩衝時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-004",
+          "function": "最早預約時間",
+          "priority": "P0",
+          "acceptance_criteria": "支援提前預約限制",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-005",
+          "function": "最晚可預約日期",
+          "priority": "P0",
+          "acceptance_criteria": "支援開放預約範圍",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-006",
+          "function": "可預約時段計算",
+          "priority": "P0",
+          "acceptance_criteria": "排除已占用及封鎖時段",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-007",
+          "function": "防止撞期",
+          "priority": "P0",
+          "acceptance_criteria": "同一互斥資源不得重複占用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-008",
+          "function": "時區處理",
+          "priority": "P0",
+          "acceptance_criteria": "UTC 儲存、正確顯示當地時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-009",
+          "function": "取消後釋出時段",
+          "priority": "P0",
+          "acceptance_criteria": "有效取消後重新開放",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-010",
+          "function": "改期原子性",
+          "priority": "P0",
+          "acceptance_criteria": "失敗時不遺失原預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-011",
+          "function": "固定週期預約",
+          "priority": "P1",
+          "acceptance_criteria": "可建立有期限的重複安排",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-012",
+          "function": "多地點排班",
+          "priority": "P1",
+          "acceptance_criteria": "不同地點可設定不同時段",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-013",
+          "function": "Google Calendar 同步",
+          "priority": "P1",
+          "acceptance_criteria": "經授權同步並處理失敗",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-014",
+          "function": "候補保留時段",
+          "priority": "P1",
+          "acceptance_criteria": "保留到期後自動釋出",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-015",
+          "function": "多資源聯合排程",
+          "priority": "P2",
+          "acceptance_criteria": "同時檢查人員、場地與設備",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "SCH-016",
+          "function": "多方共同空閒時間",
+          "priority": "P2",
+          "acceptance_criteria": "在取得授權後推薦時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-04",
+      "title": "Booking & Service Request",
+      "user_story": "需求方自主預約，供給方依服務設定直接確認或人工審核。",
+      "requirements": [
+        {
+          "id": "BKG-001",
+          "function": "直接預約",
+          "priority": "P0",
+          "acceptance_criteria": "符合規則即可建立預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-002",
+          "function": "申請式預約",
+          "priority": "P0",
+          "acceptance_criteria": "建立待確認申請",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-003",
+          "function": "接受預約",
+          "priority": "P0",
+          "acceptance_criteria": "狀態正確更新",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-004",
+          "function": "拒絕預約",
+          "priority": "P0",
+          "acceptance_criteria": "保留原因及異動紀錄",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-005",
+          "function": "需求方取消",
+          "priority": "P0",
+          "acceptance_criteria": "正確套用取消規則",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-006",
+          "function": "供給方取消",
+          "priority": "P0",
+          "acceptance_criteria": "需求方可查看取消資訊",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-007",
+          "function": "雙方改期",
+          "priority": "P0",
+          "acceptance_criteria": "避免重複或遺失預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-008",
+          "function": "手動新增預約",
+          "priority": "P0",
+          "acceptance_criteria": "供給方可加入既有安排",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-009",
+          "function": "預約詳情",
+          "priority": "P0",
+          "acceptance_criteria": "雙方看到一致資訊",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-010",
+          "function": "預約歷史",
+          "priority": "P0",
+          "acceptance_criteria": "可查看歷史與異動",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-011",
+          "function": "預約到期",
+          "priority": "P0",
+          "acceptance_criteria": "待確認申請可依規則過期",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-012",
+          "function": "候補預約",
+          "priority": "P1",
+          "acceptance_criteria": "可等待時段釋出",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-013",
+          "function": "批次預約",
+          "priority": "P1",
+          "acceptance_criteria": "可一次安排多次服務",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "BKG-014",
+          "function": "團體預約",
+          "priority": "P2",
+          "acceptance_criteria": "可管理多名參與者",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-05",
+      "title": "Demand Workspace",
+      "user_story": "需求方在同一處管理與不同供給方的服務安排。",
+      "requirements": [
+        {
+          "id": "DEM-001",
+          "function": "我的預約",
+          "priority": "P0",
+          "acceptance_criteria": "可查看未來與歷史預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-002",
+          "function": "預約狀態",
+          "priority": "P0",
+          "acceptance_criteria": "明確顯示待確認、已確認等",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-003",
+          "function": "自助改期及取消",
+          "priority": "P0",
+          "acceptance_criteria": "遵守服務政策",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-004",
+          "function": "常用供給方",
+          "priority": "P0",
+          "acceptance_criteria": "可查看曾使用的供給方",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-005",
+          "function": "快速再次預約",
+          "priority": "P1",
+          "acceptance_criteria": "不必重複輸入所有資訊",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-006",
+          "function": "我的套票",
+          "priority": "P1",
+          "acceptance_criteria": "可查看剩餘權益",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-007",
+          "function": "個人時間偏好",
+          "priority": "P1",
+          "acceptance_criteria": "可設定偏好星期與時段",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-008",
+          "function": "候補中心",
+          "priority": "P1",
+          "acceptance_criteria": "查看候補狀態及邀請",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-009",
+          "function": "跨供給方日程",
+          "priority": "P1",
+          "acceptance_criteria": "統一管理 KOVEYA 預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-010",
+          "function": "供給方邀請",
+          "priority": "P2",
+          "acceptance_criteria": "可分享邀請連結",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-011",
+          "function": "服務搜尋與收藏",
+          "priority": "P2",
+          "acceptance_criteria": "搜尋及保存感興趣的服務",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-012",
+          "function": "服務評價",
+          "priority": "P2",
+          "acceptance_criteria": "只允許符合條件的真實互動評價",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "DEM-013",
+          "function": "自然語言需求搜尋",
+          "priority": "P3",
+          "acceptance_criteria": "將自然語言轉換成結構化條件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-06",
+      "title": "Client Relationship Management",
+      "user_story": "供給方持續管理既有客戶與服務關係。",
+      "requirements": [
+        {
+          "id": "CRM-001",
+          "function": "客戶清單",
+          "priority": "P0",
+          "acceptance_criteria": "顯示與供給方有合法關聯的客戶",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-002",
+          "function": "客戶預約歷史",
+          "priority": "P0",
+          "acceptance_criteria": "可查看在該供給方的預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-003",
+          "function": "手動新增客戶",
+          "priority": "P0",
+          "acceptance_criteria": "可建立必要聯絡紀錄",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-004",
+          "function": "客戶聯絡資訊",
+          "priority": "P0",
+          "acceptance_criteria": "依授權及用途管理",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-005",
+          "function": "客戶備註",
+          "priority": "P1",
+          "acceptance_criteria": "僅授權人員可查看",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-006",
+          "function": "客戶標籤",
+          "priority": "P1",
+          "acceptance_criteria": "可分類客戶",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-007",
+          "function": "套票及方案紀錄",
+          "priority": "P1",
+          "acceptance_criteria": "查看客戶已購買權益",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-008",
+          "function": "續購提醒",
+          "priority": "P1",
+          "acceptance_criteria": "依客戶同意及通知政策執行",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-009",
+          "function": "客戶分群",
+          "priority": "P2",
+          "acceptance_criteria": "根據合法可用資料分群",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-010",
+          "function": "回訪流程",
+          "priority": "P2",
+          "acceptance_criteria": "建立自動化但可控的提醒",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-011",
+          "function": "客戶資料匯出",
+          "priority": "P1",
+          "acceptance_criteria": "匯出有權管理的資料",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "CRM-012",
+          "function": "營運分析",
+          "priority": "P1",
+          "acceptance_criteria": "查看回購及留存情況",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-07",
+      "title": "Packages, Memberships & Entitlements",
+      "user_story": "雙方查詢一致的剩餘服務權益與期限。",
+      "requirements": [
+        {
+          "id": "PKG-001",
+          "function": "建立套票",
+          "priority": "P1",
+          "acceptance_criteria": "可設定價格、次數及期限",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-002",
+          "function": "分配套票給客戶",
+          "priority": "P1",
+          "acceptance_criteria": "產生服務使用權益",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-003",
+          "function": "剩餘次數",
+          "priority": "P1",
+          "acceptance_criteria": "雙方查看一致數字",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-004",
+          "function": "完成後扣次",
+          "priority": "P1",
+          "acceptance_criteria": "符合規則後只能扣一次",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-005",
+          "function": "退還次數",
+          "priority": "P1",
+          "acceptance_criteria": "需要原因及紀錄",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-006",
+          "function": "人工調整",
+          "priority": "P1",
+          "acceptance_criteria": "記錄操作人、時間、原因",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-007",
+          "function": "到期提醒",
+          "priority": "P1",
+          "acceptance_criteria": "不超出授權通知範圍",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-008",
+          "function": "固定週期方案",
+          "priority": "P1",
+          "acceptance_criteria": "可對應重複預約",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-009",
+          "function": "定期訂閱扣款",
+          "priority": "P2",
+          "acceptance_criteria": "依適用金流及法規",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PKG-010",
+          "function": "多服務共用方案",
+          "priority": "P2",
+          "acceptance_criteria": "按權益規則使用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-08",
+      "title": "Notifications & Communication",
+      "user_story": "雙方知道服務狀態變更，通知失敗不影響已提交預約。",
+      "requirements": [
+        {
+          "id": "NTF-001",
+          "function": "預約建立通知",
+          "priority": "P0",
+          "acceptance_criteria": "雙方在網站與 Email 取得預約確認",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-002",
+          "function": "申請待審核通知",
+          "priority": "P0",
+          "acceptance_criteria": "需求方可查看待確認，供給方收到待處理通知",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-003",
+          "function": "預約接受通知",
+          "priority": "P0",
+          "acceptance_criteria": "雙方可查看已確認狀態",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-004",
+          "function": "預約拒絕通知",
+          "priority": "P0",
+          "acceptance_criteria": "需求方取得拒絕通知，供給方已結案",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-005",
+          "function": "需求方取消通知",
+          "priority": "P0",
+          "acceptance_criteria": "雙方可查看取消結果",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-006",
+          "function": "供給方取消通知",
+          "priority": "P0",
+          "acceptance_criteria": "需求方收到重要取消通知",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-007",
+          "function": "改期提案通知",
+          "priority": "P0",
+          "acceptance_criteria": "需回覆的一方收到提案及回覆入口",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-008",
+          "function": "服務提醒",
+          "priority": "P1",
+          "acceptance_criteria": "Email／行事曆依設定提醒",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-009",
+          "function": "候補有空位通知",
+          "priority": "P1",
+          "acceptance_criteria": "需求方可接受邀請，供給方依設定通知",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-010",
+          "function": "方案到期通知",
+          "priority": "P1",
+          "acceptance_criteria": "依偏好提醒需求方及供給方",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-011",
+          "function": "付款成功通知",
+          "priority": "P2",
+          "acceptance_criteria": "Email 收據或確認準確對應付款來源",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-012",
+          "function": "LINE 主動通知",
+          "priority": "P2",
+          "acceptance_criteria": "依官方 API、同意及政策使用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "NTF-013",
+          "function": "WhatsApp 主動通知",
+          "priority": "P2",
+          "acceptance_criteria": "依 Business API、同意及政策使用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-09",
+      "title": "Orders & Payments",
+      "user_story": "履約、訂單與付款分開，初期由供給方直接收款。",
+      "requirements": [
+        {
+          "id": "PAY-001",
+          "function": "記錄服務價格",
+          "priority": "P0",
+          "acceptance_criteria": "保存交易時的價格快照",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-002",
+          "function": "記錄幣別",
+          "priority": "P0",
+          "acceptance_criteria": "每筆交易有明確幣別",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-003",
+          "function": "線下付款方式",
+          "priority": "P0",
+          "acceptance_criteria": "可選現場付款或另行付款",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-004",
+          "function": "付款狀態",
+          "priority": "P1",
+          "acceptance_criteria": "區分未付、待確認、已付",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-005",
+          "function": "人工標記收款",
+          "priority": "P1",
+          "acceptance_criteria": "記錄操作人和時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-006",
+          "function": "外部付款連結",
+          "priority": "P1",
+          "acceptance_criteria": "可連到供給方自行管理的收款頁",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-007",
+          "function": "金流 Webhook",
+          "priority": "P2",
+          "acceptance_criteria": "驗證簽章、去重及更新狀態",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-008",
+          "function": "訂金與全額付款",
+          "priority": "P2",
+          "acceptance_criteria": "遵守服務設定的付款規則",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-009",
+          "function": "退款",
+          "priority": "P2",
+          "acceptance_criteria": "區分申請、處理與實際成功",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-010",
+          "function": "平台訂閱",
+          "priority": "P1",
+          "acceptance_criteria": "KOVEYA 向供給方收取 SaaS 費用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "PAY-011",
+          "function": "平台代收與分帳",
+          "priority": "P3",
+          "acceptance_criteria": "完成法規及金流商可行性審查後開發",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-10",
+      "title": "Business Analytics & Growth",
+      "user_story": "供給方理解完成服務、回購與實際營運表現。",
+      "requirements": [
+        {
+          "id": "ANA-001",
+          "function": "預約數量",
+          "priority": "P1",
+          "acceptance_criteria": "可依日期及狀態統計",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-002",
+          "function": "服務完成率",
+          "priority": "P1",
+          "acceptance_criteria": "依明確狀態計算",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-003",
+          "function": "取消率",
+          "priority": "P1",
+          "acceptance_criteria": "區分需求方與供給方取消",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-004",
+          "function": "重複預約客戶",
+          "priority": "P1",
+          "acceptance_criteria": "不跨未授權組織統計",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-005",
+          "function": "套票續購",
+          "priority": "P1",
+          "acceptance_criteria": "可查看符合定義的續購次數",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-006",
+          "function": "來源連結追蹤",
+          "priority": "P1",
+          "acceptance_criteria": "支援合法取得的 UTM 參數",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-007",
+          "function": "預約轉換漏斗",
+          "priority": "P2",
+          "acceptance_criteria": "明確統計不同階段事件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-008",
+          "function": "候補補位成效",
+          "priority": "P2",
+          "acceptance_criteria": "區分候補邀請與實際完成",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-009",
+          "function": "營收報表",
+          "priority": "P2",
+          "acceptance_criteria": "區分實收、應收及預估",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ANA-010",
+          "function": "經營建議",
+          "priority": "P3",
+          "acceptance_criteria": "基於足夠資料提出可解釋建議",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-11",
+      "title": "Organization & Resource Management",
+      "user_story": "工作室依成員權限管理多人服務及有限資源。",
+      "requirements": [
+        {
+          "id": "ORG-001",
+          "function": "建立組織",
+          "priority": "P2",
+          "acceptance_criteria": "可建立工作室檔案",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-002",
+          "function": "邀請成員",
+          "priority": "P2",
+          "acceptance_criteria": "透過安全邀請加入",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-003",
+          "function": "組織權限",
+          "priority": "P2",
+          "acceptance_criteria": "Owner、Admin、Staff",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-004",
+          "function": "多供給方排程",
+          "priority": "P2",
+          "acceptance_criteria": "各自管理可用時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-005",
+          "function": "組織服務項目",
+          "priority": "P2",
+          "acceptance_criteria": "多人可提供指定服務",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-006",
+          "function": "場地管理",
+          "priority": "P2",
+          "acceptance_criteria": "防止同場地重複占用",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-007",
+          "function": "設備管理",
+          "priority": "P2",
+          "acceptance_criteria": "管理有限資源",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-008",
+          "function": "多據點",
+          "priority": "P3",
+          "acceptance_criteria": "支援不同地點",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-009",
+          "function": "跨組織工作",
+          "priority": "P3",
+          "acceptance_criteria": "經授權可加入多組織",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ORG-010",
+          "function": "組織層級報表",
+          "priority": "P2",
+          "acceptance_criteria": "僅顯示授權業務資料",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-12",
+      "title": "Marketplace, Discovery & Matching",
+      "user_story": "供給密度足夠後，需求方可找到合適服務。",
+      "requirements": [
+        {
+          "id": "MKT-001",
+          "function": "公開搜尋服務",
+          "priority": "P2",
+          "acceptance_criteria": "可依類別搜尋",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-002",
+          "function": "地區篩選",
+          "priority": "P2",
+          "acceptance_criteria": "不需要揭露使用者精確位置",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-003",
+          "function": "價格及時間篩選",
+          "priority": "P2",
+          "acceptance_criteria": "結果符合目前條件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-004",
+          "function": "供給方評價",
+          "priority": "P2",
+          "acceptance_criteria": "具備評價資格及申訴機制",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-005",
+          "function": "服務推薦",
+          "priority": "P3",
+          "acceptance_criteria": "可說明主要推薦依據",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-006",
+          "function": "需求發布",
+          "priority": "P3",
+          "acceptance_criteria": "可發出結構化需求",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-007",
+          "function": "自動需求配對",
+          "priority": "P3",
+          "acceptance_criteria": "遵守時間、地點及服務條件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-008",
+          "function": "平台導流歸因",
+          "priority": "P3",
+          "acceptance_criteria": "清楚區分自帶與平台客戶",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "MKT-009",
+          "function": "首次成交服務費",
+          "priority": "P3",
+          "acceptance_criteria": "完成金流、法規及爭議處理設計",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-13",
+      "title": "Platform Administration",
+      "user_story": "營運人員在最小必要權限及稽核下處理異常。",
+      "requirements": [
+        {
+          "id": "ADM-001",
+          "function": "使用者管理",
+          "priority": "P0",
+          "acceptance_criteria": "可查看必要帳號狀態",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-002",
+          "function": "供給方檔案管理",
+          "priority": "P0",
+          "acceptance_criteria": "可處理不當內容及停權",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-003",
+          "function": "預約異常查詢",
+          "priority": "P0",
+          "acceptance_criteria": "可追蹤錯誤事件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-004",
+          "function": "系統健康狀態",
+          "priority": "P0",
+          "acceptance_criteria": "顯示核心服務狀態",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-005",
+          "function": "稽核紀錄",
+          "priority": "P0",
+          "acceptance_criteria": "記錄重要管理操作",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-006",
+          "function": "通知失敗管理",
+          "priority": "P0",
+          "acceptance_criteria": "可重試或處理失敗通知",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-007",
+          "function": "使用者申訴",
+          "priority": "P1",
+          "acceptance_criteria": "可建立並追蹤案件",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-008",
+          "function": "訂閱管理",
+          "priority": "P1",
+          "acceptance_criteria": "可查看平台訂閱狀態",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-009",
+          "function": "平台分析",
+          "priority": "P1",
+          "acceptance_criteria": "查看活躍供需雙方及服務完成量",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-010",
+          "function": "Feature Flags",
+          "priority": "P1",
+          "acceptance_criteria": "可控制功能開放",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-011",
+          "function": "服務者驗證",
+          "priority": "P2",
+          "acceptance_criteria": "可管理文件、審核與有效期限",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ADM-012",
+          "function": "交易爭議",
+          "priority": "P2",
+          "acceptance_criteria": "可依平台責任範圍處理",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-14",
+      "title": "Group Sessions & Events",
+      "user_story": "供給方管理團課場次、容量及實際參與。",
+      "requirements": [
+        {
+          "id": "EVT-001",
+          "function": "建立活動",
+          "priority": "P2",
+          "acceptance_criteria": "可設定場次與時間",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-002",
+          "function": "名額上限",
+          "priority": "P2",
+          "acceptance_criteria": "不得超賣",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-003",
+          "function": "多人報名",
+          "priority": "P2",
+          "acceptance_criteria": "可設定報名人數",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-004",
+          "function": "候補名單",
+          "priority": "P2",
+          "acceptance_criteria": "名額釋出後可補位",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-005",
+          "function": "最低開課人數",
+          "priority": "P2",
+          "acceptance_criteria": "未達標時依規則處理",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-006",
+          "function": "活動取消",
+          "priority": "P2",
+          "acceptance_criteria": "通知所有有效參與者",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-007",
+          "function": "報到紀錄",
+          "priority": "P2",
+          "acceptance_criteria": "可記錄實際參與",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "EVT-008",
+          "function": "套票抵用",
+          "priority": "P2",
+          "acceptance_criteria": "不重複扣除使用權益",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "PRD-15",
+      "title": "Quote, Proposal & Project Delivery",
+      "user_story": "雙方先同意有版本的服務提案，再追蹤交付及驗收。",
+      "requirements": [
+        {
+          "id": "QTE-001",
+          "function": "建立詢價表單",
+          "priority": "P2",
+          "acceptance_criteria": "可依服務設定必要欄位",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-002",
+          "function": "需求附件",
+          "priority": "P2",
+          "acceptance_criteria": "安全限制檔案格式及大小",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-003",
+          "function": "報價單",
+          "priority": "P2",
+          "acceptance_criteria": "包含價格、幣別、範圍及有效期限",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-004",
+          "function": "提案修訂",
+          "priority": "P2",
+          "acceptance_criteria": "保存每個版本",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-005",
+          "function": "提案接受",
+          "priority": "P2",
+          "acceptance_criteria": "記錄接受者及接受版本",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-006",
+          "function": "專案建立",
+          "priority": "P3",
+          "acceptance_criteria": "依已接受提案建立",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-007",
+          "function": "里程碑",
+          "priority": "P3",
+          "acceptance_criteria": "可設定交付項目與期限",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-008",
+          "function": "需求方驗收",
+          "priority": "P3",
+          "acceptance_criteria": "有明確接受或要求修正流程",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "QTE-009",
+          "function": "專案結案",
+          "priority": "P3",
+          "acceptance_criteria": "保存交付與交易歷史",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    }
+  ]
+}

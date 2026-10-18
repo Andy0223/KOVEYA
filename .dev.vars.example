@@ -1,0 +1,2 @@
+# Email integration will be configured when the identity module is implemented.
+# Never commit real credentials. Local catalog development needs no secrets.

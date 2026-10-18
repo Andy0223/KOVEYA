@@ -1,0 +1,190 @@
+openapi: 3.1.0
+info:
+  title: KOVEYA API
+  version: 0.1.0
+  description: >-
+    Implemented foundation routes only. Authentication, booking writes, and other
+    planned endpoints are listed separately under x-koveya-planned-endpoints.
+    This contract does not claim the complete MVP has been implemented.
+servers:
+  - url: /api/v1
+security: []
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check database migration readiness
+      responses:
+        '200':
+          description: Database query succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, requestId]
+                properties:
+                  data:
+                    type: object
+                    required: [status, database, version]
+                    properties:
+                      status: { const: ok }
+                      database: { const: ready }
+                      version: { type: string }
+                  requestId: { type: string }
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /providers/{slug}:
+    get:
+      operationId: getPublicProvider
+      summary: Get a published provider and published services of an active business
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+            maxLength: 80
+      responses:
+        '200':
+          description: Public fields only; unpublished services and private business identifiers excluded
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, requestId]
+                properties:
+                  data: { $ref: '#/components/schemas/PublicProvider' }
+                  requestId: { type: string }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '500': { $ref: '#/components/responses/Error' }
+components:
+  responses:
+    Error:
+      description: Structured error with request identifier; no internal details
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    ServiceUnavailable:
+      description: Database is unavailable or migrations have not been applied
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Error:
+      type: object
+      required: [error, requestId]
+      properties:
+        requestId: { type: string }
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+    PublicProvider:
+      type: object
+      additionalProperties: false
+      required: [publicName, slug, bio, locationLabel, timezone, services]
+      properties:
+        publicName: { type: string }
+        slug: { type: string }
+        bio: { type: string }
+        locationLabel: { type: string }
+        timezone: { type: string, examples: [Asia/Taipei] }
+        services:
+          type: array
+          items: { $ref: '#/components/schemas/PublicService' }
+    PublicService:
+      type: object
+      additionalProperties: false
+      required: [id, name, description, mode, delivery, locationLabel, timezone, cancellationPolicy, offerings]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        mode: { enum: [INSTANT, REQUEST] }
+        delivery: { enum: [ONLINE, IN_PERSON, AT_CLIENT] }
+        locationLabel: { type: string }
+        timezone: { type: string }
+        cancellationPolicy: { type: string }
+        offerings:
+          type: array
+          items: { $ref: '#/components/schemas/PublicOffering' }
+    PublicOffering:
+      type: object
+      additionalProperties: false
+      required: [id, durationMinutes, pricingType, priceMinor, currency]
+      properties:
+        id: { type: string }
+        durationMinutes: { type: integer, minimum: 15, multipleOf: 15 }
+        pricingType: { enum: [FIXED, FREE, QUOTE] }
+        priceMinor: { type: [integer, 'null'], minimum: 0 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+x-koveya-planned-endpoints:
+  authentication:
+    - POST /auth/email/start
+    - POST /auth/email/verify
+    - POST /auth/logout
+    - GET /me
+    - PATCH /me
+  providers-and-services:
+    - POST /organizations
+    - PATCH /organizations/:id
+    - POST /services
+    - PATCH /services/:id
+    - POST /services/:id/publish
+    - POST /services/:id/unpublish
+    - GET /services/:id
+  scheduling-and-bookings:
+    - GET /services/:id/availability
+    - PUT /services/:id/availability-rules
+    - POST /availability-exceptions
+    - POST /bookings
+    - GET /bookings
+    - GET /bookings/:id
+    - POST /bookings/:id/cancel
+    - POST /bookings/:id/reschedule-requests
+    - POST /reschedule-requests/:id/accept
+    - POST /reschedule-requests/:id/reject
+    - POST /booking-requests
+    - POST /booking-requests/:id/accept
+    - POST /booking-requests/:id/reject
+  clients-and-packages:
+    - GET /clients
+    - GET /clients/:id
+    - POST /clients
+    - POST /packages
+    - POST /entitlements
+    - GET /entitlements/:id/ledger
+    - POST /entitlements/:id/adjustments
+  notifications-and-integrations:
+    - GET /notifications
+    - PATCH /notification-preferences
+    - POST /integrations/:provider/connect
+    - DELETE /integrations/:provider/:id
+    - POST /webhooks/:provider
+  additions-under-design:
+    - POST /bookings/:id/complete
+    - POST /bookings/:id/no-show
+    - POST /booking-requests/:id/withdraw
+    - POST /booking-requests/:id/counter-proposals
+    - POST /privacy-requests
+x-koveya-planned-error-codes:
+  - AUTH_REQUIRED
+  - FORBIDDEN
+  - VALIDATION_ERROR
+  - SLOT_UNAVAILABLE
+  - BOOKING_CONFLICT
+  - STATE_CONFLICT
+  - POLICY_VIOLATION
+  - RATE_LIMITED
+  - EXTERNAL_SERVICE_ERROR
+x-koveya-write-requirements:
+  - Server-side identity, tenant scope, permissions, state and policy checks
+  - Input validation and rate limiting before external side effects
+  - Idempotency-Key for important transactional side effects
+  - Request hash conflict if the same key is reused for different input
+  - Origin and CSRF protection when cookie authentication is introduced
+  - Database constraints and atomic booking, allocation, history and outbox writes
