@@ -105,3 +105,11 @@ Founder 已完成真實 Email 登入；Computer Use 建立並發布明確標示�
 發現並補上 owner 不能申請自己服務的前端提示，以及免費預約詳情無須付款文案。新增兩個不同帳號的免費申請 → 接受 → 雙方改期 → 取消回歸案例；本機 103 項單元與 50 項桌面／模擬手機整合通過。雲端雙帳號流程尚未驗收，沒有把手動預約算作客戶申請審核通過。
 
 0.5.2 已部署試用 Worker（版本 `f7b618e7-67d1-470f-ad27-5ab92a018d92`）。Chrome 複驗已取消預約詳情顯示免費無須付款與 v0.5.2；三筆 QA 通知全部標已讀，未讀回到 0，保留歷史不刪除。此次不新增付費資源或寄送客戶訊息。
+
+## 2026-10-19 — Google 登入 v0.6.0（雲端設定中）
+
+新增 GIS 官方按鈕、RS256／JWKS 後端驗證、10 分鐘 nonce／瀏覽器綁定、明確的既有 Session 連結、交易內 Session 輪替與防重放。既有 Email 身分與品牌保留；公開 Google Client ID 未設定前不開放入口。新增 0007 migration 與 Drizzle snapshot，無新增付費服務。
+
+本機 116 項 Vitest、54 項桌面／模擬手機 Playwright 通過，型別／173 條需求追溯／OpenAPI／build 通過。Google 測試使用本機真實 RS256 簽章及 UI adapter，尚未完成 Google 雲端真實帳號登入。一次本機登出後舊 Session 查詢又出現 Miniflare HTML 500（非應用程式 JSON），完整重跑通過，既有 runtime 偶發問題仍未定根因，沒有放寬斷言或加自動重試。
+
+Google Cloud 產品帳號已在畫面完成首次條款步驟，建立獨立 KOVEYA 專案 `skilled-clover-512110-j1`，未啟用計費／免費試用。品牌名稱／聯絡信箱／External 已填好，目前停在 Google API 使用者資料政策，等待 Founder 當下確認；OAuth Client ID 尚未建立，未部署 Google 設定。後續見 [設定與驗收](../04_OPERATIONS/Google_Login.md)。

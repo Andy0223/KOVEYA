@@ -5,6 +5,7 @@ export type Environment = {
     LOCAL_EMAIL_PREVIEW?: string;
     RESEND_API_KEY?: string;
     EMAIL_FROM?: string;
+    GOOGLE_CLIENT_ID?: string;
   };
   Variables: { requestId: string; userId: string; sessionHash: string };
 };

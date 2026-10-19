@@ -1220,3 +1220,7 @@ button[aria-busy="true"]:disabled {
 .contact-value {
   overflow-wrap: anywhere;
 }
+
+.google-sign-in {
+  margin-block: 24px;
+}

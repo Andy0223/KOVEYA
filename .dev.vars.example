@@ -6,3 +6,6 @@ LOCAL_EMAIL_PREVIEW=true
 # APP_ORIGIN=https://your-domain.example
 # RESEND_API_KEY=your-secret
 # EMAIL_FROM=KOVEYA <login@your-verified-domain.example>
+
+# Public Google OAuth Web application Client ID (not a client secret).
+# GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com

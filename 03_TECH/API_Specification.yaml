@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: KOVEYA API
-  version: 0.5.0
+  version: 0.6.0
   description: Identity, individual business and catalog, scheduling, bookings and requests, in-app
     notifications, tenant-scoped contacts, provider-recorded bookings, previous providers and
     authenticated ICS export. Transaction email, platform administration and production verification
@@ -78,7 +78,7 @@ paths:
   /auth/config:
     get:
       operationId: getAuthConfig
-      summary: Discover email delivery mode
+      summary: Discover Email delivery mode and public Google client ID
       security: []
       responses:
         "200":
@@ -97,7 +97,10 @@ paths:
                     additionalProperties: false
                     required:
                       - delivery
+                      - googleClientId
                     properties:
+                      googleClientId:
+                        type: [string, "null"]
                       delivery:
                         enum:
                           - local
@@ -112,6 +115,86 @@ paths:
         "403":
           $ref: "#/components/responses/Error"
         "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /auth/google/start:
+    post:
+      operationId: startGoogleSignIn
+      summary: Create a browser-bound one-use Google nonce; linking requires an
+        existing session
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                returnTo:
+                  type: string
+                  default: /app
+                locale:
+                  enum:
+                    - en
+                    - zh-TW
+                  default: zh-TW
+                link:
+                  type: boolean
+                  default: false
+              required: []
+      responses:
+        "200":
+          description: Envelope data contains nonce; HttpOnly browser cookie is set.
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /auth/google/verify:
+    post:
+      operationId: verifyGoogleSignIn
+      summary: Verify RS256 Google ID token, consume nonce atomically, and rotate
+        session; no email-only account merge
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                credential:
+                  type: string
+                  maxLength: 12000
+              required:
+                - credential
+      responses:
+        "200":
+          description: Envelope data contains safe returnTo; HttpOnly session cookie
+            replaces old session.
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
           $ref: "#/components/responses/Error"
         "409":
           $ref: "#/components/responses/Error"

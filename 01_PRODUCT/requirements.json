@@ -76,8 +76,9 @@
           "function": "Google Login",
           "priority": "P1",
           "acceptance_criteria": "可登入並安全連結既有帳號",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.6 Google GIS nonce/browser binding, RS256/JWKS issuer/audience/expiry/email verification, explicit existing-session linking, session rotation and transaction rollback tested locally. Live OAuth client configuration and two-account cloud acceptance remain pending."
         },
         {
           "id": "ID-009",
@@ -92,8 +93,9 @@
           "function": "多登入方式連結",
           "priority": "P1",
           "acceptance_criteria": "不產生未經驗證的帳號合併",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.6 Google GIS nonce/browser binding, RS256/JWKS issuer/audience/expiry/email verification, explicit existing-session linking, session rotation and transaction rollback tested locally. Live OAuth client configuration and two-account cloud acceptance remain pending."
         },
         {
           "id": "ID-011",

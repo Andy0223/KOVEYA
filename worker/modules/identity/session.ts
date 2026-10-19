@@ -8,13 +8,16 @@ import { limit } from "./rate-limit";
 export const SESSION_SECONDS = 7 * 24 * 60 * 60;
 export const LOGIN_SECONDS = 10 * 60;
 
-function cookieName(c: Context<Environment>, type: "session" | "login") {
+function cookieName(
+  c: Context<Environment>,
+  type: "session" | "login" | "google",
+) {
   return `${new URL(c.req.url).protocol === "https:" ? "__Host-" : ""}koveya_${type}`;
 }
 
 export function writeCookie(
   c: Context<Environment>,
-  type: "session" | "login",
+  type: "session" | "login" | "google",
   value: string,
   maxAge: number,
 ) {
@@ -27,12 +30,15 @@ export function writeCookie(
   });
 }
 
-export function readCookie(c: Context<Environment>, type: "session" | "login") {
+export function readCookie(
+  c: Context<Environment>,
+  type: "session" | "login" | "google",
+) {
   return getCookie(c, cookieName(c, type));
 }
 export function clearCookie(
   c: Context<Environment>,
-  type: "session" | "login",
+  type: "session" | "login" | "google",
 ) {
   deleteCookie(c, cookieName(c, type), {
     path: "/",

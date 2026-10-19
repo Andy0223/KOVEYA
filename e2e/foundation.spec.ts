@@ -18,9 +18,7 @@ test("home switches language and navigates to workspace introductions", async ({
     .getByRole("link", { name: "KOVEYA Business" })
     .click();
   await expect(
-    page.getByText("Sign in with email", {
-      exact: false,
-    }),
+    page.getByRole("link", { name: "Sign in", exact: true }),
   ).toBeVisible();
 });
 

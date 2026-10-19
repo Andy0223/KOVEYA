@@ -54,9 +54,9 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | ID-005 | Supply Workspace | P0 | 可建立並管理自己的服務 | implemented / local_verified |
 | ID-006 | 角色切換 | P0 | 不須重新登入 | implemented / local_verified |
 | ID-007 | Session 管理 | P0 | 可登出、撤銷登入工作階段 | implemented / local_verified |
-| ID-008 | Google Login | P1 | 可登入並安全連結既有帳號 | not_started / not_verified |
+| ID-008 | Google Login | P1 | 可登入並安全連結既有帳號 | implemented / local_verified |
 | ID-009 | LINE Login | P1 | 台灣等適用市場可使用 | not_started / not_verified |
-| ID-010 | 多登入方式連結 | P1 | 不產生未經驗證的帳號合併 | not_started / not_verified |
+| ID-010 | 多登入方式連結 | P1 | 不產生未經驗證的帳號合併 | implemented / local_verified |
 | ID-011 | Apple Login | P2 | 視使用者需求導入 | not_started / not_verified |
 | ID-012 | 帳號資料匯出及刪除 | P0 | 可提交申請，依明確流程處理 | partial / not_verified |
 

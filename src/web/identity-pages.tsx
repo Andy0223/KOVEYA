@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { Locale } from "../shared/account";
+import { GoogleSignIn } from "./google-sign-in";
 import { api, errorText, useAccount } from "./account";
 
 export function SignInPage({ locale }: { locale: Locale }) {
@@ -12,11 +13,15 @@ export function SignInPage({ locale }: { locale: Locale }) {
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const [delivery, setDelivery] = useState("loading");
+  const [googleClientId, setGoogleClientId] = useState<string | null>(null);
   const [sent, setSent] = useState<{ localPreviewUrl?: string } | null>(null);
-  const { account } = useAccount();
+  const { account, state: accountState } = useAccount();
   useEffect(() => {
-    api<{ delivery: string }>("/auth/config")
-      .then((value) => setDelivery(value.delivery))
+    api<{ delivery: string; googleClientId?: string | null }>("/auth/config")
+      .then((value) => {
+        setDelivery(value.delivery);
+        setGoogleClientId(value.googleClientId ?? null);
+      })
       .catch(() => setDelivery("unavailable"));
   }, []);
   async function submit(event: FormEvent) {
@@ -41,11 +46,15 @@ export function SignInPage({ locale }: { locale: Locale }) {
     <section className="auth-page page-width">
       <div className="auth-card">
         <p className="eyebrow">WELCOME TO KOVEYA</p>
-        <h1>{en ? "A link. And you’re in." : "一封信，開始連結。"}</h1>
+        <h1>{en ? "Welcome back." : "歡迎回到 KOVEYA。"}</h1>
         <p>
-          {en
-            ? "No password to remember. We’ll send a one-time link that expires in 10 minutes."
-            : "不必記住密碼。我們會寄送一個有效 10 分鐘、僅能使用一次的驗證連結。"}
+          {googleClientId
+            ? en
+              ? "Continue with Google, or receive a one-time email link. No password to remember."
+              : "使用 Google 登入，或透過 Email 收取一次性驗證連結，不必記住密碼。"
+            : en
+              ? "No password to remember. We’ll send a one-time link that expires in 10 minutes."
+              : "不必記住密碼。我們會寄送一個有效 10 分鐘、僅能使用一次的驗證連結。"}
         </p>
         {account && (
           <p className="notice">
@@ -54,6 +63,13 @@ export function SignInPage({ locale }: { locale: Locale }) {
               {en ? "Go to workspace" : "前往工作台"}
             </button>
           </p>
+        )}
+        {googleClientId && accountState === "ready" && (
+          <GoogleSignIn
+            clientId={googleClientId}
+            locale={locale}
+            returnTo={params.get("returnTo") ?? "/app"}
+          />
         )}
         {!sent ? (
           <form onSubmit={submit} className="stack-form">
@@ -337,6 +353,17 @@ export function AccountSettings({ locale }: { locale: Locale }) {
             ))}
           </ul>
         )}
+      </section>
+      <section className="panel">
+        <h2>{en ? "Google sign-in" : "Google 登入"}</h2>
+        <p>
+          {en
+            ? "Sign in to your existing account before linking Google with the same email."
+            : "先登入既有帳號，再連結相同 Email 的 Google 帳號。"}
+        </p>
+        <Link className="text-link" to="/sign-in?returnTo=/app/profile">
+          {en ? "Manage Google sign-in" : "設定 Google 登入"} →
+        </Link>
       </section>
       <section className="panel">
         <h2>{en ? "Active sessions" : "登入工作階段"}</h2>

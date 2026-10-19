@@ -32,7 +32,12 @@ export const identities = sqliteTable(
     provider: text("provider").notNull(),
     subject: text("provider_subject").notNull(),
   },
-  (t) => [uniqueIndex("identities_subject_uq").on(t.provider, t.subject)],
+  (t) => [
+    uniqueIndex("identities_subject_uq").on(t.provider, t.subject),
+    uniqueIndex("identities_google_user_uq")
+      .on(t.userId)
+      .where(sql`${t.provider} = 'google'`),
+  ],
 );
 
 export const sessions = sqliteTable("sessions", {
@@ -570,4 +575,19 @@ export const notifications = sqliteTable(
       sql`${t.entityType} IN ('BOOKING','REQUEST')`,
     ),
   ],
+);
+
+// A one-use GIS nonce is bound to the initiating browser and, for linking, its session.
+export const googleChallenges = sqliteTable(
+  "google_challenges",
+  {
+    nonceHash: text("nonce_hash").primaryKey(),
+    browserHash: text("browser_hash").notNull(),
+    returnTo: text("return_to").notNull(),
+    locale: text("locale").notNull(),
+    linkSessionHash: text("link_session_hash"),
+    expiresAt: integer("expires_at").notNull(),
+    consumedNonce: text("consumed_nonce"),
+  },
+  (t) => [index("google_challenges_expiry_idx").on(t.expiresAt)],
 );

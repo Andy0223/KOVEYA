@@ -48,7 +48,7 @@ app.get("/api/v1/health", async (c) => {
   try {
     await c.env.DB.prepare("SELECT id FROM organizations LIMIT 1").first();
     return c.json({
-      data: { status: "ok", database: "ready", version: "0.5.2" },
+      data: { status: "ok", database: "ready", version: "0.6.0" },
       requestId: c.get("requestId"),
     });
   } catch {

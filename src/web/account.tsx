@@ -84,7 +84,7 @@ export function AccountGate({
           className="button primary"
           to={`/sign-in?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
         >
-          {en ? "Sign in with email" : "使用 Email 登入"}
+          {en ? "Sign in" : "登入帳號"}
         </Link>
       </section>
     );

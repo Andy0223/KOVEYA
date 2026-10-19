@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.6.0 Google Sign-in — 2026-10-19
+
+新增 Google Identity Services 按鈕、後端 RS256／JWKS 驗證、瀏覽器綁定一次性 nonce、明確的既有帳號連結、Session 輪替與原子交易。保留 Email 登入與預約意圖；未設定公開 Client ID 時停用 Google 入口。Google Cloud 條款與 OAuth Client 尚待 Founder 完成，不能宣稱雲端 Google 登入已成功。見 [設定與驗收](../04_OPERATIONS/Google_Login.md)。
+
 ## 0.5.2 Founder Trial Findings — 2026-10-19
 
 雲端實測虛構客戶、手動預約、改期、取消、資源釋出、站內通知與 ICS 下載；修正自己的申請式服務缺少引導，以及免費預約詳情誤顯示付款說明。雙帳號雲端申請流程仍待第二個合法登入渠道；隔離測試已覆蓋。見 [雲端測試紀錄](../05_TESTING/Founder_Cloud_Trial_2026-10-19.md)。

@@ -44,6 +44,18 @@ export async function api<T>(
 }
 
 const messages: Record<string, [string, string]> = {
+  GOOGLE_LOGIN_INVALID: [
+    "Google 驗證已失效或無法確認，請重新載入 Google 登入。",
+    "Google verification failed or expired. Reload Google sign-in.",
+  ],
+  GOOGLE_LINK_REQUIRED: [
+    "此 Email 已有 KOVEYA 帳號。請先使用 Email 登入，再到帳號設定連結 Google。",
+    "This email already has a KOVEYA account. Sign in with email first, then link Google in account settings.",
+  ],
+  GOOGLE_ACCOUNT_CONFLICT: [
+    "請選擇與目前 KOVEYA 帳號相同 Email、且未連結其他帳號的 Google 帳號。",
+    "Choose Google with the same email as your current KOVEYA account, without another account link.",
+  ],
   REQUEST_TIMEOUT: [
     "連線逾時，已停止等待。若剛才正在儲存或預約，操作可能已完成；請先重新整理確認結果，再重試。",
     "The connection timed out. A save or booking may still have completed; refresh to check the result before retrying.",

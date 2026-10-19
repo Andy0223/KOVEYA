@@ -4,6 +4,7 @@ import type { Environment } from "../../environment";
 import { ApiError, appOrigin, body, isLocalPreview, ok } from "../../http";
 import { emailStartInput, locale, timezone } from "../../validation";
 import { hashToken, randomToken } from "./crypto";
+import { googleRoutes } from "./google";
 import { deliverLoginEmail } from "./email";
 import { limit } from "./rate-limit";
 import {
@@ -17,9 +18,11 @@ import {
 } from "./session";
 
 export const identityRoutes = new Hono<Environment>();
+identityRoutes.route("/", googleRoutes);
 
 identityRoutes.get("/auth/config", (c) =>
   ok(c, {
+    googleClientId: c.env.GOOGLE_CLIENT_ID || null,
     delivery: isLocalPreview(c)
       ? "local"
       : c.env.RESEND_API_KEY && c.env.EMAIL_FROM && c.env.APP_ORIGIN

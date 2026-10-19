@@ -552,7 +552,7 @@ function App() {
           KOVEYA<span>↗</span>
         </Link>
         <p>{t.footer}</p>
-        <span className="preview-tag">{t.preview} · v0.5.2</span>
+        <span className="preview-tag">{t.preview} · v0.6.0</span>
       </footer>
     </>
   );
