@@ -73,3 +73,11 @@ E2E 已改為每次獨立 D1、執行正式 build；測試啟動先確認本機�
 驗證：100 項 Vitest、38 項桌面／模擬手機 Playwright、TypeScript、173 條需求／文件連結／OpenAPI 與正式 build 通過。新增手動／自助預約 100 請求競爭僅一筆成功、客戶與 Outbox 失敗回滾、改期失敗保留原安排、Email 不連結帳號、跨租戶拒絕、ICS 私人權限／注入／版本與瀏覽器實際下載。已檢視桌面客戶與手機手動預約截圖，320px 無橫向溢出。
 
 剩餘：交易 Email 與正式寄送、品牌圖片、平台管理、隱私案件實際處理、第三方日曆匯入驗證、正式 Cloudflare 部署與 Cron、備份復原、實體手機及獨立 Beta 審查。上述測試使用獨立本機 D1 與虛構帳號，完整 P0 及正式上線門檻尚未全部完成。
+
+## 2026-10-19 — Founder 試用部署（驗收中）
+
+已以 Founder 的 Cloudflare 帳號授權，建立 workers.dev 子網域、獨立 APAC D1 `koveya-trial`，套用全部 7 次 migration；雲端 users 為 0、foreign_key_check 無錯誤，沒有匯入 demo seed。以 `CLOUDFLARE_ENV=trial` build，部署 Worker `koveya-trial` 及五分鐘 Cron 設定，版本 `0279d148-059d-47fa-b0c4-b01f6a297fb7`。
+
+網址 `https://koveya-trial.koveya-test.workers.dev`。本機驗證入口在雲端明確停用；Resend Secret 待帳號擁有者設定，不讀取或記錄金鑰。未設定前不能登入，沒有執行真實寄信。
+
+初次檢查：Cloudflare API 回報 workers.dev 已啟用，HTTP health 回報資料庫 ready／0.5.0，但 HTTPS 出現 TLS handshake failure。原因尚未確認，不將上傳成功當成 HTTPS 可用證據，不引導使用者透過 HTTP 登入。後續須重新確認 HTTPS、深層路由／API 404、Secret、同瀏覽器登入、Founder 操作與正式 Cron；備份復原及完整 Beta 驗收仍未完成。

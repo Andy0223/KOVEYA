@@ -17,4 +17,27 @@
   ],
   "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": true },
+  "env": {
+    "trial": {
+      "name": "koveya-trial",
+      "account_id": "c7cae8c52b445b8f6cc319dc2eb231a4",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "APP_ORIGIN": "https://koveya-trial.koveya-test.workers.dev",
+        "EMAIL_FROM": "KOVEYA <onboarding@resend.dev>",
+        "LOCAL_EMAIL_PREVIEW": "false",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "koveya-trial",
+          "database_id": "f5681220-c0ff-4603-a51e-423dfaa0f68f",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "triggers": { "crons": ["*/5 * * * *"] },
+      "observability": { "enabled": true },
+    },
+  },
 }

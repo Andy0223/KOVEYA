@@ -25,7 +25,7 @@ npm run dev
 
 如已有 `.dev.vars`，請編輯旗標而非直接覆寫。所有私人寫入必須 JSON 並提供正確 Origin；前端瀏覽器會自動設定。
 
-## 正式部署前置（尚未執行）
+## 正式部署前置（production 尚未執行）
 
 建立各自的 staging／production D1，替換全零 database_id，設置真正網域與 secrets；加入 Email、rate limit、監控、備份與回復演練。禁止把 demo seed 套入 production。資料庫及 secrets 必須按環境隔離。
 
@@ -42,3 +42,25 @@ Worker 預設匯出含 fetch 與 scheduled handler；wrangler.jsonc 設定每五
 本機開啟通知中心或 GET /api/v1/notifications 也會處理一批，無須公開未驗證的 Cron HTTP 入口。正式 Cron 需部署到正確環境並實測；目前只有 scheduled handler 的本機測試，沒有正式雲端證據。
 
 站內通知失敗以 30 秒開始指數退避，最多五次；失敗原因與下次嘗試時間保留在 Outbox。終止失敗後需日後管理介面或授權營運程序處理，不能無限重送。此版本不寄交易 Email。
+
+## Founder 雲端試用環境 — 2026-10-19
+
+Wrangler `trial` 環境使用獨立 Worker `koveya-trial`、APAC D1 `koveya-trial`，不使用本機資料庫或 production。資料庫由 migration 建立，不套用 demo seed。網站網址為 `https://koveya-trial.koveya-test.workers.dev`。
+
+```sh
+npx wrangler d1 migrations apply DB --remote --env trial
+CLOUDFLARE_ENV=trial npm run build
+npx wrangler deploy --config dist/koveya/wrangler.json
+```
+
+環境選擇必須在 Vite build 時完成；部署明確指向該次輸出設定，避免把本機全零 D1 設定部署到雲端。見 [Cloudflare 環境說明](https://developers.cloudflare.com/workers/vite-plugin/reference/cloudflare-environments/)。禁止直接對整個 dist 建立公開靜態網站。
+
+`APP_ORIGIN` 固定為上述 HTTPS origin，`LOCAL_EMAIL_PREVIEW=false`，`EMAIL_FROM=KOVEYA <onboarding@resend.dev>`。Resend 金鑰由帳號擁有者在 Worker 的 Settings → Variables and Secrets 新增 **Secret** `RESEND_API_KEY` 並儲存／部署，不提交 repo，也不貼在對話。金鑰建議命名 KOVEYA Trial，使用 Sending access。亦可在本機由使用者自行執行隱藏輸入提示：
+
+```sh
+npx wrangler secret put RESEND_API_KEY --env trial --config wrangler.jsonc
+```
+
+沒有自有寄件網域時，Resend 僅寄給其註冊信箱。現階段只有 Founder 試用；寄信、登入與業務操作仍需逐項雲端驗證，不能把 Worker 上傳成功視為可登入或正式 Beta 驗收。[Resend 測試寄件限制](https://resend.com/docs/knowledge-base/403-error-resend-dev-domain)
+
+首次部署後檢查 health、auth/config、深層網址與 API 404；金鑰設定後由 Founder 在同一瀏覽器索取並確認登入信，再建立自己的品牌與服務。備份復原與正式 Cron 執行證據另行記錄，不以 migration 成功取代。
