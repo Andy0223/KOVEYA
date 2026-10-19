@@ -43,6 +43,7 @@ export async function write(
 export async function fixture(
   owner: APIRequestContext,
   mode: "INSTANT" | "REQUEST" = "INSTANT",
+  pricingType: "FIXED" | "FREE" = "FIXED",
 ) {
   const slug = `booking-${crypto.randomUUID()}`;
   expect(
@@ -86,8 +87,8 @@ export async function fixture(
     locationLabel: "Online meeting",
     timezone: "Asia/Taipei",
     durationMinutes: 60,
-    pricingType: "FIXED",
-    priceMinor: 150000,
+    pricingType,
+    priceMinor: pricingType === "FREE" ? 0 : 150000,
     currency: "TWD",
     cancellationNoticeMinutes: 1440,
     cancellationPolicy: "Cancel at least 24 hours before the session.",

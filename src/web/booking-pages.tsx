@@ -222,7 +222,9 @@ export function BookingPage({ locale }: { locale: Locale }) {
     [attempt, setAttempt] = useState(0);
   const key = useOperationKey(),
     service = provider?.services.find((s) => s.id === id),
-    offering = service?.offerings[0];
+    offering = service?.offerings[0],
+    ownRequest =
+      service?.mode === "REQUEST" && account?.business?.slug === slug;
   const date = search.get("date") ?? (service ? today(service.timezone) : ""),
     raw = search.get("start"),
     timestamp = Number(raw),
@@ -265,6 +267,7 @@ export function BookingPage({ locale }: { locale: Locale }) {
     e.preventDefault();
     if (
       busy ||
+      ownRequest ||
       !service ||
       !offering ||
       selected === null ||
@@ -365,6 +368,16 @@ export function BookingPage({ locale }: { locale: Locale }) {
                     `/services/${id}/availability?offeringId=${offering.id}&date=${date}`
                   }
                 />
+                {ownRequest && (
+                  <p className="notice">
+                    {en
+                      ? "You cannot submit a booking request for your own service. Use a different customer account, or record an agreed client booking in your business workspace."
+                      : "這是你自己的服務，不能以同一帳號提出預約申請。請使用另一個客戶帳號，或在供給方工作台為客戶手動新增預約。"}{" "}
+                    <Link to="/business/bookings/new">
+                      {en ? "Record a client booking" : "手動新增預約"} →
+                    </Link>
+                  </p>
+                )}
               </div>
               <div className="panel">
                 <h2>{en ? "Before you confirm" : "確認前，請先閱讀"}</h2>
@@ -420,7 +433,11 @@ export function BookingPage({ locale }: { locale: Locale }) {
                     aria-busy={busy}
                     aria-describedby="booking-submit-help"
                     disabled={
-                      busy || selected === null || !slotValid || !accepted
+                      busy ||
+                      ownRequest ||
+                      selected === null ||
+                      !slotValid ||
+                      !accepted
                     }
                   >
                     {busy
@@ -441,17 +458,21 @@ export function BookingPage({ locale }: { locale: Locale }) {
                     ? en
                       ? "Submitting your booking. Please wait…"
                       : "正在送出預約，請稍候…"
-                    : !slotValid
+                    : ownRequest
                       ? en
-                        ? "Choose a date and an available time before submitting."
-                        : "請先選擇日期與一個可用時段，才能送出。"
-                      : !accepted
+                        ? "Use another customer account or record a client booking."
+                        : "請使用另一個客戶帳號，或手動新增客戶預約。"
+                      : !slotValid
                         ? en
-                          ? "Review and agree to the service terms before submitting."
-                          : "請閱讀並勾選同意服務條件後送出。"
-                        : en
-                          ? "Your time is selected. You can now submit."
-                          : "已選擇時段，可以送出。"}
+                          ? "Choose a date and an available time before submitting."
+                          : "請先選擇日期與一個可用時段，才能送出。"
+                        : !accepted
+                          ? en
+                            ? "Review and agree to the service terms before submitting."
+                            : "請閱讀並勾選同意服務條件後送出。"
+                          : en
+                            ? "Your time is selected. You can now submit."
+                            : "已選擇時段，可以送出。"}
                 </p>
               </div>
             </>
@@ -676,9 +697,13 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
               )}
             </p>
             <p>
-              {en
-                ? "Payment arranged directly with provider"
-                : "依約定方式直接向供給方付款"}
+              {booking.terms.priceMinor === 0
+                ? en
+                  ? "This service is free. No payment is required."
+                  : "此服務免費，無須付款。"
+                : en
+                  ? "Payment arranged directly with provider"
+                  : "依約定方式直接向供給方付款"}
             </p>
             <p className="dev-note">
               {en ? "Booking reference" : "預約編號"}：{booking.id}
