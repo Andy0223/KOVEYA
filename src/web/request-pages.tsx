@@ -153,6 +153,7 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
     [reason, setReason] = useState(""),
     [date, setDate] = useState(""),
     [selected, setSelected] = useState<number | null>(null),
+    [slotValid, setSlotValid] = useState(false),
     [accepted, setAccepted] = useState(false),
     [refresh, setRefresh] = useState(0),
     key = useOperationKey();
@@ -204,6 +205,7 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
           {en ? "Back to requests" : "返回申請列表"} →
         </Link>
         <button
+          aria-busy={Boolean(busy)}
           className="button secondary"
           disabled={busy}
           onClick={() => {
@@ -297,7 +299,11 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
                   ? "I confirm the service, price, time and policy shown above."
                   : "我確認上述服務、價格、時間與政策。"}
               </label>
-              <button className="button primary" disabled={busy || !accepted}>
+              <button
+                aria-busy={Boolean(busy)}
+                className="button primary"
+                disabled={busy || !accepted}
+              >
                 {en ? "Accept and confirm booking" : "接受並確認預約"}
               </button>
             </form>
@@ -307,7 +313,7 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
               className="panel stack-form"
               onSubmit={(e) => {
                 e.preventDefault();
-                if (selected !== null)
+                if (!busy && slotValid && selected !== null)
                   void action("counter-proposals", { startsAt: selected });
               }}
             >
@@ -323,14 +329,16 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
                 date={date || today(item.terms.timezone)}
                 onDate={setDate}
                 selected={selected}
+                onValidityChange={setSlotValid}
                 onSelect={setSelected}
                 endpoint={(d) =>
                   `/booking-requests/${id}/availability?date=${d}`
                 }
               />
               <button
+                aria-busy={Boolean(busy)}
                 className="button secondary"
-                disabled={busy || selected === null}
+                disabled={busy || !slotValid || selected === null}
               >
                 {en ? "Send alternative time" : "送出替代時間"}
               </button>
@@ -373,6 +381,7 @@ export function RequestDetailPage({ locale }: { locale: Locale }) {
                 onChange={(e) => setReason(e.target.value)}
               />
               <button
+                aria-busy={Boolean(busy)}
                 className="button secondary"
                 disabled={busy || !reason.trim()}
               >
@@ -488,6 +497,7 @@ export function NotificationPage({ locale }: { locale: Locale }) {
                 </Link>
                 {n.readAt === null && (
                   <button
+                    aria-busy={busy === n.id}
                     className="button secondary"
                     disabled={busy === n.id}
                     onClick={() => void mark(n.id)}

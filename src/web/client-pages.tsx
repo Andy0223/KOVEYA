@@ -312,7 +312,11 @@ export function ClientDetailPage({ locale }: { locale: Locale }) {
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
-          <button className="button primary" disabled={busy}>
+          <button
+            aria-busy={Boolean(busy)}
+            className="button primary"
+            disabled={busy}
+          >
             {busy
               ? en
                 ? "Saving…"
@@ -427,6 +431,7 @@ export function ManualBookingPage({ locale }: { locale: Locale }) {
     [serviceId, setServiceId] = useState(""),
     [date, setDate] = useState(""),
     [selected, setSelected] = useState<number | null>(null),
+    [slotValid, setSlotValid] = useState(false),
     [confirmed, setConfirmed] = useState(false),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -486,7 +491,15 @@ export function ManualBookingPage({ locale }: { locale: Locale }) {
   const service = services.find((s) => s.id === serviceId);
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!service || !chosen || !confirmed || selected === null) return;
+    if (
+      busy ||
+      !slotValid ||
+      !service ||
+      !chosen ||
+      !confirmed ||
+      selected === null
+    )
+      return;
     setBusy(true);
     setError("");
     const value = {
@@ -640,6 +653,7 @@ export function ManualBookingPage({ locale }: { locale: Locale }) {
                   date={date || today(service.timezone)}
                   onDate={setDate}
                   selected={selected}
+                  onValidityChange={setSlotValid}
                   onSelect={(v) => {
                     setSelected(v);
                     setConfirmed(false);
@@ -662,8 +676,15 @@ export function ManualBookingPage({ locale }: { locale: Locale }) {
                     : "我已與客戶確認這項服務、價格、時間及取消政策，並代為記錄。"}
                 </label>
                 <button
+                  aria-busy={Boolean(busy)}
                   className="button primary"
-                  disabled={busy || selected === null || !chosen || !confirmed}
+                  disabled={
+                    busy ||
+                    !slotValid ||
+                    selected === null ||
+                    !chosen ||
+                    !confirmed
+                  }
                 >
                   {busy
                     ? en

@@ -78,6 +78,7 @@ export function TimePicker({
   selected,
   onSelect,
   endpoint,
+  onValidityChange,
 }: {
   locale: Locale;
   timezone: string;
@@ -86,11 +87,15 @@ export function TimePicker({
   selected: number | null;
   onSelect: (v: number | null) => void;
   endpoint: (date: string) => string;
+  onValidityChange?: (valid: boolean) => void;
 }) {
   const [slots, setSlots] = useState<number[]>([]),
     [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
     [attempt, setAttempt] = useState(0);
+  const [loadedUrl, setLoadedUrl] = useState("");
+  const selectRef = useRef(onSelect);
+  selectRef.current = onSelect;
   const url = date ? endpoint(date) : "",
     en = locale === "en";
   useEffect(() => {
@@ -98,6 +103,7 @@ export function TimePicker({
     setSlots([]);
     setError("");
     setLoading(true);
+    setLoadedUrl("");
     if (!url) {
       setLoading(false);
       return;
@@ -106,21 +112,32 @@ export function TimePicker({
       .then((result) => {
         if (active) {
           setSlots(result.slots);
+          setLoadedUrl(url);
           setLoading(false);
           if (selected !== null && !result.slots.includes(selected))
-            onSelect(null);
+            selectRef.current(null);
         }
       })
       .catch((e) => {
         if (active) {
           setError(errorText(e, locale));
           setLoading(false);
+          selectRef.current(null);
         }
       });
     return () => {
       active = false;
     };
   }, [url, attempt]);
+  const valid =
+    !loading &&
+    !error &&
+    loadedUrl === url &&
+    selected !== null &&
+    slots.includes(selected);
+  useEffect(() => {
+    onValidityChange?.(valid);
+  }, [valid, onValidityChange]);
   return (
     <div className="time-picker">
       <label htmlFor="booking-date">
@@ -157,8 +174,8 @@ export function TimePicker({
           {slots.length === 0 ? (
             <p className="notice">
               {en
-                ? "No available times on this date. Try another date."
-                : "這一天沒有可用時段，請選擇其他日期。"}
+                ? "No available times on this date. Choose another date; only times within the provider's schedule and advance-notice rules are shown."
+                : "這一天沒有可用時段，請選擇其他日期；僅顯示符合供給方排班與提前預約規則的時間。"}
             </p>
           ) : (
             <div
@@ -181,9 +198,7 @@ export function TimePicker({
           )}
         </>
       )}
-      {selected !== null &&
-      !loading &&
-      !slots.includes(selected) ? null : selected !== null ? (
+      {valid && selected !== null ? (
         <p role="status">
           {en ? "Selected" : "已選擇"}：{when(selected, timezone, locale)}
         </p>
@@ -203,13 +218,21 @@ export function BookingPage({ locale }: { locale: Locale }) {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [accepted, setAccepted] = useState(false),
+    [slotValid, setSlotValid] = useState(false),
     [attempt, setAttempt] = useState(0);
   const key = useOperationKey(),
     service = provider?.services.find((s) => s.id === id),
     offering = service?.offerings[0];
   const date = search.get("date") ?? (service ? today(service.timezone) : ""),
     raw = search.get("start"),
-    selected = raw && Number.isSafeInteger(Number(raw)) ? Number(raw) : null;
+    timestamp = Number(raw),
+    selected =
+      raw &&
+      Number.isSafeInteger(timestamp) &&
+      timestamp > 0 &&
+      !Number.isNaN(new Date(timestamp).getTime())
+        ? timestamp
+        : null;
   function change(values: { date?: string; start?: number | null }) {
     const next = new URLSearchParams(search);
     if (values.date !== undefined) next.set("date", values.date);
@@ -220,6 +243,9 @@ export function BookingPage({ locale }: { locale: Locale }) {
     setAccepted(false);
     setSearch(next, { replace: true });
   }
+  useEffect(() => {
+    if (raw !== null && selected === null) change({ start: null });
+  }, [raw]);
   useEffect(() => {
     let active = true;
     setProvider(null);
@@ -237,7 +263,15 @@ export function BookingPage({ locale }: { locale: Locale }) {
   }, [slug, id]);
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!service || !offering || selected === null || !accepted || !account)
+    if (
+      busy ||
+      !service ||
+      !offering ||
+      selected === null ||
+      !slotValid ||
+      !accepted ||
+      !account
+    )
       return;
     setBusy(true);
     setError("");
@@ -325,6 +359,7 @@ export function BookingPage({ locale }: { locale: Locale }) {
                   date={date}
                   onDate={(date) => change({ date, start: null })}
                   selected={selected}
+                  onValidityChange={setSlotValid}
                   onSelect={(start) => change({ start })}
                   endpoint={(date) =>
                     `/services/${id}/availability?offeringId=${offering.id}&date=${date}`
@@ -353,9 +388,13 @@ export function BookingPage({ locale }: { locale: Locale }) {
                   </p>
                 )}
                 <p className="notice">
-                  {en
-                    ? "Pay directly to your provider by your agreed method. KOVEYA does not collect or verify this service payment."
-                    : "請依雙方約定方式直接向供給方付款。KOVEYA 不代收或驗證這筆服務款項。"}
+                  {offering.priceMinor === 0
+                    ? en
+                      ? "This service is free. No payment is required."
+                      : "此服務免費，無須付款。"
+                    : en
+                      ? "Pay directly to your provider by your agreed method. KOVEYA does not collect or verify this service payment."
+                      : "請依雙方約定方式直接向供給方付款。KOVEYA 不代收或驗證這筆服務款項。"}
                 </p>
                 <label className="check-label">
                   <input
@@ -378,7 +417,11 @@ export function BookingPage({ locale }: { locale: Locale }) {
                 ) : (
                   <button
                     className="button primary"
-                    disabled={busy || selected === null || !accepted}
+                    aria-busy={busy}
+                    aria-describedby="booking-submit-help"
+                    disabled={
+                      busy || selected === null || !slotValid || !accepted
+                    }
                   >
                     {busy
                       ? en
@@ -393,6 +436,23 @@ export function BookingPage({ locale }: { locale: Locale }) {
                           : "確認預約"}
                   </button>
                 )}
+                <p id="booking-submit-help" role="status">
+                  {busy
+                    ? en
+                      ? "Submitting your booking. Please wait…"
+                      : "正在送出預約，請稍候…"
+                    : !slotValid
+                      ? en
+                        ? "Choose a date and an available time before submitting."
+                        : "請先選擇日期與一個可用時段，才能送出。"
+                      : !accepted
+                        ? en
+                          ? "Review and agree to the service terms before submitting."
+                          : "請閱讀並勾選同意服務條件後送出。"
+                        : en
+                          ? "Your time is selected. You can now submit."
+                          : "已選擇時段，可以送出。"}
+                </p>
               </div>
             </>
           )}
@@ -517,6 +577,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
     [manualConsent, setManualConsent] = useState(false),
     [date, setDate] = useState(""),
     [selected, setSelected] = useState<number | null>(null),
+    [slotValid, setSlotValid] = useState(false),
     [attempt, setAttempt] = useState(0),
     key = useOperationKey();
   async function load() {
@@ -654,6 +715,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                   {p.canRespond ? (
                     <div className="button-row">
                       <button
+                        aria-busy={Boolean(busy)}
                         className="button primary"
                         disabled={busy}
                         onClick={() =>
@@ -663,6 +725,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                         {en ? "Accept new time" : "接受新時間"}
                       </button>
                       <button
+                        aria-busy={Boolean(busy)}
                         className="button secondary"
                         disabled={busy}
                         onClick={() =>
@@ -692,7 +755,12 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                   className="panel stack-form"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (selected !== null && manualConsent)
+                    if (
+                      !busy &&
+                      slotValid &&
+                      selected !== null &&
+                      manualConsent
+                    )
                       void action(`/bookings/${id}/manual-reschedule`, {
                         expectedVersion: booking.version,
                         startsAt: selected,
@@ -716,6 +784,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                     date={date || today(booking.terms.timezone)}
                     onDate={setDate}
                     selected={selected}
+                    onValidityChange={setSlotValid}
                     onSelect={(v) => {
                       setSelected(v);
                       setManualConsent(false);
@@ -746,9 +815,11 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                       : "我已於平台外取得客戶同意，並代為記錄新時間。"}
                   </label>
                   <button
+                    aria-busy={Boolean(busy)}
                     className="button primary"
                     disabled={
                       busy ||
+                      !slotValid ||
                       selected === null ||
                       !manualConsent ||
                       !manualReason.trim()
@@ -763,7 +834,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                     className="panel stack-form"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      if (selected !== null)
+                      if (!busy && slotValid && selected !== null)
                         void action(`/bookings/${id}/reschedule-requests`, {
                           expectedVersion: booking.version,
                           startsAt: selected,
@@ -783,14 +854,16 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                       date={date || today(booking.terms.timezone)}
                       onDate={setDate}
                       selected={selected}
+                      onValidityChange={setSlotValid}
                       onSelect={setSelected}
                       endpoint={(date) =>
                         `/bookings/${id}/availability?date=${date}`
                       }
                     />
                     <button
+                      aria-busy={Boolean(busy)}
                       className="button primary"
-                      disabled={busy || selected === null}
+                      disabled={busy || !slotValid || selected === null}
                     >
                       {en ? "Send proposal" : "送出改期提案"}
                     </button>
@@ -824,6 +897,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                   maxLength={500}
                 />
                 <button
+                  aria-busy={Boolean(busy)}
                   className="button secondary"
                   disabled={busy || !reason.trim()}
                 >
@@ -838,6 +912,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
               booking.endsAt <= Date.now() && (
                 <div className="button-row">
                   <button
+                    aria-busy={Boolean(busy)}
                     className="button primary"
                     disabled={busy}
                     onClick={() =>
@@ -849,6 +924,7 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
                     {en ? "Mark completed" : "標記服務完成"}
                   </button>
                   <button
+                    aria-busy={Boolean(busy)}
                     className="button secondary"
                     disabled={busy}
                     onClick={() =>
@@ -1185,7 +1261,11 @@ export function AvailabilityPage({ locale }: { locale: Locale }) {
               {en ? "Add exception" : "新增日期例外"}
             </button>
           </div>
-          <button className="button primary" disabled={busy}>
+          <button
+            aria-busy={Boolean(busy)}
+            className="button primary"
+            disabled={busy}
+          >
             {busy
               ? en
                 ? "Saving…"
@@ -1248,6 +1328,7 @@ function CalendarDownload({ id, locale }: { id: string; locale: Locale }) {
   return (
     <div>
       <button
+        aria-busy={Boolean(busy)}
         className="button secondary"
         type="button"
         disabled={busy}

@@ -876,6 +876,10 @@ nav .active {
 .button:disabled,
 button:disabled {
   opacity: 0.55;
+  cursor: not-allowed;
+}
+.button[aria-busy="true"],
+button[aria-busy="true"]:disabled {
   cursor: wait;
 }
 .inline-button {

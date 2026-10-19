@@ -85,3 +85,15 @@ E2E 已改為每次獨立 D1、執行正式 build；測試啟動先確認本機�
 同輪稍後重查 HTTPS 已正常（未變更應用程式），health 200／database ready／0.5.0、深層頁面 200 HTML、未知 API 404 JSON、未登入客戶查詢 401 JSON。auth/config 為 unavailable，與 Secret 尚未設定一致。TLS 初始原因未作結論；接續等待金鑰與真實登入驗證。
 
 Founder 設定 Resend 後，Secret 清單確認 `RESEND_API_KEY` 已存在（未讀取值）；HTTPS health 維持 ready、auth/config 改為 email。以 Founder 的 Chrome 登入頁提交管理信箱，畫面成功顯示「請查看你的信箱」，雲端保留一筆未使用 challenge，表示寄信 API 成功。尚未確認信箱實際收件或消費連結；由 Founder 在同一 Chrome 開啟信並確認登入。沒有把寄信 API 成功當成已送達或登入完成。
+
+## 2026-10-19 — 預約 review／修正 v0.5.1
+
+Founder 已完成真實 Email 登入；Computer Use 建立並發布明確標示測試用途的品牌與免費申請式網球服務，設定台北時區、60 分鐘、前後各 15 分鐘、提前 24 小時、未來 30 天；週一／週三 18–21、週六 9–12。公開頁與 10/21 可選時段經 Chrome 檢查。未建立真實交易。
+
+依 Founder 截圖 review，修正停用游標、送出提示、前端逾時、時段查詢有效性、無效 URL 日期、免費付款文案及一般服務錯誤訊息；完整發現及限制見 [review 紀錄](../05_TESTING/Booking_Review_2026-10-19.md)。
+
+本機 103 項 Vitest、48 項桌面／模擬手機 Playwright 通過，型別、173 需求／文件與正式 build 通過。新增查詢失敗重試、清空日期、異常時間參數、停用／實際送出游標、回應遺失後冪等重送。正式試用部署與人工畫面複驗接續記錄。
+
+試用環境已部署 0.5.1（Worker 版本 `52a9ebd5-cb1a-4072-ad50-504e7755bccf`），HTTPS health ready、登入渠道 email；保留原試用資料庫與 Secret。Chrome 確認今日無時段時顯示先選時段提示、免費服務無須付款與新版版本號。
+
+其中一次本機回歸在登出後查詢遭遇 Vite／Miniflare 的 HTML 500（undici dispatchFetch failed，未包含應用程式 JSON／Request ID），已檢視 trace；同測試四個 workers 重複十次全部通過，隨後完整 48 項通過，沒有加自動重試或放寬斷言。該本機 runtime 偶發錯誤根因尚未確認，保留追蹤，不宣稱已修復。
