@@ -81,3 +81,5 @@ E2E 已改為每次獨立 D1、執行正式 build；測試啟動先確認本機�
 網址 `https://koveya-trial.koveya-test.workers.dev`。本機驗證入口在雲端明確停用；Resend Secret 待帳號擁有者設定，不讀取或記錄金鑰。未設定前不能登入，沒有執行真實寄信。
 
 初次檢查：Cloudflare API 回報 workers.dev 已啟用，HTTP health 回報資料庫 ready／0.5.0，但 HTTPS 出現 TLS handshake failure。原因尚未確認，不將上傳成功當成 HTTPS 可用證據，不引導使用者透過 HTTP 登入。後續須重新確認 HTTPS、深層路由／API 404、Secret、同瀏覽器登入、Founder 操作與正式 Cron；備份復原及完整 Beta 驗收仍未完成。
+
+同輪稍後重查 HTTPS 已正常（未變更應用程式），health 200／database ready／0.5.0、深層頁面 200 HTML、未知 API 404 JSON、未登入客戶查詢 401 JSON。auth/config 為 unavailable，與 Secret 尚未設定一致。TLS 初始原因未作結論；接續等待金鑰與真實登入驗證。
