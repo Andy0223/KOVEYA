@@ -83,3 +83,5 @@ E2E 已改為每次獨立 D1、執行正式 build；測試啟動先確認本機�
 初次檢查：Cloudflare API 回報 workers.dev 已啟用，HTTP health 回報資料庫 ready／0.5.0，但 HTTPS 出現 TLS handshake failure。原因尚未確認，不將上傳成功當成 HTTPS 可用證據，不引導使用者透過 HTTP 登入。後續須重新確認 HTTPS、深層路由／API 404、Secret、同瀏覽器登入、Founder 操作與正式 Cron；備份復原及完整 Beta 驗收仍未完成。
 
 同輪稍後重查 HTTPS 已正常（未變更應用程式），health 200／database ready／0.5.0、深層頁面 200 HTML、未知 API 404 JSON、未登入客戶查詢 401 JSON。auth/config 為 unavailable，與 Secret 尚未設定一致。TLS 初始原因未作結論；接續等待金鑰與真實登入驗證。
+
+Founder 設定 Resend 後，Secret 清單確認 `RESEND_API_KEY` 已存在（未讀取值）；HTTPS health 維持 ready、auth/config 改為 email。以 Founder 的 Chrome 登入頁提交管理信箱，畫面成功顯示「請查看你的信箱」，雲端保留一筆未使用 challenge，表示寄信 API 成功。尚未確認信箱實際收件或消費連結；由 Founder 在同一 Chrome 開啟信並確認登入。沒有把寄信 API 成功當成已送達或登入完成。
