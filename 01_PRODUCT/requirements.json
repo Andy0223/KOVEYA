@@ -176,8 +176,9 @@
           "function": "服務發布與下架",
           "priority": "P0",
           "acceptance_criteria": "下架後不可新增預約",
-          "implementation_status": "partial",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "PRO-008",
@@ -456,8 +457,9 @@
           "function": "手動新增預約",
           "priority": "P0",
           "acceptance_criteria": "供給方可加入既有安排",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "BKG-009",
@@ -549,8 +551,9 @@
           "function": "常用供給方",
           "priority": "P0",
           "acceptance_criteria": "可查看曾使用的供給方",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "DEM-005",
@@ -636,32 +639,36 @@
           "function": "客戶清單",
           "priority": "P0",
           "acceptance_criteria": "顯示與供給方有合法關聯的客戶",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "CRM-002",
           "function": "客戶預約歷史",
           "priority": "P0",
           "acceptance_criteria": "可查看在該供給方的預約",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "CRM-003",
           "function": "手動新增客戶",
           "priority": "P0",
           "acceptance_criteria": "可建立必要聯絡紀錄",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "CRM-004",
           "function": "客戶聯絡資訊",
           "priority": "P0",
           "acceptance_criteria": "依授權及用途管理",
-          "implementation_status": "not_started",
-          "acceptance_status": "not_verified"
+          "implementation_status": "implemented",
+          "acceptance_status": "local_verified",
+          "verification_scope": "v0.5 local SQLite, Workers-D1 and desktop/mobile-browser verification. Tenant-scoped contacts, manual bookings, no email-only linking, private ICS and previous providers. Production, real calendar import and independent Beta review pending."
         },
         {
           "id": "CRM-005",

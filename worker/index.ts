@@ -12,6 +12,9 @@ import { bookingRoutes } from "./modules/scheduling/bookings";
 import { requestRoutes } from "./modules/scheduling/requests";
 import { notificationRoutes } from "./modules/notifications/routes";
 import { maintenance } from "./modules/notifications/jobs";
+import { clientRoutes } from "./modules/clients/routes";
+import { manualRoutes } from "./modules/clients/manual-bookings";
+import { calendarRoutes } from "./modules/calendar/routes";
 export const app = new Hono<Environment>();
 
 app.use("*", requestId({ generator: () => crypto.randomUUID() }));
@@ -37,12 +40,15 @@ app.route("/api/v1", schedulingRoutes);
 app.route("/api/v1", bookingRoutes);
 app.route("/api/v1", requestRoutes);
 app.route("/api/v1", notificationRoutes);
+app.route("/api/v1", clientRoutes);
+app.route("/api/v1", manualRoutes);
+app.route("/api/v1", calendarRoutes);
 
 app.get("/api/v1/health", async (c) => {
   try {
     await c.env.DB.prepare("SELECT id FROM organizations LIMIT 1").first();
     return c.json({
-      data: { status: "ok", database: "ready", version: "0.4.0" },
+      data: { status: "ok", database: "ready", version: "0.5.0" },
       requestId: c.get("requestId"),
     });
   } catch {

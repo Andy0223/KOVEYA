@@ -19,6 +19,8 @@ export interface BusinessProfile {
   published: boolean;
 }
 export interface ManagedService {
+  offeringId: string;
+  policyVersion: number;
   id: string;
   revision: number;
   name: string;

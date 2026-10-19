@@ -57,7 +57,7 @@ describe("Initial database constraints (not full booking API acceptance)", () =>
     db.exec("BEGIN");
     try {
       db.exec(
-        "INSERT INTO bookings SELECT 'b2', org_id, offering_id, client_id, starts_at, ends_at, status, terms_snapshot, created_at, version FROM bookings WHERE id = 'b1'",
+        "INSERT INTO bookings (id,org_id,offering_id,client_id,starts_at,ends_at,status,terms_snapshot,created_at,version) SELECT 'b2', org_id, offering_id, client_id, starts_at, ends_at, status, terms_snapshot, created_at, version FROM bookings WHERE id = 'b1'",
       );
       db.exec(
         "INSERT INTO booking_allocations VALUES ('org-demo', 'b2', 'r1', 1792407600000)",

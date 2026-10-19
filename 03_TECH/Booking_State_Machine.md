@@ -38,3 +38,11 @@ REQUEST／固定價格或免費服務支援 SUBMITTED → ACCEPTED／COUNTER_PRO
 有效期為 now + 24 小時與 startsAt − max(15, minNoticeMinutes) 分鐘的較早者；到期時刻不允許接受。替代時間只能縮短而不能延長原期限。讀取即顯示 EXPIRED；背景工作再以版本／nonce 條件寫入終態及系統事件，避免與接受競爭重複更新。正式部署 Cron 尚未驗收。
 
 原始價格、政策、時長與緩衝保存在申請快照；服務後續修改不改寫原條件。QUOTE 仍需未實作的議價同意流程，不得偽裝成免費預約。個人業務不能向自己送出需要自己批准的申請。
+
+## v0.5 手動安排
+
+供給方可為自己業務中的客戶記錄已於平台外約定的未來預約，包括固定價格／免費的 INSTANT 或 REQUEST 服務；只允許 PUBLISHED，DRAFT／UNPUBLISHED／QUOTE 均不能新增。品牌頁可隱藏，但業務及 owner membership 必須有效。
+
+confirmedWithClient=true 是供給方聲明，source=PROVIDER_RECORDED、terms.consentSource=PROVIDER_REPORTED 及 actor／事件保存該來源，不當作平台驗證過需求方同意或付款。需求方提前量在此流程豁免；排班、緩衝、未來起點、最遠日期與防撞全部生效。
+
+未連結帳號的客戶沒有平台回覆能力，供給方須先取得平台外同意，再透過 manual-reschedule 記錄新時間、原因與聲明；新時間／配置／事件在同批替換，失敗保留原預約。已連結帳號的客戶仍使用原雙方提案／接受流程，不開放單方面代替其確認。取消、完成／未到場沿用已有權限及終態規則。

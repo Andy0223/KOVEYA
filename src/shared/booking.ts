@@ -11,6 +11,7 @@ export interface Availability {
   slots: number[];
 }
 export interface BookingTerms {
+  consentSource?: "PROVIDER_REPORTED";
   serviceId: string;
   serviceRevision: number;
   serviceName: string;
@@ -32,6 +33,9 @@ export interface BookingTerms {
   acceptedAt: number;
 }
 export interface Booking {
+  source: "CUSTOMER" | "PROVIDER_RECORDED";
+  clientHasAccount: boolean;
+  clientId?: string;
   id: string;
   startsAt: number;
   endsAt: number;

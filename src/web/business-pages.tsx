@@ -21,6 +21,7 @@ export function BusinessNav({ locale }: { locale: Locale }) {
         {en ? "Availability" : "可用時間"}
       </Link>
       <Link to="/business/bookings">{en ? "Bookings" : "預約管理"}</Link>
+      <Link to="/business/clients">{en ? "Clients" : "客戶管理"}</Link>
       <Link to="/business/requests">{en ? "Requests" : "預約申請"}</Link>
       <Link to="/app/notifications">{en ? "Notifications" : "通知中心"}</Link>
       <Link to="/business/profile">{en ? "Business profile" : "品牌資料"}</Link>
@@ -351,7 +352,10 @@ export function BusinessProfilePage({ locale }: { locale: Locale }) {
   );
 }
 
-type ServiceForm = Omit<ManagedService, "id" | "revision" | "status">;
+type ServiceForm = Omit<
+  ManagedService,
+  "id" | "revision" | "status" | "offeringId" | "policyVersion"
+>;
 export function ServiceEditor({ locale }: { locale: Locale }) {
   const en = locale === "en",
     { id } = useParams(),
@@ -789,6 +793,9 @@ export function DemandHome({ locale }: { locale: Locale }) {
         {en ? "My bookings" : "我的預約"} →
       </Link>
       <div className="button-row">
+        <Link className="button secondary" to="/app/providers">
+          {en ? "My providers" : "我的服務者"}
+        </Link>
         <Link className="button secondary" to="/app/requests">
           {en ? "My requests" : "我的預約申請"}
         </Link>

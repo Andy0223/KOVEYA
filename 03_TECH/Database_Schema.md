@@ -47,3 +47,11 @@ Migration 0005 新增 booking_requests、request_events、notifications；outbox
 request_events 可保存 actor_id=null 的到期系統事件。到期以版本／狀態／時間條件更新並標記本次 nonce，只有同一次更新成功才能寫入歷史與 Outbox，全部在 batch 內提交。
 
 notifications 有 event_id + recipient_id 唯一鍵及自己的 read_at。Outbox 消費時按目前合法客戶／業務關係找收件者，插入站內通知與標記 SENT 在同一交易。SENT 在此版本只代表站內處理，不代表 Email 或已讀。Email 尚未接上；站內通知不是付款或接受提案的證據。
+
+## v0.5 增量（仍為 27 張表）
+
+Migration 0006 在 client_relationships 新增 phone、revision、created_at、updated_at；舊資料時間 0 表示未知，不冒稱實際建立／更新時間。新增客戶與首次平台關係都會記錄目前時間。新增 bookings.source，既有記錄預設 CUSTOMER；供給方代為記錄為 PROVIDER_RECORDED。
+
+客戶 Email 是租戶聯絡資訊，不能設定 user_id。手動客戶即使 Email 相同也保持未連結；之後該 Email 的已驗證帳號自行預約，建立另一筆平台關係，不自動合併或開放舊資料。客戶編輯不修改 users 或 identities。
+
+客戶聯絡編輯使用 revision、owner membership guard 與稽核批次；手動預約／改期共用資源唯一鍵、Outbox、稽核及冪等。新增 booking_client_start_idx 與 booking_events_timeline_idx 支援租戶客戶歷史、統計與日曆最後異動查詢。

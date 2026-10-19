@@ -1213,3 +1213,6 @@ button:disabled {
 .booking-page .dev-note {
   overflow-wrap: anywhere;
 }
+.contact-value {
+  overflow-wrap: anywhere;
+}

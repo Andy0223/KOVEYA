@@ -41,6 +41,13 @@ import {
   NotificationPage,
 } from "./request-pages";
 
+import {
+  ClientListPage,
+  ClientDetailPage,
+  ManualBookingPage,
+  MyProvidersPage,
+} from "./client-pages";
+
 type Locale = "zh-TW" | "en";
 const copy = {
   "zh-TW": {
@@ -376,6 +383,46 @@ function App() {
             element={<BookingPage locale={locale} />}
           />
           <Route
+            path="/business/clients"
+            element={
+              <AccountGate locale={locale}>
+                <ClientListPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/clients/new"
+            element={
+              <AccountGate locale={locale}>
+                <ClientDetailPage key="new-client" locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/clients/:id"
+            element={
+              <AccountGate locale={locale}>
+                <ClientDetailPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/business/bookings/new"
+            element={
+              <AccountGate locale={locale}>
+                <ManualBookingPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
+            path="/app/providers"
+            element={
+              <AccountGate locale={locale}>
+                <MyProvidersPage locale={locale} />
+              </AccountGate>
+            }
+          />
+          <Route
             path="/app/requests"
             element={
               <AccountGate locale={locale}>
@@ -505,7 +552,7 @@ function App() {
           KOVEYA<span>↗</span>
         </Link>
         <p>{t.footer}</p>
-        <span className="preview-tag">{t.preview} · v0.4</span>
+        <span className="preview-tag">{t.preview} · v0.5</span>
       </footer>
     </>
   );

@@ -30,11 +30,11 @@ export function termsFor(service: BookableService, now: number): BookingTerms {
 export function clientStatement(db: D1Database, orgId: string, user: string) {
   return db
     .prepare(
-      `INSERT INTO client_relationships (id,org_id,user_id,name,email)
-    SELECT ?,?,u.id,u.name,i.provider_subject FROM users u JOIN identities i ON i.user_id=u.id AND i.provider='email' WHERE u.id=?
+      `INSERT INTO client_relationships (id,org_id,user_id,name,email,created_at,updated_at)
+    SELECT ?,?,u.id,u.name,i.provider_subject,?,? FROM users u JOIN identities i ON i.user_id=u.id AND i.provider='email' WHERE u.id=?
     ON CONFLICT(org_id,user_id) DO NOTHING`,
     )
-    .bind(crypto.randomUUID(), orgId, user);
+    .bind(crypto.randomUUID(), orgId, Date.now(), Date.now(), user);
 }
 export function bookingStatements(
   db: D1Database,
@@ -46,13 +46,14 @@ export function bookingStatements(
   start: number,
   terms: BookingTerms,
   now: number,
+  manualClientId?: string,
 ) {
   const end = start + terms.durationMinutes * 60_000;
   return [
     db
       .prepare(
-        `INSERT INTO bookings (id,org_id,offering_id,client_id,starts_at,ends_at,status,terms_snapshot,created_at,version)
-      SELECT ?,?,?,id,?,?,'CONFIRMED',?,?,1 FROM client_relationships WHERE org_id=? AND user_id=?`,
+        `INSERT INTO bookings (id,org_id,offering_id,client_id,starts_at,ends_at,status,terms_snapshot,created_at,version,source)
+      SELECT ?,?,?,id,?,?,'CONFIRMED',?,?,1,? FROM client_relationships WHERE org_id=? AND ${manualClientId ? "id" : "user_id"}=?`,
       )
       .bind(
         id,
@@ -62,8 +63,9 @@ export function bookingStatements(
         end,
         JSON.stringify(terms),
         now,
+        manualClientId ? "PROVIDER_RECORDED" : "CUSTOMER",
         orgId,
-        clientUser,
+        manualClientId ?? clientUser,
       ),
     db
       .prepare(
@@ -88,7 +90,13 @@ export function bookingStatements(
       id,
       actor,
       "booking.confirmed",
-      { startsAt: start, endsAt: end },
+      {
+        startsAt: start,
+        endsAt: end,
+        ...(manualClientId
+          ? { source: "PROVIDER_RECORDED", consentSource: "PROVIDER_REPORTED" }
+          : {}),
+      },
       now,
     ),
   ];

@@ -263,6 +263,10 @@ export const availabilityRules = sqliteTable(
 export const clients = sqliteTable(
   "client_relationships",
   {
+    phone: text("phone"),
+    revision: integer("revision").notNull().default(1),
+    createdAt: integer("created_at").notNull().default(0),
+    updatedAt: integer("updated_at").notNull().default(0),
     id: text("id").primaryKey(),
     orgId: text("org_id")
       .notNull()
@@ -280,6 +284,9 @@ export const clients = sqliteTable(
 export const bookings = sqliteTable(
   "bookings",
   {
+    source: text("source", { enum: ["CUSTOMER", "PROVIDER_RECORDED"] })
+      .notNull()
+      .default("CUSTOMER"),
     id: text("id").primaryKey(),
     orgId: text("org_id").notNull(),
     offeringId: text("offering_id").notNull(),
@@ -289,7 +296,7 @@ export const bookings = sqliteTable(
     status: text("status", {
       enum: ["CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"],
     }).notNull(),
-    // Immutable JSON snapshots will be written by the future booking transaction, not read from live service settings.
+    // Immutable agreed or provider-reported terms, independent of live service settings.
     termsSnapshot: text("terms_snapshot", { mode: "json" }).notNull(),
     createdAt: integer("created_at").notNull(),
     version: integer("version").notNull().default(1),
@@ -297,6 +304,7 @@ export const bookings = sqliteTable(
   (t) => [
     uniqueIndex("booking_tenant_uq").on(t.id, t.orgId),
     index("booking_org_start_idx").on(t.orgId, t.startsAt),
+    index("booking_client_start_idx").on(t.orgId, t.clientId, t.startsAt),
     foreignKey({
       columns: [t.offeringId, t.orgId],
       foreignColumns: [offerings.id, offerings.orgId],
@@ -436,6 +444,7 @@ export const bookingEvents = sqliteTable(
     createdAt: integer("created_at").notNull(),
   },
   (t) => [
+    index("booking_events_timeline_idx").on(t.bookingId, t.orgId, t.createdAt),
     foreignKey({
       columns: [t.bookingId, t.orgId],
       foreignColumns: [bookings.id, bookings.orgId],

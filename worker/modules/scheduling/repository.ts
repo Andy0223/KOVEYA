@@ -59,6 +59,7 @@ export async function bookableService(
   db: D1Database,
   serviceId: string,
   offeringId: string,
+  ownedOrgId?: string,
 ) {
   const row = await db
     .prepare(
@@ -71,10 +72,14 @@ export async function bookableService(
     FROM services s JOIN offerings o ON o.service_id=s.id AND o.org_id=s.org_id
     JOIN service_resources sr ON sr.service_id=s.id AND sr.org_id=s.org_id
     JOIN organizations org ON org.id=s.org_id AND org.status='ACTIVE'
-    JOIN provider_profiles p ON p.org_id=s.org_id AND p.published=1
-    WHERE s.id=? AND o.id=? AND s.status='PUBLISHED'`,
+    JOIN provider_profiles p ON p.org_id=s.org_id
+    WHERE s.id=? AND o.id=? AND ${ownedOrgId ? "s.org_id=? AND s.status='PUBLISHED'" : "s.status='PUBLISHED' AND p.published=1"}`,
     )
-    .bind(serviceId, offeringId)
+    .bind(
+      ...(ownedOrgId
+        ? [serviceId, offeringId, ownedOrgId]
+        : [serviceId, offeringId]),
+    )
     .first<BookableService>();
   if (!row) throw new ApiError("NOT_FOUND", 404);
   return row;

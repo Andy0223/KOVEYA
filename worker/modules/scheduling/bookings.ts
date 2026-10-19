@@ -95,7 +95,11 @@ bookingRoutes.post("/bookings", requireUser, async (c) => {
     );
   });
 });
-interface BookingRow {
+export interface BookingRow {
+  source: Booking["source"];
+  clientId: string;
+  createdAt: number;
+  updatedAt: number;
   id: string;
   orgId: string;
   startsAt: number;
@@ -104,13 +108,16 @@ interface BookingRow {
   version: number;
   terms: string;
   clientName: string;
-  clientUser: string;
+  clientUser: string | null;
   ownerUser: string;
 }
-const selectBooking = `SELECT b.id,b.org_id AS orgId,b.starts_at AS startsAt,b.ends_at AS endsAt,b.status,b.version,b.terms_snapshot AS terms,c.name AS clientName,c.user_id AS clientUser,o.owner_user_id AS ownerUser
+export const selectBooking = `SELECT b.source,b.client_id AS clientId,b.created_at AS createdAt,COALESCE((SELECT MAX(e.created_at) FROM booking_events e WHERE e.booking_id=b.id AND e.org_id=b.org_id),b.created_at) AS updatedAt,b.id,b.org_id AS orgId,b.starts_at AS startsAt,b.ends_at AS endsAt,b.status,b.version,b.terms_snapshot AS terms,c.name AS clientName,c.user_id AS clientUser,o.owner_user_id AS ownerUser
   FROM bookings b JOIN client_relationships c ON c.id=b.client_id AND c.org_id=b.org_id JOIN organizations o ON o.id=b.org_id`;
-function dto(row: BookingRow, user: string): Booking {
+export function bookingDto(row: BookingRow, user: string): Booking {
   return {
+    source: row.source,
+    clientHasAccount: row.clientUser !== null,
+    ...(row.ownerUser === user ? { clientId: row.clientId } : {}),
     id: row.id,
     startsAt: row.startsAt,
     endsAt: row.endsAt,
@@ -121,7 +128,7 @@ function dto(row: BookingRow, user: string): Booking {
     isProvider: row.ownerUser === user,
   };
 }
-async function ownedBooking(db: D1Database, id: string, user: string) {
+export async function ownedBooking(db: D1Database, id: string, user: string) {
   const row = await db
     .prepare(
       selectBooking +
@@ -148,7 +155,7 @@ bookingRoutes.get("/bookings", requireUser, async (c) => {
     .all<BookingRow>();
   return ok(
     c,
-    rows.results.map((row) => dto(row, user)),
+    rows.results.map((row) => bookingDto(row, user)),
   );
 });
 bookingRoutes.get("/bookings/:id", requireUser, async (c) => {
@@ -170,7 +177,7 @@ bookingRoutes.get("/bookings/:id", requireUser, async (c) => {
       responder: string;
     }>();
   return ok(c, {
-    ...dto(row, c.get("userId")),
+    ...bookingDto(row, c.get("userId")),
     proposals: proposals.results.map((p) => ({
       id: p.id,
       startsAt: p.startsAt,
@@ -258,7 +265,7 @@ bookingRoutes.post("/bookings/:id/cancel", requireUser, async (c) => {
   });
 });
 
-async function rescheduleSlots(
+export async function rescheduleSlots(
   db: D1Database,
   row: BookingRow,
   date: string,
@@ -284,7 +291,9 @@ async function rescheduleSlots(
     slots: availableSlots(
       date,
       schedule,
-      terms,
+      row.source === "PROVIDER_RECORDED" && row.clientUser === null
+        ? { ...terms, minNoticeMinutes: 0 }
+        : terms,
       new Set(occupied.results.map((r) => r.slot)),
       now,
     ),

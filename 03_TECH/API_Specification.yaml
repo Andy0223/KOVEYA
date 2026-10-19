@@ -1,10 +1,11 @@
 openapi: 3.1.0
 info:
   title: KOVEYA API
-  version: 0.4.0
-  description: Identity, individual service business, scheduling, instant and request bookings,
-    counterpart proposals, cancellation, fulfillment and in-app notifications. Email transaction
-    delivery, CRM, ICS and production verification remain pending.
+  version: 0.5.0
+  description: Identity, individual business and catalog, scheduling, bookings and requests, in-app
+    notifications, tenant-scoped contacts, provider-recorded bookings, previous providers and
+    authenticated ICS export. Transaction email, platform administration and production verification
+    remain pending.
 servers:
   - url: /api/v1
 security: []
@@ -1150,7 +1151,7 @@ paths:
                     required:
                       - revision
                     properties:
-                      revision: &a15
+                      revision: &a20
                         type: integer
                   requestId: *a1
         "400":
@@ -2182,7 +2183,7 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/Notification"
-                      unread: &a21
+                      unread: &a26
                         type: integer
                   requestId: *a6
         "400":
@@ -2248,6 +2249,435 @@ paths:
         "409":
           $ref: "#/components/responses/Error"
         "429":
+          $ref: "#/components/responses/Error"
+  /clients:
+    get:
+      operationId: listClients
+      summary: Search own business contacts
+      description: Active business owner only. Literal substring search over local name/email/phone; SQL
+        wildcard characters are escaped. Fifty records per page, ordered by local name/id. Counts
+        are limited to this business.
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a12
+          in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 1000000
+            default: 0
+        - in: query
+          name: q
+          schema:
+            type: string
+            maxLength: 80
+            default: ""
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ClientList"
+                  requestId: &a11
+                    type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createClient
+      summary: Create an unlinked business contact
+      description: Contact, audit and idempotency receipt commit together. Matching an existing account
+        email never links identities. Multiple contacts may share an email; verified account
+        linking/merging is not implemented.
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a14
+          in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]{8,128}$
+          description: Scoped by actor and operation; identical retries replay the same id; conflicting input
+            is rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: &a15
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - id
+                    properties:
+                      id: *a11
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /clients/{id}:
+    get:
+      operationId: getClient
+      summary: Read own client and paginated booking history
+      description: Owning active business only. History has fifty records per page, newest starts first;
+        includes cancelled bookings. No other business or account-wide history is exposed.
+      security:
+        - sessionCookie: []
+      parameters:
+        - &a13
+          in: path
+          name: id
+          required: true
+          schema: *a11
+        - *a12
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ClientDetail"
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+    patch:
+      operationId: editClient
+      summary: Edit business-local contact fields with revision check
+      description: Does not change linked account profile, login email or identity. Rejects stale revision
+        atomically; saves audit. No account linking or userId input.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a13
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientEdit"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - revision
+                    properties:
+                      revision: &a31
+                        type: integer
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /my-providers:
+    get:
+      operationId: getMyProviders
+      summary: List public providers from own bookings
+      description: Up to 100 currently active/public providers; last-booking order. Includes
+        confirmed/history/cancelled bookings belonging to the current account. A manual contact
+        email match does not grant booking access.
+      security:
+        - sessionCookie: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MyProvider"
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /business/services/{id}/availability:
+    get:
+      operationId: getManualAvailability
+      summary: Read own service times for agreed arrangements
+      description: Published fixed/free services of the owning active business only; profile may be
+        private. Uses minNoticeMinutes=0 because the provider records an existing agreement.
+        Resource working hours, buffers, future-only time, booking horizon and conflicts still
+        apply. Draft/unpublished services are rejected; quotes return no slots.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a13
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: offeringId
+          required: true
+          schema: *a11
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Availability"
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /business/bookings:
+    post:
+      operationId: recordManualBooking
+      summary: Provider records an agreed future booking for an owned client
+      description: Published fixed/free services only, including REQUEST mode when already agreed outside
+        the platform. Requires explicit provider attestation. Does not accept a pending request or
+        mark customer verification. Uses the same atomic booking/allocation/history/outbox/audit
+        machinery. An unlinked contact remains unlinked, and contact email does not receive account
+        notifications.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a14
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManualBookingInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a15
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/manual-reschedule:
+    post:
+      operationId: recordManualReschedule
+      summary: Owner records an externally agreed time change for an unlinked contact
+      description: Only future CONFIRMED, PROVIDER_RECORDED bookings whose client has no linked account.
+        Original terms remain unchanged. Resource hours/buffers/horizon apply, notice is waived.
+        Conflict rolls back the original time and allocations. Linked accounts use counterpart
+        reschedule proposals instead.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a13
+        - *a14
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - expectedVersion
+                - startsAt
+                - confirmedWithClient
+                - reason
+              properties:
+                expectedVersion:
+                  type: integer
+                  minimum: 1
+                startsAt:
+                  type: integer
+                  description: UTC epoch milliseconds
+                  multipleOf: 900000
+                  maximum: 8000000000000
+                confirmedWithClient:
+                  const: true
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - requestId
+                properties:
+                  data: *a15
+                  requestId: *a11
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+  /bookings/{id}/calendar.ics:
+    get:
+      operationId: exportBookingCalendar
+      summary: Download private RFC 5545 event snapshot
+      description: Authorized customer or active owner only; no public token or attendee email. UTC
+        DTSTART/DTEND, immutable service summary/location, stable UID and
+        SEQUENCE=booking.version-1. CANCELLED exports STATUS:CANCELLED; fulfillment is described
+        separately. CRLF, UTF-8 line folding and text escaping prevent injected properties. This is
+        a file snapshot, not calendar sync or an invitation; importer update/cancellation behavior
+        is application-dependent.
+      security:
+        - sessionCookie: []
+      parameters:
+        - *a13
+      responses:
+        "200":
+          description: Private calendar file
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: attachment; filename="koveya-booking.ics"
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            text/calendar:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
           $ref: "#/components/responses/Error"
 components:
   responses:
@@ -2823,12 +3253,12 @@ components:
         - start
         - end
       properties:
-        start: &a11
+        start: &a16
           type: integer
           minimum: 0
           maximum: 1425
           multipleOf: 15
-        end: &a12
+        end: &a17
           type: integer
           minimum: 15
           maximum: 1440
@@ -2847,7 +3277,7 @@ components:
           type: integer
           minimum: 1
         timezone: *a1
-        rules: &a13
+        rules: &a18
           type: array
           items:
             type: object
@@ -2857,14 +3287,14 @@ components:
               - end
               - weekday
             properties:
-              start: *a11
-              end: *a12
+              start: *a16
+              end: *a17
               weekday:
                 type: integer
                 minimum: 0
                 maximum: 6
           maxItems: 28
-        exceptions: &a14
+        exceptions: &a19
           type: array
           items:
             type: object
@@ -2895,8 +3325,8 @@ components:
           type: integer
           minimum: 1
         timezone: *a1
-        rules: *a13
-        exceptions: *a14
+        rules: *a18
+        exceptions: *a19
       description: One personal resource shared by all services. Date exceptions replace weekly rules; an
         empty interval array closes that date. Duplicate dates and overlaps are rejected. Saving
         does not alter confirmed bookings.
@@ -2914,7 +3344,7 @@ components:
         timezone: *a1
         slots:
           type: array
-          items: &a16
+          items: &a21
             type: integer
             description: UTC epoch milliseconds
     BookingInput:
@@ -2964,25 +3394,29 @@ components:
         - acceptedAt
       properties:
         serviceId: *a1
-        serviceRevision: *a15
+        serviceRevision: *a20
         serviceName: *a1
         providerName: *a1
         providerSlug: *a1
         resourceId: *a1
         timezone: *a1
         locationLabel: *a1
-        durationMinutes: *a15
-        bufferBeforeMinutes: *a15
-        bufferAfterMinutes: *a15
-        priceMinor: *a15
+        durationMinutes: *a20
+        bufferBeforeMinutes: *a20
+        bufferAfterMinutes: *a20
+        priceMinor: *a20
         currency: *a1
         cancellationPolicy: *a1
-        cancellationNoticeMinutes: *a15
-        minNoticeMinutes: *a15
-        maxAdvanceDays: *a15
+        cancellationNoticeMinutes: *a20
+        minNoticeMinutes: *a20
+        maxAdvanceDays: *a20
         paymentMethod:
           const: ARRANGED_WITH_PROVIDER
-        acceptedAt: *a16
+        acceptedAt: *a21
+        consentSource:
+          const: PROVIDER_REPORTED
+          description: Present for provider-recorded arrangements; acceptedAt is the provider attestation
+            timestamp, not proof of customer verification.
     Booking:
       type: object
       additionalProperties: false
@@ -2995,22 +3429,33 @@ components:
         - terms
         - clientName
         - isProvider
+        - source
+        - clientHasAccount
       properties:
         id: *a1
-        startsAt: *a16
-        endsAt: *a16
-        status: &a17
+        startsAt: *a21
+        endsAt: *a21
+        status: &a22
           enum:
             - CONFIRMED
             - CANCELLED
             - COMPLETED
             - NO_SHOW
-        version: *a15
-        terms: &a18
+        version: *a20
+        terms: &a23
           $ref: "#/components/schemas/BookingTerms"
         clientName: *a1
-        isProvider: &a19
+        isProvider: &a24
           type: boolean
+        source:
+          enum:
+            - CUSTOMER
+            - PROVIDER_RECORDED
+        clientHasAccount:
+          type: boolean
+        clientId:
+          type: string
+          description: Only returned to the owning provider.
     BookingDetail:
       type: object
       additionalProperties: false
@@ -3025,15 +3470,17 @@ components:
         - isProvider
         - events
         - proposals
+        - source
+        - clientHasAccount
       properties:
         id: *a1
-        startsAt: *a16
-        endsAt: *a16
-        status: *a17
-        version: *a15
-        terms: *a18
+        startsAt: *a21
+        endsAt: *a21
+        status: *a22
+        version: *a20
+        terms: *a23
         clientName: *a1
-        isProvider: *a19
+        isProvider: *a24
         events:
           type: array
           items:
@@ -3048,7 +3495,7 @@ components:
               payload:
                 type: object
                 additionalProperties: true
-              createdAt: *a16
+              createdAt: *a21
         proposals:
           type: array
           items:
@@ -3062,7 +3509,7 @@ components:
               - canRespond
             properties:
               id: *a1
-              startsAt: *a16
+              startsAt: *a21
               status:
                 enum:
                   - PENDING
@@ -3070,9 +3517,18 @@ components:
                   - REJECTED
                   - CANCELLED
                   - EXPIRED
-              expiresAt: *a16
+              expiresAt: *a21
               canRespond:
                 type: boolean
+        source:
+          enum:
+            - CUSTOMER
+            - PROVIDER_RECORDED
+        clientHasAccount:
+          type: boolean
+        clientId:
+          type: string
+          description: Only returned to the owning provider.
     BookingRequest:
       type: object
       additionalProperties: false
@@ -3089,11 +3545,11 @@ components:
         - isProvider
       properties:
         id: *a6
-        startsAt: &a20
+        startsAt: &a25
           type: integer
           description: UTC epoch milliseconds
-        originalStartsAt: *a20
-        status: &a22
+        originalStartsAt: *a25
+        status: &a27
           enum:
             - SUBMITTED
             - COUNTER_PROPOSED
@@ -3102,16 +3558,16 @@ components:
             - WITHDRAWN
             - DECLINED
             - EXPIRED
-        version: *a21
-        expiresAt: *a20
-        bookingId: &a23
+        version: *a26
+        expiresAt: *a25
+        bookingId: &a28
           type:
             - string
             - "null"
-        terms: &a24
+        terms: &a29
           $ref: "#/components/schemas/BookingTerms"
         clientName: *a6
-        isProvider: &a25
+        isProvider: &a30
           type: boolean
     RequestDetail:
       type: object
@@ -3130,15 +3586,15 @@ components:
         - events
       properties:
         id: *a6
-        startsAt: *a20
-        originalStartsAt: *a20
-        status: *a22
-        version: *a21
-        expiresAt: *a20
-        bookingId: *a23
-        terms: *a24
+        startsAt: *a25
+        originalStartsAt: *a25
+        status: *a27
+        version: *a26
+        expiresAt: *a25
+        bookingId: *a28
+        terms: *a29
         clientName: *a6
-        isProvider: *a25
+        isProvider: *a30
         events:
           type: array
           items:
@@ -3153,7 +3609,7 @@ components:
               payload:
                 type: object
                 additionalProperties: true
-              createdAt: *a20
+              createdAt: *a25
     Notification:
       type: object
       additionalProperties: false
@@ -3172,12 +3628,175 @@ components:
             - BOOKING
             - REQUEST
         entityId: *a6
-        createdAt: *a20
+        createdAt: *a25
         readAt:
           type:
             - integer
             - "null"
           description: Recipient explicitly marked read; not proof of understanding or agreement.
+    Client:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - email
+        - phone
+        - linkedAccount
+        - revision
+        - createdAt
+        - updatedAt
+        - bookingCount
+        - completedCount
+        - lastServiceAt
+        - nextBookingAt
+      properties:
+        id: *a11
+        name: *a11
+        email:
+          type:
+            - string
+            - "null"
+        phone:
+          type:
+            - string
+            - "null"
+        linkedAccount:
+          type: boolean
+        revision: *a31
+        createdAt:
+          type: integer
+          description: Zero for legacy records whose creation timestamp is unknown.
+        updatedAt:
+          type: integer
+          description: Zero for legacy records whose last update timestamp is unknown.
+        bookingCount: *a31
+        completedCount: *a31
+        lastServiceAt:
+          type:
+            - integer
+            - "null"
+          description: Start of most recent completed service.
+        nextBookingAt:
+          type:
+            - integer
+            - "null"
+    ClientInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name: &a32
+          type: string
+          minLength: 1
+          maxLength: 120
+        email: &a33
+          type:
+            - string
+            - "null"
+          maxLength: 254
+        phone: &a34
+          type:
+            - string
+            - "null"
+          maxLength: 40
+      description: Business-local contact only. Email is contact information, never authorization to link
+        an account. No userId/orgId input is accepted. Empty optional contacts become null; email is
+        normalized to lowercase.
+    ClientEdit:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - expectedRevision
+      properties:
+        name: *a32
+        email: *a33
+        phone: *a34
+        expectedRevision:
+          type: integer
+          minimum: 1
+    ClientList:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - total
+        - offset
+        - limit
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Client"
+        total: *a31
+        offset: *a31
+        limit:
+          const: 50
+    ClientDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - client
+        - bookings
+        - totalBookings
+        - offset
+        - limit
+      properties:
+        client:
+          $ref: "#/components/schemas/Client"
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        totalBookings: *a31
+        offset: *a31
+        limit:
+          const: 50
+    MyProvider:
+      type: object
+      additionalProperties: false
+      required:
+        - publicName
+        - slug
+        - locationLabel
+        - timezone
+        - bookingCount
+        - lastBookingAt
+      properties:
+        publicName: *a11
+        slug: *a11
+        locationLabel: *a11
+        timezone: *a11
+        bookingCount: *a31
+        lastBookingAt:
+          type: integer
+          description: UTC epoch milliseconds
+    ManualBookingInput:
+      type: object
+      additionalProperties: false
+      required:
+        - clientId
+        - serviceId
+        - offeringId
+        - startsAt
+        - expectedServiceRevision
+        - confirmedWithClient
+      properties:
+        clientId: *a11
+        serviceId: *a11
+        offeringId: *a11
+        startsAt:
+          type: integer
+          description: UTC epoch milliseconds
+          multipleOf: 900000
+          maximum: 8000000000000
+        expectedServiceRevision:
+          type: integer
+          minimum: 1
+        confirmedWithClient:
+          const: true
   securitySchemes:
     sessionCookie:
       type: apiKey
@@ -3195,9 +3814,6 @@ x-koveya-planned-endpoints:
     - GET /services/:id
   scheduling-and-bookings: []
   clients-and-packages:
-    - GET /clients
-    - GET /clients/:id
-    - POST /clients
     - POST /packages
     - POST /entitlements
     - GET /entitlements/:id/ledger

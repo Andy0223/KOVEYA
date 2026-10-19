@@ -72,7 +72,7 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | PRO-004 | 服務定價 | P0 | 支援固定價格、免費、待報價 | implemented / local_verified |
 | PRO-005 | 服務時長 | P0 | 可設定服務時間 | implemented / local_verified |
 | PRO-006 | 線上／實體服務 | P0 | 可設定交付方式 | implemented / local_verified |
-| PRO-007 | 服務發布與下架 | P0 | 下架後不可新增預約 | partial / not_verified |
+| PRO-007 | 服務發布與下架 | P0 | 下架後不可新增預約 | implemented / local_verified |
 | PRO-008 | 專屬公開連結 | P0 | 可分享至其他社群 | implemented / local_verified |
 | PRO-009 | 服務排序 | P1 | 可調整公開顯示順序 | not_started / not_verified |
 | PRO-010 | 服務方案組合 | P1 | 可建立多次服務方案 | not_started / not_verified |
@@ -117,7 +117,7 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | BKG-005 | 需求方取消 | P0 | 正確套用取消規則 | implemented / local_verified |
 | BKG-006 | 供給方取消 | P0 | 需求方可查看取消資訊 | implemented / local_verified |
 | BKG-007 | 雙方改期 | P0 | 避免重複或遺失預約 | implemented / local_verified |
-| BKG-008 | 手動新增預約 | P0 | 供給方可加入既有安排 | not_started / not_verified |
+| BKG-008 | 手動新增預約 | P0 | 供給方可加入既有安排 | implemented / local_verified |
 | BKG-009 | 預約詳情 | P0 | 雙方看到一致資訊 | implemented / local_verified |
 | BKG-010 | 預約歷史 | P0 | 可查看歷史與異動 | implemented / local_verified |
 | BKG-011 | 預約到期 | P0 | 待確認申請可依規則過期 | implemented / local_verified |
@@ -134,7 +134,7 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 | DEM-001 | 我的預約 | P0 | 可查看未來與歷史預約 | implemented / local_verified |
 | DEM-002 | 預約狀態 | P0 | 明確顯示待確認、已確認等 | implemented / local_verified |
 | DEM-003 | 自助改期及取消 | P0 | 遵守服務政策 | implemented / local_verified |
-| DEM-004 | 常用供給方 | P0 | 可查看曾使用的供給方 | not_started / not_verified |
+| DEM-004 | 常用供給方 | P0 | 可查看曾使用的供給方 | implemented / local_verified |
 | DEM-005 | 快速再次預約 | P1 | 不必重複輸入所有資訊 | not_started / not_verified |
 | DEM-006 | 我的套票 | P1 | 可查看剩餘權益 | not_started / not_verified |
 | DEM-007 | 個人時間偏好 | P1 | 可設定偏好星期與時段 | not_started / not_verified |
@@ -151,10 +151,10 @@ PRD-08 原文沒有逐項 ID；工程整理新增 NTF-001–013，順序對應�
 
 | ID | 功能 | 優先級 | 驗收標準 | 實作／驗收狀態 |
 |---|---|---|---|---|
-| CRM-001 | 客戶清單 | P0 | 顯示與供給方有合法關聯的客戶 | not_started / not_verified |
-| CRM-002 | 客戶預約歷史 | P0 | 可查看在該供給方的預約 | not_started / not_verified |
-| CRM-003 | 手動新增客戶 | P0 | 可建立必要聯絡紀錄 | not_started / not_verified |
-| CRM-004 | 客戶聯絡資訊 | P0 | 依授權及用途管理 | not_started / not_verified |
+| CRM-001 | 客戶清單 | P0 | 顯示與供給方有合法關聯的客戶 | implemented / local_verified |
+| CRM-002 | 客戶預約歷史 | P0 | 可查看在該供給方的預約 | implemented / local_verified |
+| CRM-003 | 手動新增客戶 | P0 | 可建立必要聯絡紀錄 | implemented / local_verified |
+| CRM-004 | 客戶聯絡資訊 | P0 | 依授權及用途管理 | implemented / local_verified |
 | CRM-005 | 客戶備註 | P1 | 僅授權人員可查看 | not_started / not_verified |
 | CRM-006 | 客戶標籤 | P1 | 可分類客戶 | not_started / not_verified |
 | CRM-007 | 套票及方案紀錄 | P1 | 查看客戶已購買權益 | not_started / not_verified |

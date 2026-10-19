@@ -454,6 +454,11 @@ export function BookingList({
           {en ? "My workspace" : "我的工作台"} →
         </Link>
       )}
+      {business && (
+        <Link className="button primary" to="/business/bookings/new">
+          {en ? "Record booking" : "手動新增預約"} +
+        </Link>
+      )}
       <ErrorNotice message={error} />
       {error && (
         <button
@@ -508,6 +513,8 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [reason, setReason] = useState(""),
+    [manualReason, setManualReason] = useState(""),
+    [manualConsent, setManualConsent] = useState(false),
     [date, setDate] = useState(""),
     [selected, setSelected] = useState<number | null>(null),
     [attempt, setAttempt] = useState(0),
@@ -528,6 +535,8 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
       await load();
       setSelected(null);
       setReason("");
+      setManualReason("");
+      setManualConsent(false);
       setAttempt((a) => a + 1);
     } catch (e) {
       setError(errorText(e, locale));
@@ -554,6 +563,29 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
               {statusText(booking.status, en)}
             </span>
             <h2>{booking.terms.serviceName}</h2>
+            {booking.source === "PROVIDER_RECORDED" && (
+              <p className="notice">
+                {en
+                  ? "Recorded by provider based on an agreement outside KOVEYA. This is not a verified customer confirmation."
+                  : "此預約由供給方依平台外約定代為記錄，不代表平台驗證過客戶確認。"}
+              </p>
+            )}
+            {booking.isProvider && booking.clientId && (
+              <Link
+                className="text-link"
+                to={`/business/clients/${booking.clientId}`}
+              >
+                {en ? "View client" : "查看客戶資料"} →
+              </Link>
+            )}
+            <CalendarDownload id={booking.id} locale={locale} />
+            {booking.isProvider && !booking.clientHasAccount && (
+              <p>
+                {en
+                  ? "This client has no linked account. Please contact them directly; they do not receive in-app notifications."
+                  : "此客戶未連結帳號，不會收到站內通知，請直接聯絡。"}
+              </p>
+            )}
             <p>
               {booking.terms.providerName} · {booking.clientName}
             </p>
@@ -653,42 +685,118 @@ export function BookingDetailPage({ locale }: { locale: Locale }) {
           ))}
           {booking.status === "CONFIRMED" && booking.startsAt > Date.now() && (
             <>
-              <form
-                className="panel stack-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (selected !== null)
-                    void action(`/bookings/${id}/reschedule-requests`, {
-                      expectedVersion: booking.version,
-                      startsAt: selected,
-                    });
-                }}
-              >
-                <h2>{en ? "Propose another time" : "提出改期"}</h2>
-                <p>
-                  {en
-                    ? "The original booking stays in place until the other person accepts. A new proposal replaces earlier unanswered proposals; the proposed time is not held."
-                    : "對方接受前，原預約仍保留。新提案會取代尚未回覆的舊提案；提案時間不會預先占位。"}
-                </p>
-                <TimePicker
-                  key={attempt}
-                  locale={locale}
-                  timezone={booking.terms.timezone}
-                  date={date || today(booking.terms.timezone)}
-                  onDate={setDate}
-                  selected={selected}
-                  onSelect={setSelected}
-                  endpoint={(date) =>
-                    `/bookings/${id}/availability?date=${date}`
-                  }
-                />
-                <button
-                  className="button primary"
-                  disabled={busy || selected === null}
+              {booking.isProvider &&
+              booking.source === "PROVIDER_RECORDED" &&
+              !booking.clientHasAccount ? (
+                <form
+                  className="panel stack-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (selected !== null && manualConsent)
+                      void action(`/bookings/${id}/manual-reschedule`, {
+                        expectedVersion: booking.version,
+                        startsAt: selected,
+                        confirmedWithClient: true,
+                        reason: manualReason,
+                      });
+                  }}
                 >
-                  {en ? "Send proposal" : "送出改期提案"}
-                </button>
-              </form>
+                  <h2>
+                    {en ? "Record an agreed time change" : "記錄已約定的改期"}
+                  </h2>
+                  <p>
+                    {en
+                      ? "For contacts without an account, first agree the change directly with the client, then record it here. The original booking is preserved if the new time is unavailable."
+                      : "未連結帳號的客戶，請先直接取得改期同意，再於此記錄。新時段無法使用時，原預約會保留。"}
+                  </p>
+                  <TimePicker
+                    key={attempt}
+                    locale={locale}
+                    timezone={booking.terms.timezone}
+                    date={date || today(booking.terms.timezone)}
+                    onDate={setDate}
+                    selected={selected}
+                    onSelect={(v) => {
+                      setSelected(v);
+                      setManualConsent(false);
+                    }}
+                    endpoint={(date) =>
+                      `/bookings/${id}/availability?date=${date}`
+                    }
+                  />
+                  <label htmlFor="manual-reschedule-reason">
+                    {en ? "Reason" : "改期原因"}
+                  </label>
+                  <input
+                    id="manual-reschedule-reason"
+                    required
+                    maxLength={500}
+                    value={manualReason}
+                    onChange={(e) => setManualReason(e.target.value)}
+                  />
+                  <label className="check-label">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={manualConsent}
+                      onChange={(e) => setManualConsent(e.target.checked)}
+                    />
+                    {en
+                      ? "I have obtained the client's agreement outside KOVEYA and am recording the new time."
+                      : "我已於平台外取得客戶同意，並代為記錄新時間。"}
+                  </label>
+                  <button
+                    className="button primary"
+                    disabled={
+                      busy ||
+                      selected === null ||
+                      !manualConsent ||
+                      !manualReason.trim()
+                    }
+                  >
+                    {en ? "Record time change" : "確認記錄改期"}
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <form
+                    className="panel stack-form"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (selected !== null)
+                        void action(`/bookings/${id}/reschedule-requests`, {
+                          expectedVersion: booking.version,
+                          startsAt: selected,
+                        });
+                    }}
+                  >
+                    <h2>{en ? "Propose another time" : "提出改期"}</h2>
+                    <p>
+                      {en
+                        ? "The original booking stays in place until the other person accepts. A new proposal replaces earlier unanswered proposals; the proposed time is not held."
+                        : "對方接受前，原預約仍保留。新提案會取代尚未回覆的舊提案；提案時間不會預先占位。"}
+                    </p>
+                    <TimePicker
+                      key={attempt}
+                      locale={locale}
+                      timezone={booking.terms.timezone}
+                      date={date || today(booking.terms.timezone)}
+                      onDate={setDate}
+                      selected={selected}
+                      onSelect={setSelected}
+                      endpoint={(date) =>
+                        `/bookings/${id}/availability?date=${date}`
+                      }
+                    />
+                    <button
+                      className="button primary"
+                      disabled={busy || selected === null}
+                    >
+                      {en ? "Send proposal" : "送出改期提案"}
+                    </button>
+                  </form>
+                </>
+              )}
               <form
                 className="panel stack-form"
                 onSubmit={(e) => {
@@ -1103,5 +1211,62 @@ export function AvailabilityPage({ locale }: { locale: Locale }) {
         </button>
       )}
     </section>
+  );
+}
+
+function CalendarDownload({ id, locale }: { id: string; locale: Locale }) {
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  async function download() {
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `/api/v1/bookings/${encodeURIComponent(id)}/calendar.ics`,
+        { credentials: "same-origin" },
+      );
+      if (!response.ok) {
+        const result = (await response.json()) as { error?: { code?: string } };
+        throw new ClientError(result.error?.code ?? "INTERNAL_ERROR");
+      }
+      if (!response.headers.get("Content-Type")?.startsWith("text/calendar"))
+        throw new Error("Invalid calendar response");
+      const url = URL.createObjectURL(await response.blob()),
+        link = document.createElement("a");
+      link.href = url;
+      link.download = "koveya-booking.ics";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) {
+      setError(errorText(e, locale));
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div>
+      <button
+        className="button secondary"
+        type="button"
+        disabled={busy}
+        onClick={() => void download()}
+      >
+        {busy
+          ? locale === "en"
+            ? "Preparing…"
+            : "準備中…"
+          : locale === "en"
+            ? "Export calendar (.ics)"
+            : "匯出行事曆（.ics）"}
+      </button>
+      <p>
+        {locale === "en"
+          ? "This file is a snapshot, not automatic calendar sync. Re-export after changes; how an import updates an existing event depends on your calendar app."
+          : "此檔案為當下快照，不會自動同步。預約變更後請重新匯出；匯入是否更新原事件，依你的行事曆支援而定。"}
+      </p>
+      <ErrorNotice message={error} />
+    </div>
   );
 }
