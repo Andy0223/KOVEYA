@@ -122,3 +122,12 @@ Founder 已完成 Google API 使用者資料政策。建立 `KOVEYA Trial Web` O
 遠端套用 0007 migration、部署 v0.6.0（Worker `f5cfd61d-9eba-40c8-8034-656fb414e420`），HTTPS health ready。Chrome 完成既有 Email 帳號明確連結 Google → 登出 → Google 重新登入 → 返回原帳號設定。連結後 users 維持 1，原品牌保留。詳細範圍見 [Google 設定與實測](../04_OPERATIONS/Google_Login.md)。第二個 Gmail 等 Founder 指定；雙帳號雲端申請、改期、取消尚待驗收。
 
 補充核對 Google 官方規則：本案僅 openid／email／profile，不需先加入 OAuth 測試名單即可登入；External／Testing 的名單不是產品存取控制。第二帳號仍待 Founder 指定以便代測，Founder 自己可直接選另一個 Google 帳號登入。
+
+
+## 2026-10-20 — Founder 自測回報與規劃 v1.1
+
+Founder 回報「測試完了可以了」，視為本次自助試用可用的使用者回饋；沒有新增代理端逐案例雲端證據，不將其替代所有 P0／獨立 Beta 驗收。
+
+依 Founder 新需求，納入主動客戶關心與回約、文字操作助手、語音輸入及後續受控自動化。新增獨立 24 條 Proposed 需求 RCH-001–009、ACT-001–010、VOC-001–005，原 173 條基準保持不變；更新 Roadmap、Backlog、KPI 與決策。此輪僅文件規劃，沒有新增實作、對外訊息、付費資源或部署。
+
+下一步為約兩位真實供給方的有協助試用與 P0 營運補強，並行訪談／設計人工關心清單；其後按門檻交付關心工作台、文字助手、語音與自動化。詳見 [產品補充](../01_PRODUCT/Client_Care_and_Action_Assistant_PRD.md)。

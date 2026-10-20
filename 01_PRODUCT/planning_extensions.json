@@ -1,0 +1,222 @@
+{
+  "version": "1.1-proposed",
+  "date": "2026-10-20",
+  "status": "Proposed",
+  "baseline": "requirements.json (173 requirements; unchanged)",
+  "source": "Founder-reported tennis coach insight and natural-language/voice request, 2026-10-20; one qualitative source, not a market-wide finding.",
+  "modules": [
+    {
+      "id": "RCH",
+      "title": "Client Care & Rebooking",
+      "user_story": "教練想知道誰可能需要關心，並用合適的方式邀請再次預約。",
+      "requirements": [
+        {
+          "id": "RCH-001",
+          "function": "待關心客戶清單",
+          "priority": "P1",
+          "acceptance_criteria": "依該供給方已完成服務、約定上課頻率與距離上次服務天數產生候選名單，顯示可解釋原因；資料不足標示待確認，不以未預約判定失去動機。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-002",
+          "function": "提醒資格與抑制",
+          "priority": "P1",
+          "acceptance_criteria": "已有未來有效預約、待審核申請、待回覆改期、已暫停或不希望收到關心的客戶不重複提醒；產生與送出前均重新檢查。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-003",
+          "function": "關心草稿與預約入口",
+          "priority": "P1",
+          "acceptance_criteria": "提供可編輯的關心範本、正確供給方服務連結及目前可用時段；不承諾時段已保留，不在訊息帶入敏感紀錄。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-004",
+          "function": "人工聯絡與真實狀態",
+          "priority": "P1",
+          "acceptance_criteria": "教練明確確認後自行複製或開啟既有聯絡渠道；複製、開啟對話不自動標記已送出，外部聯絡只能由教練記錄為自行回報。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-005",
+          "function": "暫停、稍後與頻率限制",
+          "priority": "P1",
+          "acceptance_criteria": "教練可略過、延後及設定客戶聯絡節奏；同客戶／供給方／活動週期去重，客戶明確要求暫停即停止待送關心。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-006",
+          "function": "客戶偏好與同意",
+          "priority": "P1",
+          "acceptance_criteria": "記錄提醒用途、允許渠道、時區與退訂／暫停；既有預約或公開聯絡資料不自動視為同意行銷或跨業者聯絡。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-007",
+          "function": "與上課前提醒分流",
+          "priority": "P1",
+          "acceptance_criteria": "未預約的關心邀請與已成立預約的課前通知使用不同事件、偏好及排程；取消關心不悄悄取消課程，也不改變必要交易通知。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-008",
+          "function": "受控自動關心",
+          "priority": "P2",
+          "acceptance_criteria": "供給方明確啟用規則且客戶已允許渠道後才背景發送；具安靜時段、頻率上限、去重、退訂、重試、預算與總開關，背景自動送出前再檢查資格。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "RCH-009",
+          "function": "回約與打擾量測",
+          "priority": "P1",
+          "acceptance_criteria": "分開量測候選、教練處理、自行回報聯絡、渠道確認發送、點擊、回約及完成服務；報告樣本與退訂，不把點擊或相關性當成增量成效。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "ACT",
+      "title": "Natural-language Action Assistant",
+      "user_story": "使用者想描述要做的事，讓平台準備好操作，再確認執行。",
+      "requirements": [
+        {
+          "id": "ACT-001",
+          "function": "有限指令目錄",
+          "priority": "P1",
+          "acceptance_criteria": "首版只支援既有可授權功能：建立服務草稿、查詢可用時間、準備自己的預約／申請；其他意圖清楚說明尚未支援，不回報假成功。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-002",
+          "function": "結構化操作草稿",
+          "priority": "P1",
+          "acceptance_criteria": "文字輸入轉成具型別與欄位驗證的操作草稿；解析本身無業務寫入、發訊或扣款副作用。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-003",
+          "function": "必要資訊與歧義釐清",
+          "priority": "P1",
+          "acceptance_criteria": "釐清建立服務項目或安排單次課、服務／客戶身份、日期時間時區、時長、價格幣別、地點與規則；不以猜測填入重要交易條件。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-004",
+          "function": "身分、租戶與資料最小化",
+          "priority": "P1",
+          "acceptance_criteria": "每次查詢與執行沿用伺服器 Session 與既有權限，模型不決定 userId／orgId 授權；不同業者資料及私人備註不混入上下文。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-005",
+          "function": "確認後精確執行",
+          "priority": "P1",
+          "acceptance_criteria": "顯示操作、對象、完整日期時區、價格與主要政策，提供編輯及取消；確認僅適用該版本草稿，不能授權模型往後任意執行。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-006",
+          "function": "生命週期操作擴展",
+          "priority": "P2",
+          "acceptance_criteria": "發布、取消、改期、教練手動安排與關心草稿分批加入；維持對方同意及外部同意來源規則，沒有把提出改期視為已接受。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-007",
+          "function": "競爭、冪等與重新確認",
+          "priority": "P1",
+          "acceptance_criteria": "確認後重新查權限、政策與資源並使用既有交易 API／冪等鍵；內容或版本變更須重新確認，逾時先查結果，不重複新增。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-008",
+          "function": "結果與操作紀錄",
+          "priority": "P1",
+          "acceptance_criteria": "只有後端成功才顯示成功及資源連結；區分待確認、提案、完成及通知送出，保存確認版本、操作人與結果，不記錄原始憑證。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-009",
+          "function": "查時段不冒稱保留",
+          "priority": "P1",
+          "acceptance_criteria": "只讀查詢可直接執行並標示查詢時間；推薦時段不保留、不保證場地，真正預約時仍以資料庫結果為準。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "ACT-010",
+          "function": "能力擴展與禁用範圍",
+          "priority": "P2",
+          "acceptance_criteria": "以角色和單一能力逐項加入測試後擴展平台操作；任意 SQL、程式執行、越權、代替他人同意及未支援付款不交由模型自由執行。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    },
+    {
+      "id": "VOC",
+      "title": "Voice Input",
+      "user_story": "使用者想用語音描述需求，能校正辨識內容，再使用同一套操作流程。",
+      "requirements": [
+        {
+          "id": "VOC-001",
+          "function": "主動錄音與文字備援",
+          "priority": "P2",
+          "acceptance_criteria": "使用者主動開始並授權麥克風才錄音，可隨時停止或取消；不支援、拒絕權限或失敗時仍可使用文字與原表單。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "VOC-002",
+          "function": "轉錄可編輯與多語",
+          "priority": "P2",
+          "acceptance_criteria": "繁中／英文轉錄先顯示供校正；測試人名、數字、地點、噪音及中英夾雜；價格、日期及否定語句有歧義就釐清。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "VOC-003",
+          "function": "與文字共用執行流程",
+          "priority": "P2",
+          "acceptance_criteria": "語音只提供輸入，轉錄後共用 ACT 草稿／確認／授權；聲音或口頭宣稱不是登入身分或他人同意證明。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "VOC-004",
+          "function": "資料與成本控制",
+          "priority": "P2",
+          "acceptance_criteria": "實作前比較相容性、準確度、延遲、資料處理及每次成本；錄音限長，預設不保留原始音檔，雲端處理前清楚告知渠道與保存方式，設用量上限及回退。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        },
+        {
+          "id": "VOC-005",
+          "function": "錄音錯誤與安全復原",
+          "priority": "P2",
+          "acceptance_criteria": "取消錄音、辨識失敗、網路中斷、內容夾帶指令或重送均不自動寫入；可重新錄音或改文字，原訂單與預約不受影響。",
+          "implementation_status": "not_started",
+          "acceptance_status": "not_verified"
+        }
+      ]
+    }
+  ]
+}

@@ -76,3 +76,6 @@ e2e/                Playwright 瀏覽器測試
 時間保存 UTC 時間點及 IANA 時區；金額保存最小貨幣單位整數及幣別。Secrets 與本機資料不進 Git。
 
 Google 登入已於 v0.6.0 試用環境啟用，Founder 已完成真實連結及重新登入；第二帳號與雙方預約驗收待完成，見 [Google 登入設定](04_OPERATIONS/Google_Login.md)。
+
+
+2026-10-20 新增 [客戶關心與自然語言／語音操作計畫 v1.1](01_PRODUCT/Client_Care_and_Action_Assistant_PRD.md)：24 條 Proposed 需求，依序驗證人工關心、文字助手、語音及受控自動化；尚未實作。原 173 條 v1.0 需求與 Beta 門檻不變。

@@ -18,6 +18,10 @@
 
 對需求方：**One place for all your services.** 對供給方：**Run your service business, effortlessly.** 關係價值：**From first booking to lasting relationships.**
 
+## v1.1 規劃補充 — 2026-10-20
+
+Founder 新增主動客戶關心與回約、自然語言操作及語音輸入需求。另見 [產品補充](Client_Care_and_Action_Assistant_PRD.md) 與 [24 條結構化提案](planning_extensions.json)。屬 Proposed／未實作，原 173 條基準及 P0／Beta 驗收門檻保持不變。長期擴大平台操作覆蓋，首批先支援有限能力、釐清與確認後執行。
+
 ## 六種服務模式
 
 | 模式 | 階段 | 例子 |
