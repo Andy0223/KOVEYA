@@ -75,4 +75,4 @@ e2e/                Playwright 瀏覽器測試
 
 時間保存 UTC 時間點及 IANA 時區；金額保存最小貨幣單位整數及幣別。Secrets 與本機資料不進 Git。
 
-Google 登入程式已加入 v0.6.0；雲端 OAuth 設定與雙帳號驗收待完成，見 [Google 登入設定](04_OPERATIONS/Google_Login.md)。
+Google 登入已於 v0.6.0 試用環境啟用，Founder 已完成真實連結及重新登入；第二帳號與雙方預約驗收待完成，見 [Google 登入設定](04_OPERATIONS/Google_Login.md)。

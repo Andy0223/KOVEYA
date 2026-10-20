@@ -2,7 +2,7 @@
 
 ## 0.6.0 Google Sign-in — 2026-10-19
 
-新增 Google Identity Services 按鈕、後端 RS256／JWKS 驗證、瀏覽器綁定一次性 nonce、明確的既有帳號連結、Session 輪替與原子交易。保留 Email 登入與預約意圖；未設定公開 Client ID 時停用 Google 入口。Google Cloud 條款與 OAuth Client 尚待 Founder 完成，不能宣稱雲端 Google 登入已成功。見 [設定與驗收](../04_OPERATIONS/Google_Login.md)。
+新增 Google Identity Services 按鈕、後端 RS256／JWKS 驗證、瀏覽器綁定一次性 nonce、明確的既有帳號連結、Session 輪替與原子交易。保留 Email 登入與預約意圖；未設定公開 Client ID 時停用 Google 入口。2026-10-20 已設定 OAuth Client、部署試用環境，並完成 Founder 原帳號真實連結及登出後 Google 登入；第二帳號與雙方預約驗收仍待完成。見 [設定與驗收](../04_OPERATIONS/Google_Login.md)。
 
 ## 0.5.2 Founder Trial Findings — 2026-10-19
 

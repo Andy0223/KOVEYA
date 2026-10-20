@@ -27,6 +27,7 @@
         "APP_ORIGIN": "https://koveya-trial.koveya-test.workers.dev",
         "EMAIL_FROM": "KOVEYA <onboarding@resend.dev>",
         "LOCAL_EMAIL_PREVIEW": "false",
+        "GOOGLE_CLIENT_ID": "1056240593972-uk0bbsppbug5k838a25jrp31pkbivf1g.apps.googleusercontent.com",
       },
       "d1_databases": [
         {

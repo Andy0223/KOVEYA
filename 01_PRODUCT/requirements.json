@@ -78,7 +78,7 @@
           "acceptance_criteria": "可登入並安全連結既有帳號",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.6 Google GIS nonce/browser binding, RS256/JWKS issuer/audience/expiry/email verification, explicit existing-session linking, session rotation and transaction rollback tested locally. Live OAuth client configuration and two-account cloud acceptance remain pending."
+          "verification_scope": "v0.6 local RS256, browser nonce binding, explicit linking, replay/rollback and UI tests passed. On 2026-10-20 Founder linked the existing Email account through real Google GIS, signed out, then signed in through Google on the deployed trial without creating a duplicate user. Second-account signup and bilateral cloud booking acceptance remain pending."
         },
         {
           "id": "ID-009",
@@ -95,7 +95,7 @@
           "acceptance_criteria": "不產生未經驗證的帳號合併",
           "implementation_status": "implemented",
           "acceptance_status": "local_verified",
-          "verification_scope": "v0.6 Google GIS nonce/browser binding, RS256/JWKS issuer/audience/expiry/email verification, explicit existing-session linking, session rotation and transaction rollback tested locally. Live OAuth client configuration and two-account cloud acceptance remain pending."
+          "verification_scope": "v0.6 local RS256, browser nonce binding, explicit linking, replay/rollback and UI tests passed. On 2026-10-20 Founder linked the existing Email account through real Google GIS, signed out, then signed in through Google on the deployed trial without creating a duplicate user. Second-account signup and bilateral cloud booking acceptance remain pending."
         },
         {
           "id": "ID-011",

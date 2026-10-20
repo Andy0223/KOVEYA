@@ -113,3 +113,10 @@ Founder 已完成真實 Email 登入；Computer Use 建立並發布明確標示�
 本機 116 項 Vitest、54 項桌面／模擬手機 Playwright 通過，型別／173 條需求追溯／OpenAPI／build 通過。Google 測試使用本機真實 RS256 簽章及 UI adapter，尚未完成 Google 雲端真實帳號登入。一次本機登出後舊 Session 查詢又出現 Miniflare HTML 500（非應用程式 JSON），完整重跑通過，既有 runtime 偶發問題仍未定根因，沒有放寬斷言或加自動重試。
 
 Google Cloud 產品帳號已在畫面完成首次條款步驟，建立獨立 KOVEYA 專案 `skilled-clover-512110-j1`，未啟用計費／免費試用。品牌名稱／聯絡信箱／External 已填好，目前停在 Google API 使用者資料政策，等待 Founder 當下確認；OAuth Client ID 尚未建立，未部署 Google 設定。後續見 [設定與驗收](../04_OPERATIONS/Google_Login.md)。
+
+
+## 2026-10-20 — Google 試用部署與 Founder 真實登入
+
+Founder 已完成 Google API 使用者資料政策。建立 `KOVEYA Trial Web` OAuth 用戶端，僅允許試用網站 origin；External／Testing，目前加入產品帳號一位測試者，未啟用 Google 計費或免費試用。只將公開 Client ID 加到 trial vars，不使用 Client Secret。
+
+遠端套用 0007 migration、部署 v0.6.0（Worker `f5cfd61d-9eba-40c8-8034-656fb414e420`），HTTPS health ready。Chrome 完成既有 Email 帳號明確連結 Google → 登出 → Google 重新登入 → 返回原帳號設定。連結後 users 維持 1，原品牌保留。詳細範圍見 [Google 設定與實測](../04_OPERATIONS/Google_Login.md)。第二個 Gmail 等 Founder 指定；雙帳號雲端申請、改期、取消尚待驗收。

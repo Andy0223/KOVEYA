@@ -1,6 +1,6 @@
 # Google 登入設定與驗收（v0.6.0）
 
-狀態：程式與本機驗證已完成；產品 Google Cloud 帳號的服務條款、OAuth Web Client 與雲端真實登入尚待完成。不要將本機簽章測試或 UI 測試替身視為真實 Google 登入。
+狀態（2026-10-20）：Google Cloud 條款由 Founder 完成、OAuth Web Client 已設定並部署。Founder 既有帳號完成真實 Google 連結、登出與重新登入；第二個帳號及雙方預約流程尚待驗收。
 
 ## Google Cloud
 
@@ -40,3 +40,14 @@
 - 新增真實 RS256 簽章測試與 UI adapter contract 測試；雲端必須另外驗收 Founder 連結、登出再登入、第二帳號登入、雙方預約與改期。Google 第三方服務不能以測試替身宣稱已驗收。
 
 官方參考：[GIS 設定](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid)、[後端 ID token 驗證](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token)。
+
+
+## 2026-10-20 雲端實測
+
+- 專案 `skilled-clover-512110-j1`，名稱 KOVEYA，帳號 `koveya.test@gmail.com`；External／Testing，未啟用計費或免費試用。
+- Web Client 名稱 `KOVEYA Trial Web`；只授權試用網站 origin，未設定重新導向 URI。
+- 公開 Client ID 已加入 trial vars；應用程式不使用、不保存 Client Secret，未下載 OAuth JSON。
+- 0007 migration 遠端套用成功；部署 Worker 版本 `f5cfd61d-9eba-40c8-8034-656fb414e420`，health 0.6.0／ready，auth/config 同時提供 Google 與 Email。
+- Chrome 實測：原 Email Session → Google 按鈕 → 選產品帳號 → 同意基本名稱／相片／Email → 返回原帳號設定頁。再登出 KOVEYA，透過 Google 按鈕登入同一帳號成功；不需登入信。
+- 連結後 users 仍為 1，Google identity 1；沒有新增重複帳號，原品牌資料保留。Google 真實 consent 顯示試用網域 `koveya-test.workers.dev`。
+- 第二個 Gmail 尚待 Founder 指定，測試名單目前僅產品帳號。沒有把同帳號登出再登入視為雙帳號流程通過。
