@@ -6,7 +6,7 @@
 
 使用 `koveya.test@gmail.com`，建立獨立 KOVEYA 專案；不啟用計費、免費試用或額外 Google API。若首次顯示服務條款，由 Founder 閱讀接受或於當下明確確認後再繼續。
 
-在 Google Auth Platform 設定 KOVEYA 品牌、產品支援與開發者聯絡 Email。試用階段選 External／Testing（若介面適用），加入 Founder 與第二個測試 Google 帳號。只使用登入必要的 `openid`、`email`、`profile`，不要求 Gmail、Drive 或 Calendar 存取。
+在 Google Auth Platform 設定 KOVEYA 品牌、產品支援與開發者聯絡 Email。試用階段選 External／Testing（若介面適用），可將 Founder 與測試帳號列入名單作管理紀錄。僅基本身分 scope 的 Google 登入有例外：不必在測試名單上也可登入；此名單不是 KOVEYA 的存取控制。只使用登入必要的 `openid`、`email`、`profile`，不要求 Gmail、Drive 或 Calendar 存取。
 
 建立 OAuth Client，Application type 選 Web application。Authorized JavaScript origins：
 
@@ -50,4 +50,6 @@
 - 0007 migration 遠端套用成功；部署 Worker 版本 `f5cfd61d-9eba-40c8-8034-656fb414e420`，health 0.6.0／ready，auth/config 同時提供 Google 與 Email。
 - Chrome 實測：原 Email Session → Google 按鈕 → 選產品帳號 → 同意基本名稱／相片／Email → 返回原帳號設定頁。再登出 KOVEYA，透過 Google 按鈕登入同一帳號成功；不需登入信。
 - 連結後 users 仍為 1，Google identity 1；沒有新增重複帳號，原品牌資料保留。Google 真實 consent 顯示試用網域 `koveya-test.workers.dev`。
-- 第二個 Gmail 尚待 Founder 指定，測試名單目前僅產品帳號。沒有把同帳號登出再登入視為雙帳號流程通過。
+- 第二個 Gmail 尚待 Founder 指定以便代測，名單目前僅產品帳號；這不是第二帳號登入的前置限制。只有 openid／email／profile 時，Google 官方允許名單外帳號登入。沒有把同帳號登出再登入視為雙帳號流程通過。
+
+Google 基本身分 scope 的測試名單例外：[Manage App Audience](https://support.google.com/cloud/answer/15549945?hl=en)。

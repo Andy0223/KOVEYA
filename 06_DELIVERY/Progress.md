@@ -120,3 +120,5 @@ Google Cloud 產品帳號已在畫面完成首次條款步驟，建立獨立 KOV
 Founder 已完成 Google API 使用者資料政策。建立 `KOVEYA Trial Web` OAuth 用戶端，僅允許試用網站 origin；External／Testing，目前加入產品帳號一位測試者，未啟用 Google 計費或免費試用。只將公開 Client ID 加到 trial vars，不使用 Client Secret。
 
 遠端套用 0007 migration、部署 v0.6.0（Worker `f5cfd61d-9eba-40c8-8034-656fb414e420`），HTTPS health ready。Chrome 完成既有 Email 帳號明確連結 Google → 登出 → Google 重新登入 → 返回原帳號設定。連結後 users 維持 1，原品牌保留。詳細範圍見 [Google 設定與實測](../04_OPERATIONS/Google_Login.md)。第二個 Gmail 等 Founder 指定；雙帳號雲端申請、改期、取消尚待驗收。
+
+補充核對 Google 官方規則：本案僅 openid／email／profile，不需先加入 OAuth 測試名單即可登入；External／Testing 的名單不是產品存取控制。第二帳號仍待 Founder 指定以便代測，Founder 自己可直接選另一個 Google 帳號登入。
